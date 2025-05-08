@@ -22,7 +22,7 @@ const NavbarHome = () => {
               placeholder="Buscar..."
               className="search-input"
             />
-            <a href="/"><Link to="/login">Entrar</Link></a>
+           <Link to="/login">Entrar</Link>
           </div>
         </nav>
       </header>
