@@ -1,0 +1,75 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* height: 100vh; */
+}
+
+.first-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 100px;
+}
+
+.first-container h1 {
+  font-size: 48px;
+  font-weight: 700;
+}
+
+.first-container button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 18px;
+  font-weight: 600;
+  background-color: orange;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.second-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 35px;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 24px; /* espaço entre os itens */
+}
+
+.list li {
+  position: relative;
+}
+
+.list li:hover {
+  background-color: #f0f0f0ee;
+  transition: background-color 0.3s ease;
+}
+
+.list li a{
+    text-decoration: none;
+    color: black;
+    display: inline-block;
+    padding: 10px;
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 20px 20px;
+}
+
+.third-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 35px;
+}
