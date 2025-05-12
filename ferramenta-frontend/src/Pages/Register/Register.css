@@ -1,19 +1,9 @@
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f7f8fa;
-}
-
-.mainLogin {
+.mainRegister {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
+  background-color: #f7f8fa;
 }
 
 .card-container {
@@ -32,7 +22,7 @@ body {
   gap: 16px;
 }
 
-.logo-login {
+.logo-register {
   font-size: 28px;
   font-weight: 700;
   color: #333;
@@ -55,27 +45,7 @@ body {
   width: 100%;
 }
 
-.options {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 13px;
-}
-
-.checkbox input {
-  margin-right: 6px;
-}
-
-.forgot {
-  color: #3182ce;
-  text-decoration: none;
-}
-
-.forgot:hover {
-  text-decoration: underline;
-}
-
-.btn-login {
+.btn-register {
   background-color: orange;
   color: white;
   border: none;
@@ -86,7 +56,7 @@ body {
   transition: background 0.3s;
 }
 
-.btn-login:hover {
+.btn-register:hover {
   background-color: #e27c1c;
 }
 

@@ -1,4 +1,4 @@
-.header {
+.headerNavBar {
   position: fixed;
   top: 0;
   left: 0;
@@ -12,20 +12,20 @@
   z-index: 100;
 }
 
-.logo {
+.logoNavbar {
   font-size: 32px;
   color: #fff;
   font-weight: 700;
 }
 
-.navbar {
+.navbarNav {
   display: flex;
   width: 100%;
   justify-content: space-between;
   align-items: center;
 }
 
-.navbar a {
+.navbarNav a {
   position: relative;
   font-size: 18px;
   color: #fff;
@@ -33,7 +33,7 @@
   margin-right: 30px;
 }
 
-.navbar a::before {
+.navbarNav a::before {
   content: "";
   position: absolute;
   top: 100%;
@@ -44,7 +44,7 @@
   transition: 0.3s;
 }
 
-.navbar a:hover::before {
+.navbarNav a:hover::before {
   width: 100%;
 }
 

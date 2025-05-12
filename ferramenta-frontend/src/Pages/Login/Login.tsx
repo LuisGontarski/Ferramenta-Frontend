@@ -1,30 +1,43 @@
 import React from "react";
 import "./Login.css";
+import { Link } from "react-router-dom";
 
 const Login = () => {
   return (
-    <main className="main">
+    <main className="mainLogin">
       <div className="card-container">
         <section className="card">
-          <h1>Zencore</h1>
-          <p>Entre para continuar</p>
-          <input type="text" name="" id="" placeholder="Insira seu email..." />
+          <Link to="/home" className="logo-login">
+            Ferramenta
+          </Link>
+          <p className="subtitle">Entre para continuar</p>
+
+          <input
+            type="email"
+            placeholder="Insira seu e-mail"
+            className="input"
+          />
           <input
             type="password"
-            name=""
-            id=""
-            placeholder="Insira sua senha..."
+            placeholder="Insira sua senha"
+            className="input"
           />
-          <div className="checkbox-container">
-            <input type="checkbox" id="manterConectado" />
-            <label htmlFor="manterConectado">Continuar conectado</label>
+
+          <div className="options">
+            <label className="checkbox">
+              <input type="checkbox" />
+              Continuar conectado
+            </label>
+            <a href="/" className="forgot">
+              Esqueceu sua senha?
+            </a>
           </div>
+
           <button className="btn-login">Entrar</button>
-          <div className="links-container">
-            <a href="/">Esqueci minha senha</a>
-            <div className="divider"></div>
-            <a href="/">Criar conta</a>
-          </div>
+
+          <p className="redirect">
+            Não tem uma conta? <Link to="/register">Cadastre-se</Link>
+          </p>
         </section>
       </div>
     </main>

@@ -6,6 +6,10 @@
   /* height: 100vh; */
 }
 
+h1 {
+  color: #333;
+}
+
 .first-container {
   display: flex;
   flex-direction: column;
@@ -58,7 +62,7 @@
 
 .list li a{
     text-decoration: none;
-    color: black;
+    color: #333;
     display: inline-block;
     padding: 10px;
     border: 1px solid black;

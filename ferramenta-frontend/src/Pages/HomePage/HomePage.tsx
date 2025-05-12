@@ -11,7 +11,7 @@ const HomePage = () => {
       <main className="main">
         <div className="first-container">
           <h1>Seja Bem-vindo:</h1>
-          <h1>Ferramenta Zencore</h1>
+          <h1>Ferramenta</h1>
 
           <button>Começar</button>
         </div>

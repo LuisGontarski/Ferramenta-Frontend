@@ -3,12 +3,12 @@ import { Link } from "react-router-dom";
 
 const NavbarHome = () => {
   return (
-      <header className="header">
+      <header className="headerNavBarHome">
         <a href="/" className="logo">
           Logo
         </a>
 
-        <nav className="navbar">
+        <nav className="navbarHome">
           <div className="div-menu">
             <a href="/">Home</a>
             <a href="/">Projetos</a>
