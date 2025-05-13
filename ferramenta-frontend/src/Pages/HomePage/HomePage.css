@@ -77,3 +77,69 @@ h1 {
   justify-content: center;
   margin-top: 35px;
 }
+
+.container_projetos_atualizacoes{
+  display: flex;
+  align-items: start;
+  width: 70%;
+  margin: auto;
+}
+
+.card_atualizacoes{
+  width: 100%;
+  background-color: white;
+  padding: 1rem;
+  border-radius: 10px;
+}
+
+.titulo_projetos{
+  font-weight: 600;
+}
+
+.texto_projetos{
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.texto_atualizacao{
+  font-size: 16px;
+  font-weight: 400;
+  color: grey;
+}
+
+.div_projetos{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  margin-top: 0.8rem;
+  border-bottom: 1px solid #0000001c;
+  padding-bottom: 0.8rem;
+}
+
+.container_projetos{
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.icone_projetos{
+  background-color: rgba(128, 128, 128, 0.4);
+  padding: 1rem;
+  border-radius: 50%;
+}
+
+.texto_projetos{
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.descricao_projetos{
+  font-weight: 400;
+  font-size: 16px;
+  color: grey;
+}
+
+.fa-arrow-right{
+  cursor: pointer;
+}

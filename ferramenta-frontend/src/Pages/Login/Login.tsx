@@ -7,7 +7,7 @@ const Login = () => {
     <main className="mainLogin">
       <div className="card-container">
         <section className="card">
-          <Link to="/home" className="logo-login">
+          <Link to="/" className="logo-login">
             Ferramenta
           </Link>
           <p className="subtitle">Entre para continuar</p>
