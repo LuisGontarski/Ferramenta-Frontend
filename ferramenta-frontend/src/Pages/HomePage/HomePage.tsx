@@ -18,7 +18,7 @@ const HomePage = () => {
         
         <div className="second-container">
             <ul className="list">
-                <li><a href="/">Projetos</a></li>
+                <li><a href="/projetos">Projetos</a></li>
                 <li><a href="/">Repositório</a></li>
                 <li><a href="/">Tarefas</a></li>
                 <li><a href="/">Gráficos</a></li>

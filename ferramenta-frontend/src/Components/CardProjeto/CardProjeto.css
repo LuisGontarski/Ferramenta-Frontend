@@ -1,0 +1,83 @@
+.divCategorias{
+    display: flex;
+    gap: 1rem;
+    background-color: #0000001a;
+    padding: 0.4rem;
+    border-radius: 0.6rem;
+    align-items: center;
+    margin-top: 0.4rem;
+    cursor: pointer;
+}
+
+.categoria_selecionada{
+    background-color: white;
+}
+
+.texto_categoria{
+    font-size: 16px;
+    font-weight: 600;
+    padding: 0.6rem;
+    border-radius: 4px;
+}
+
+.card_projetos{
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    background-color: white;
+    border-radius: 10px;
+    padding: 0.8rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    max-width: 400px;
+}
+
+.titulo_projeto{
+    font-weight: 600;
+    font-size: 22px;
+}
+
+.descricao_projeto{
+    font-weight: 500;
+    font-size: 18px;
+}
+
+.div_informacoes_projeto{
+    display: flex;
+    justify-content: space-between;
+}
+
+.btn_entrar_projetos{
+    width: 100%;
+    border: none;
+    background-color: black;
+    color: white;
+    font-weight: 600;
+    font-size: 16px;
+    padding: 0.4rem;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 0.4rem;
+    text-align: center;
+}
+
+
+.div_icones{
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+
+}
+
+.fa-solid{
+    color: grey;
+}
+
+.fas{
+    color: grey;
+}
+
+.container_informacoes{
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
