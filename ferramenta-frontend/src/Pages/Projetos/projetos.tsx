@@ -26,93 +26,93 @@ const Projetos = () => {
       <div className="container_modal sumir" id="card_modal">
           <div className="modal_adicionar_projeto">
             <div className="div_titulo_modal">
-              <h1>Criar novo projeto</h1>
+              <h1 className="titulo_modal">Criar novo projeto</h1>
               <h2 onClick={fecharModal}>X</h2>
             </div>
-            <h2>Preencha as informações abaixo para criar um novo projeto. Clique em salvar quando terminar.</h2>
+            <h2 className="descricao_modal">Preencha as informações abaixo para criar um novo projeto. Clique em salvar quando terminar.</h2>
             <div>
-              <h2>Nome do projeto</h2>
-              <input type="text" name="" id="" />
+              <h2 className="titulo_input">Nome do projeto</h2>
+              <input type="text" name="" id=""  className="input_modal" placeholder="Digite o nome do projeto"/>
             </div>
             <div>
-              <h2>Descrição</h2>
-              <input type="text" name="" id="" />
+              <h2 className="titulo_input">Descrição</h2>
+              <input type="text" name="" id="" className="input_modal" placeholder="Descreva o objetivo do projeto"/>
             </div>
-            <div>
-              <div>
-                <h2>Data de Início</h2>
-                <input type="date" name="" id="" />
+            <div className="container_data">
+              <div className="div_data">
+                <h2 className="titulo_input">Data de Início</h2>
+                <input type="date" name="" id="" className="input_modal" />
               </div>
-              <div>
-                <h2>Data de Término</h2>
-                <input type="date" name="" id="" />
+              <div className="div_data">
+                <h2 className="titulo_input">Data de Término</h2>
+                <input type="date" name="" id="" className="input_modal" />
               </div>
             </div>
             <div>
-                <h2>Membros da equipe</h2>
+                <h2 className="titulo_input">Membros da equipe</h2>
                 <div className="container_membros">
                   <div className="card_membros_equipe">
                     <input type="checkbox" name="" id="" />
                       <div className="img_perfil"></div>            
                     <div>
-                      <h2>João Silva</h2>
-                      <h2>Desenvolvedor Frontend</h2>
+                      <h2 className="titulo_input">João Silva</h2>
+                      <h2 className="descricao_membros">Desenvolvedor Frontend</h2>
                     </div>
                   </div>
                   <div className="card_membros_equipe">
                     <input type="checkbox" name="" id="" />
                       <div className="img_perfil"></div>            
                     <div>
-                      <h2>João Silva</h2>
-                      <h2>Desenvolvedor Frontend</h2>
+                      <h2 className="titulo_input">João Silva</h2>
+                      <h2 className="descricao_membros">Desenvolvedor Frontend</h2>
                     </div>
                   </div>
                   <div className="card_membros_equipe">
                     <input type="checkbox" name="" id="" />
                       <div className="img_perfil"></div>            
                     <div>
-                      <h2>João Silva</h2>
-                      <h2>Desenvolvedor Frontend</h2>
+                      <h2 className="titulo_input">João Silva</h2>
+                      <h2 className="descricao_membros">Desenvolvedor Frontend</h2>
                     </div>
                   </div>
                   <div className="card_membros_equipe">
                     <input type="checkbox" name="" id="" />
                       <div className="img_perfil"></div>            
                     <div>
-                      <h2>João Silva</h2>
-                      <h2>Desenvolvedor Frontend</h2>
+                      <h2 className="titulo_input">João Silva</h2>
+                      <h2 className="descricao_membros">Desenvolvedor Frontend</h2>
                     </div>
                   </div>
                   <div className="card_membros_equipe">
                     <input type="checkbox" name="" id="" />
                       <div className="img_perfil"></div>            
                     <div>
-                      <h2>João Silva</h2>
-                      <h2>Desenvolvedor Frontend</h2>
+                      <h2 className="titulo_input">João Silva</h2>
+                      <h2 className="descricao_membros">Desenvolvedor Frontend</h2>
                     </div>
                   </div>
                   <div className="card_membros_equipe">
                     <input type="checkbox" name="" id="" />
                       <div className="img_perfil"></div>            
                     <div>
-                      <h2>João Silva</h2>
-                      <h2>Desenvolvedor Frontend</h2>
+                      <h2 className="titulo_input">João Silva</h2>
+                      <h2 className="descricao_membros">Desenvolvedor Frontend</h2>
                     </div>
                   </div>
                   <div className="card_membros_equipe">
                     <input type="checkbox" name="" id="" />
                       <div className="img_perfil"></div>            
                     <div>
-                      <h2>João Silva</h2>
-                      <h2>Desenvolvedor Frontend</h2>
+                      <h2 className="titulo_input">João Silva</h2>
+                      <h2 className="descricao_membros">Desenvolvedor Frontend</h2>
                     </div>
                   </div>
                 </div>
             </div>
             <div>
-            <h2>Repositório (Opcional)</h2>
+            <h2 className="titulo_input">Repositório (Opcional)</h2>
             <button className="btn_conectar">
-              <h2>Conectar com GitHub</h2>
+              Conectar com GitHub
               <i className="fa-brands fa-github"></i>
               </button>
             </div>
