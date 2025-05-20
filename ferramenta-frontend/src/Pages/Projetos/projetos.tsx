@@ -28,7 +28,7 @@ const Projetos = () => {
             <div>
               <div className="div_titulo_modal">
                 <h1 className="titulo_modal">Criar novo projeto</h1>
-                <h2 onClick={fecharModal}>X</h2>
+                <h2 onClick={fecharModal}><i className="fa-solid fa-xmark"></i></h2>
               </div>
               <h2 className="descricao_modal">Preencha as informações abaixo para criar um novo projeto. Clique em salvar quando terminar.</h2>
             </div>

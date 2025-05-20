@@ -236,6 +236,11 @@ body {
     gap: 0.8rem;
 }
 
+.fa-xmark{
+  cursor: pointer;
+  color: black;
+}
+
 .fa-github{
   font-size: 24px;
 }
