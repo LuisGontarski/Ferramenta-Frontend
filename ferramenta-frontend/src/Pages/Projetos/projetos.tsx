@@ -25,16 +25,18 @@ const Projetos = () => {
 
       <div className="container_modal sumir" id="card_modal">
           <div className="modal_adicionar_projeto">
-            <div className="div_titulo_modal">
-              <h1 className="titulo_modal">Criar novo projeto</h1>
-              <h2 onClick={fecharModal}>X</h2>
-            </div>
-            <h2 className="descricao_modal">Preencha as informações abaixo para criar um novo projeto. Clique em salvar quando terminar.</h2>
             <div>
+              <div className="div_titulo_modal">
+                <h1 className="titulo_modal">Criar novo projeto</h1>
+                <h2 onClick={fecharModal}>X</h2>
+              </div>
+              <h2 className="descricao_modal">Preencha as informações abaixo para criar um novo projeto. Clique em salvar quando terminar.</h2>
+            </div>
+            <div className="div_inputs_modal">
               <h2 className="titulo_input">Nome do projeto</h2>
               <input type="text" name="" id=""  className="input_modal" placeholder="Digite o nome do projeto"/>
             </div>
-            <div>
+            <div className="div_inputs_modal">
               <h2 className="titulo_input">Descrição</h2>
               <input type="text" name="" id="" className="input_modal" placeholder="Descreva o objetivo do projeto"/>
             </div>
@@ -48,7 +50,7 @@ const Projetos = () => {
                 <input type="date" name="" id="" className="input_modal" />
               </div>
             </div>
-            <div>
+            <div className="div_inputs_modal">
                 <h2 className="titulo_input">Membros da equipe</h2>
                 <div className="container_membros">
                   <div className="card_membros_equipe">
@@ -109,16 +111,12 @@ const Projetos = () => {
                   </div>
                 </div>
             </div>
-            <div>
-            <h2 className="titulo_input">Repositório (Opcional)</h2>
-            <button className="btn_conectar">
-              Conectar com GitHub
-              <i className="fa-brands fa-github"></i>
-              </button>
+            <div className="div_inputs_modal">
+              <h2 className="titulo_input">Repositório (Opcional)</h2>
+              <button className="btn_conectar">Conectar com GitHub <i className="fa-brands fa-github"></i> </button>
             </div>
           </div>
         </div>
-
       <main className="mainProjetos">
         <div className="div_titulo_projetos">
           <h1>Projetos</h1>
