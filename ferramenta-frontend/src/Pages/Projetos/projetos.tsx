@@ -113,7 +113,13 @@ const Projetos = () => {
             </div>
             <div className="div_inputs_modal">
               <h2 className="titulo_input">Repositório (Opcional)</h2>
-              <button className="btn_conectar">Conectar com GitHub <i className="fa-brands fa-github"></i> </button>
+              <h2 className="titulo_input">Nome de usuário</h2>
+              <input type="text" name="" id="" className="input_modal"/>
+              <h2 className="titulo_input">Nome do repositório</h2>
+              <input type="text" name="" id="" className="input_modal"/>
+              <h2 className="titulo_input">Número de commits</h2>
+              <input type="text" name="" id="" className="input_modal"/>
+              <button className="btn_conectar">Buscar repositório <i className="fa-brands fa-github"></i> </button>
             </div>
           </div>
         </div>
