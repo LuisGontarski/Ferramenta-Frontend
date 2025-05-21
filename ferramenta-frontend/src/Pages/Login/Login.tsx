@@ -15,6 +15,7 @@ const Login: React.FC = () => {
       // Exemplo: salvar token
       localStorage.setItem("token", response.token);
       // Aqui você pode redirecionar o usuário, ex: navigate("/dashboard")
+      console.log(response.token);
 
     } catch (error: any) {
       console.error("Erro ao fazer login:", error.message || error);
