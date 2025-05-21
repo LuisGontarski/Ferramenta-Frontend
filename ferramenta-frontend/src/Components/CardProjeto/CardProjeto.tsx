@@ -23,20 +23,20 @@ const CardProjeto = (props: CardProjetoProps) => {
         <div className="div_informacoes_projeto">
           <div className="div_icones">
             <i className="fas fa-clock"></i>
-            <h2 className="descricao_projeto">{props.atualizadoEm}</h2>
+            <h2 className="sub_descricao_projeto">{props.atualizadoEm}</h2>
           </div>
           <div className="div_icones">
             <i className="fa-solid fa-user-group"></i>
-            <h2 className="descricao_projeto">{props.membros} membros</h2>
+            <h2 className="sub_descricao_projeto">{props.membros} membros</h2>
           </div>
         </div>
 
         <div className="div_informacoes_projeto">
           <div className="div_icones">
             <i className="fa-solid fa-code-branch"></i>
-            <h2 className="descricao_projeto">{props.branches} branches</h2>
+            <h2 className="sub_descricao_projeto">{props.branches} branches</h2>
           </div>
-          <h2 className="descricao_projeto">{props.status}</h2>
+          <h2 className="sub_descricao_projeto">{props.status}</h2>
         </div>
       </div>
 

@@ -27,18 +27,25 @@
     padding: 0.8rem;
     display: flex;
     flex-direction: column;
-    gap: 0.8rem;
+    gap: 1rem;
     max-width: 400px;
 }
 
 .titulo_projeto{
     font-weight: 600;
-    font-size: 22px;
+    font-size: 24px;
 }
 
 .descricao_projeto{
     font-weight: 500;
-    font-size: 18px;
+    font-size: 14px;
+    color: rgb(113 113 122);
+    margin-top: 0.3rem;
+}
+
+.sub_descricao_projeto{
+    font-weight: 500;
+    font-size: 14px;
 }
 
 .div_informacoes_projeto{
@@ -51,8 +58,8 @@
     border: none;
     background-color: black;
     color: white;
-    font-weight: 600;
-    font-size: 16px;
+    font-weight: 500;
+    font-size: 14px;
     padding: 0.4rem;
     border-radius: 6px;
     cursor: pointer;
@@ -79,5 +86,5 @@
 .container_informacoes{
     display: flex;
     flex-direction: column;
-    gap: 0.4rem;
+    gap: 0.8rem;
 }
