@@ -3,9 +3,14 @@ import "./projetos.css";
 import NavbarHome from "../../Components/Navbar/NavbarHome";
 import CardProjeto from "../../Components/CardProjeto/CardProjeto";
 
+
 const Projetos = () => {
   const categorias = ["Todos", "Ativos", "Concluídos", "Arquivados"];
   const [categoriaSelecionada, setCategoriaSelecionada] = useState("Todos");
+  const [nomeUsuario, setNomeUsuario] = useState("");
+  const [nomeRepositorio, setNomeRepositorio] = useState("");
+  const [numeroCommits, setNumeroCommits] = useState("");
+
 
   function abrirModal() {
     var modal = document.getElementById('card_modal');
@@ -16,6 +21,27 @@ const Projetos = () => {
     var modal = document.getElementById('card_modal');
     if (modal) modal.style.display = 'none';
   }
+
+  const buscarRepositorio = async () => {
+  try {
+    const response = await fetch("https://8fd6-191-13-110-50.ngrok-free.app/api/github", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        user: nomeUsuario,
+        repo_name: nomeRepositorio,
+      }),
+    });
+
+    const data = await response.json();
+    console.log("Resposta do backend:", data);
+  } catch (error) {
+    console.error("Erro ao buscar repositório:", error);
+  }
+};
+
 
   return (
     <>
@@ -114,12 +140,12 @@ const Projetos = () => {
             <div className="div_inputs_modal">
               <h2 className="titulo_input">Repositório (Opcional)</h2>
               <h2 className="titulo_input">Nome de usuário</h2>
-              <input type="text" name="" id="" className="input_modal"/>
+              <input type="text" name="" id="" onChange={(e) => setNomeUsuario(e.target.value)} className="input_modal"/>
               <h2 className="titulo_input">Nome do repositório</h2>
-              <input type="text" name="" id="" className="input_modal"/>
+              <input type="text" name="" id="" onChange={(e) => setNomeRepositorio(e.target.value)} className="input_modal"/>
               <h2 className="titulo_input">Número de commits</h2>
               <input type="text" name="" id="" className="input_modal"/>
-              <button className="btn_conectar">Buscar repositório <i className="fa-brands fa-github"></i> </button>
+              <button className="btn_conectar" onClick={buscarRepositorio}>Buscar repositório <i className="fa-brands fa-github"></i> </button>
             </div>
           </div>
         </div>
