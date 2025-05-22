@@ -35,13 +35,17 @@ const Register: React.FC = () => {
             value={nome}
             onChange={(e) => setNome(e.target.value)}
           />
-          <input type="email" placeholder="Seu e-mail" className="input" />
+          <input
+            type="email"
+            placeholder="Seu e-mail"
+            className="input"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
           <input
             type="password"
             placeholder="Crie uma senha"
             className="input"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
           />
           <input
             type="password"

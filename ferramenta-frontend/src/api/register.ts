@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "https://localhost:3000/api";
+const API_URL = "http://localhost:3001/api/auth";
 
 export interface RegisterPayload {
   nome: string;
@@ -16,7 +16,7 @@ export const register = async (
   payload: RegisterPayload
 ): Promise<RegisterResponse> => {
   const response = await axios.post<RegisterResponse>(
-    `${API_URL}/register`,
+    `${API_URL}/create`,
     payload
   );
   return response.data;
