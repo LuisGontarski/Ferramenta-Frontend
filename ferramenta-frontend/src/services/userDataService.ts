@@ -8,13 +8,13 @@ export const register = async (payload: UserDTO): Promise<UserDTO> => {
   return response.data;
 };
 
-export const getUserById = async (): Promise<UserDTO> => {
-  const usuarioId = localStorage.getItem("usuario_id");
+export const getUserById = async (usuarioId: string | null): Promise<UserDTO> => {
+  const storedUsuarioId = usuarioId || localStorage.getItem("usuario_id");
 
-  if (!usuarioId) {
+  if (!storedUsuarioId) {
     throw new Error("ID do usuário não encontrado no localStorage.");
   }
 
-  const response = await axios.get<UserDTO>(`${API_URL}/user/${usuarioId}`);
+  const response = await axios.get<UserDTO>(`${API_URL}/user/${storedUsuarioId}`);
   return response.data;
 };

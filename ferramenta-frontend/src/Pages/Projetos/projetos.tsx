@@ -2,7 +2,7 @@ import { useState } from "react";
 import "./projetos.css";
 import NavbarHome from "../../Components/Navbar/NavbarHome";
 import CardProjeto from "../../Components/CardProjeto/CardProjeto";
-import { getGithubCommitCount } from "../../api/githubCommit";
+import { getGithubCommitCount } from "../../services/githubCommitService";
 
 const Projetos = () => {
   const categorias = ["Todos", "Ativos", "Concluídos", "Arquivados"];

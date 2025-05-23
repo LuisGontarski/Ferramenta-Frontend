@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./Register.css";
 import { Link, useNavigate } from "react-router-dom";
-import { register } from "../../api/register";
+import { register } from "../../services/registerService";
 import type { UserDTO } from "../../dtos/userDTO";
 
 const Register: React.FC = () => {

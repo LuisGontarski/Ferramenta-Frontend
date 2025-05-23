@@ -1,31 +1,78 @@
 import "./Perfil.css";
-import imgPerfil from '../../assets/img_perfil.jpeg';
+import imgPerfil from "../../assets/img_perfil.jpeg";
 import NavbarHome from "../../Components/Navbar/NavbarHome";
-import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
+import {
+  PieChart,
+  Pie,
+  Cell,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+} from "recharts";
+import { getUserById } from "../../services/userDataService";
+import { useEffect, useState } from "react";
 
 const dataDistribuicao = [
-  { name: 'Projeto A', value: 40 },
-  { name: 'Projeto B', value: 30 },
-  { name: 'Projeto C', value: 30 },
+  { name: "Projeto A", value: 40 },
+  { name: "Projeto B", value: 30 },
+  { name: "Projeto C", value: 30 },
 ];
 
 const dataCommits = [
-  { name: 'Projeto A', commits: 24 },
-  { name: 'Projeto B', commits: 13 },
-  { name: 'Projeto C', commits: 32 },
+  { name: "Projeto A", commits: 24 },
+  { name: "Projeto B", commits: 13 },
+  { name: "Projeto C", commits: 32 },
 ];
 
 const dataHoras = [
-  { dia: 'Seg', horas: 5 },
-  { dia: 'Ter', horas: 7 },
-  { dia: 'Qua', horas: 4 },
-  { dia: 'Qui', horas: 6 },
-  { dia: 'Sex', horas: 3 },
+  { dia: "Seg", horas: 5 },
+  { dia: "Ter", horas: 7 },
+  { dia: "Qua", horas: 4 },
+  { dia: "Qui", horas: 6 },
+  { dia: "Sex", horas: 3 },
 ];
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28'];
+const COLORS = ["#0088FE", "#00C49F", "#FFBB28"];
 
 const Perfil = () => {
+  const [usuario, setUsuario] = useState({
+    nome: "",
+    cargo: "",
+    email: "",
+    github: "",
+    foto_perfil: "",
+  });
+
+  const carregarPerfil = async () => {
+    const usuarioId = localStorage.getItem("usuario_id");
+    if (!usuarioId) {
+      console.error("ID do usuário não encontrado no localStorage.");
+      return;
+    }
+
+    try {
+      const response = await getUserById(usuarioId);
+      console.log("Dados do usuário:", response);
+      // Aqui você pode atualizar o estado com os dados, ex:
+      setUsuario({
+        nome: response.nome_usuario,
+        cargo: response.cargo || "Cargo não informado",
+        email: response.email,
+        github: response.github,
+        foto_perfil: response.foto_perfil
+      });
+    } catch (error: any) {
+      console.error("Erro ao buscar dados do usuário:", error.message || error);
+    }
+  };
+
+  useEffect(() => {
+    carregarPerfil();
+  }, []);
+
   return (
     <>
       <div>
@@ -35,24 +82,26 @@ const Perfil = () => {
         <div className="card_perfil">
           <div className="div_foto_perfil">
             <img src={imgPerfil} alt="testes" className="foto_perfil" />
-            <h2 className="texto_foto_perfil">Gustavo Capeletti</h2>
-            <h2 className="texto_cargo">Desenvolvedor Frontend</h2>
+            <h2 className="texto_foto_perfil">
+              {usuario.nome || "Nome não informado"}
+            </h2>
+            <h2 className="texto_cargo">{usuario.cargo}</h2>
           </div>
           <div className="container_icones_perfil">
             <div className="div_icones_perfil">
               <i className="fa-regular fa-envelope icones_perfil"></i>
-              <h2 className="texto_dados">gustavo.capeletti@gmail.com</h2>
+              <h2 className="texto_dados">{usuario.email}</h2>
             </div>
             <div className="div_icones_perfil">
               <i className="fa-brands fa-github icones_perfil"></i>
-              <h2 className="texto_dados">github.com/IGDSCI</h2>
+              <h2 className="texto_dados">{usuario.github}</h2>
             </div>
             <div className="div_icones_perfil">
               <i className="fa-regular fa-calendar icones_perfil"></i>
               <h2 className="texto_dados">Ingressou em 15/03/2022</h2>
             </div>
           </div>
-          
+
           <button className="btn_editar">Editar Perfil</button>
         </div>
 
@@ -67,7 +116,7 @@ const Perfil = () => {
             <h2 className="titulo_input">GitHub</h2>
             <input type="text" name="" id="" className="input_modal" />
           </div>
-          <button className="btn_conectar">Salvar</button>   
+          <button className="btn_conectar">Salvar</button>
         </div>
 
         <div className="container_sessoes_perfil">
@@ -108,7 +157,10 @@ const Perfil = () => {
                 label
               >
                 {dataDistribuicao.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
                 ))}
               </Pie>
             </PieChart>
