@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'https://646e-2804-7f2-c041-1bab-f18b-d5b1-5f5e-7d48.ngrok-free.app/api/auth';
+const API_URL = import.meta.env.VITE_API_URL;
 
 export interface LoginPayload {
   email: string;
@@ -17,6 +17,6 @@ export interface LoginResponse {
 }
 
 export const login = async (payload: LoginPayload): Promise<LoginResponse> => {
-  const response = await axios.post<LoginResponse>(`${API_URL}/login`, payload);
+  const response = await axios.post<LoginResponse>(`${API_URL}/auth/login`, payload);
   return response.data;
 };

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:3001/api/github/commit/count';
+const API_URL = import.meta.env.VITE_API_URL;
 
 export interface GithubCommitResponse {
   quant_commits: number;
