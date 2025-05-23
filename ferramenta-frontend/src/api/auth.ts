@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'https://daea-2804-7f2-c041-1bab-519b-dd5b-9a0d-dc58.ngrok-free.app/api/auth';
+const API_URL = 'https://646e-2804-7f2-c041-1bab-f18b-d5b1-5f5e-7d48.ngrok-free.app/api/auth';
 
 export interface LoginPayload {
   email: string;

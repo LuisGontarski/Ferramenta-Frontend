@@ -1,23 +1,9 @@
 import axios from "axios";
+import type { UserDTO } from "../dtos/userDTO";
 
-const API_URL = "http://localhost:3001/api/auth";
+const API_URL = "http://localhost:3001/api";
 
-export interface RegisterPayload {
-  nome: string;
-  email: string;
-  senha: string;
-}
-
-export interface RegisterResponse {
-  data: string;
-}
-
-export const register = async (
-  payload: RegisterPayload
-): Promise<RegisterResponse> => {
-  const response = await axios.post<RegisterResponse>(
-    `${API_URL}/create`,
-    payload
-  );
+export const register = async (payload: UserDTO): Promise<UserDTO> => {  
+  const response = await axios.post<UserDTO>(`${API_URL}/user`, payload);
   return response.data;
 };

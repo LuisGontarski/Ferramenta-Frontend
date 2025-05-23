@@ -6,13 +6,81 @@
 
 .container_perfil{
     margin-top: 90px;
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.container_icones_perfil{
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.div_foto_perfil{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.texto_foto_perfil{
+    font-weight: bold;
+    font-size: 20px;
+    margin: 0;
+}
+
+.texto_cargo{
+    font-size: 16px;
+    color: #71717A;
+    margin: 0;
+}
+
+.div_icones_perfil{
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.icones_perfil{
+    font-size: 1.2rem;
+    color: #71717A;
+}
+
+.texto_dados{
+    font-size: 14px;
+    margin: 0;
 }
 
 .card_perfil{
-    margin: 0 auto;
-    width: 80%;
     padding: 20px;
+    width: 100%;
     border-radius: 10px;
     background-color: white;
     border: 1px solid rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.container_sessoes_perfil{
+    width: 100%;
+}
+
+.btn_editar{
+    width: 100%;
+    border: none;
+    background-color: black;
+    color: white;
+    font-size: 18px;
+    padding: 0.4rem;
+    border-radius: 6px;
+    cursor: pointer;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
 }

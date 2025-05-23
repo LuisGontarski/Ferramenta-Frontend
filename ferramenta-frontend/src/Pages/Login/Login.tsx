@@ -1,20 +1,20 @@
 import React, { useState } from "react";
 import "./Login.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { login } from "../../api/auth";
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
+  const navigate = useNavigate();
 
   const handleLogin = async () => {
     try {
       const response = await login({ email, senha });
       console.log("Login bem-sucedido:", response);
-
-      // Exemplo: salvar token
       localStorage.setItem("token", response.token);
-      // Aqui você pode redirecionar o usuário, ex: navigate("/dashboard")
+      navigate("/");
+      console.log(response.token);
       console.log(response.token);
 
     } catch (error: any) {

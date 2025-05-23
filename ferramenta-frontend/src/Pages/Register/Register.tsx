@@ -1,23 +1,31 @@
 import React, { useState } from "react";
 import "./Register.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { register } from "../../api/register";
+import type { UserDTO } from "../../dtos/userDTO";
 
 const Register: React.FC = () => {
+  const userPayload: UserDTO = {nome_usuario: "gustavo", email: "teste@gmail.com", senha: "1234567", cargo: "1234567", github: "", foto_perfil: "", usuario_id: ""};
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
+  const navigate = useNavigate();
 
   const handleRegister = async () => {
-    try {
-      const response = await register({ nome, email, senha });
-      console.log("Cadastro bem-sucedido:", response);
-      // Aqui você pode redirecionar o usuário ou mostrar uma mensagem de sucesso
-    } catch (error: any) {
-      console.error("Erro ao fazer cadastro:", error.message || error);
-      alert("Cadastro falhou: " + (error.message || "Tente novamente."));
-    }
-  };
+
+  try {
+    const response = await register(userPayload);
+    console.log("Cadastro bem-sucedido:", response);
+    navigate("/");
+  } catch (error: any) {
+    console.error("Erro ao fazer cadastro:", error.message || error);
+    var inputs = document.querySelectorAll("input");
+    inputs.forEach((input) => {
+      input.style.border = "1px solid red";
+    });
+  }
+};
+
 
   return (
     <main className="mainRegister">
