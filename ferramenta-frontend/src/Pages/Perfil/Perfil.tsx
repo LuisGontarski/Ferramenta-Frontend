@@ -44,6 +44,7 @@ const Perfil = () => {
     email: "",
     github: "",
     foto_perfil: "",
+    criado_em: "",
   });
 
   const carregarPerfil = async () => {
@@ -54,7 +55,7 @@ const Perfil = () => {
     }
 
     try {
-      const response = await getUserById(usuarioId);
+      const response = await getUserById("b3e4688e-4383-4100-b016-de4931b23e27");
       console.log("Dados do usuário:", response);
       // Aqui você pode atualizar o estado com os dados, ex:
       setUsuario({
@@ -62,7 +63,8 @@ const Perfil = () => {
         cargo: response.cargo || "Cargo não informado",
         email: response.email,
         github: response.github,
-        foto_perfil: response.foto_perfil
+        foto_perfil: response.foto_perfil,
+        criado_em: response.criado_em,
       });
     } catch (error: any) {
       console.error("Erro ao buscar dados do usuário:", error.message || error);
@@ -98,7 +100,7 @@ const Perfil = () => {
             </div>
             <div className="div_icones_perfil">
               <i className="fa-regular fa-calendar icones_perfil"></i>
-              <h2 className="texto_dados">Ingressou em 15/03/2022</h2>
+              <h2 className="texto_dados">{usuario.criado_em}</h2>
             </div>
           </div>
 

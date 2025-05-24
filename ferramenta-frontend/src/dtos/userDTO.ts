@@ -6,4 +6,5 @@ export interface UserDTO {
   cargo: string;
   github: string;
   foto_perfil: string;
+  criado_em: string;
 }
