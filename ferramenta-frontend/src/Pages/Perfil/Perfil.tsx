@@ -103,7 +103,7 @@ const Perfil = () => {
         <div className="container_cards">
             <div className="container_sessoes_perfil">
               <div className="card_perfil">
-                <h2>Atividades</h2>
+                <h2 className="titulo_card">Atividades</h2>
                 <div className="div_tipo_atividade">
                 {["Commits", "Tarefas", "Pull Requests", "Tempo"].map((categoria) => (
                   <h2
