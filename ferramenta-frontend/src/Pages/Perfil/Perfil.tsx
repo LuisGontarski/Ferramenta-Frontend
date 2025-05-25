@@ -37,6 +37,20 @@ const dataHoras = [
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28"];
 
+const abrirModalEditar = () => {
+  const modal = document.getElementById("editar_modal");
+  if (modal) {
+    modal.classList.remove("sumir");
+  }
+}
+
+const fecharModalEditar = () => {
+  const modal = document.getElementById("editar_modal");
+  if (modal) {
+    modal.classList.add("sumir");
+  }
+}
+
 const Perfil = () => {
   const [usuario, setUsuario] = useState({
     nome: "",
@@ -104,22 +118,10 @@ const Perfil = () => {
             </div>
           </div>
 
-          <button className="btn_editar">Editar Perfil</button>
+          <button className="btn_editar" id="btn_editar" onClick={abrirModalEditar}>Editar Perfil</button>
         </div>
 
-        <div className="container_editar sumir" id="editar_modal">
-          <div className="card_editar">
-            <h2 className="titulo_input">Nome</h2>
-            <input type="text" name="" id="" className="input_modal" />
-            <h2 className="titulo_input">Cargo</h2>
-            <input type="text" name="" id="" className="input_modal" />
-            <h2 className="titulo_input">E-mail</h2>
-            <input type="text" name="" id="" className="input_modal" />
-            <h2 className="titulo_input">GitHub</h2>
-            <input type="text" name="" id="" className="input_modal" />
-          </div>
-          <button className="btn_conectar">Salvar</button>
-        </div>
+        
 
         <div className="container_sessoes_perfil">
           <div className="card_perfil">
@@ -137,7 +139,7 @@ const Perfil = () => {
             </div>
           </div>
 
-          <div>
+          <div className="categorias_perfil">
             <h2>Visão geral</h2>
             <h2>Atividades</h2>
             <h2>Configurações</h2>
@@ -187,6 +189,20 @@ const Perfil = () => {
           </div>
         </div>
       </div>
+      <div className="container_editar sumir" id="editar_modal">
+          <div className="card_editar">
+            <h2 onClick={fecharModalEditar}>X</h2>
+            <h2 className="titulo_input">Nome</h2>
+            <input type="text" name="" id="" className="input_modal" />
+            <h2 className="titulo_input">Cargo</h2>
+            <input type="text" name="" id="" className="input_modal" />
+            <h2 className="titulo_input">E-mail</h2>
+            <input type="text" name="" id="" className="input_modal" />
+            <h2 className="titulo_input">GitHub</h2>
+            <input type="text" name="" id="" className="input_modal" />
+            <button className="btn_conectar">Salvar</button>
+          </div>
+        </div>
     </>
   );
 };
