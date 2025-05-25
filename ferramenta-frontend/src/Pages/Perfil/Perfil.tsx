@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import "./Perfil.css";
 import imgPerfil from "../../assets/img_perfil.jpeg";
 import NavbarHome from "../../Components/Navbar/NavbarHome";
@@ -13,7 +14,7 @@ import {
   CartesianGrid,
 } from "recharts";
 import { getUserById } from "../../services/userDataService";
-import { useEffect, useState } from "react";
+import { formatarDataParaDDMMYYYY } from "../../utils/dateUtils";
 
 const dataDistribuicao = [
   { name: "Projeto A", value: 40 },
@@ -46,34 +47,69 @@ const Perfil = () => {
     foto_perfil: "",
     criado_em: "",
   });
+  const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   const carregarPerfil = async () => {
+    setLoading(true);
+    setFetchError(null);
     const usuarioId = localStorage.getItem("usuario_id");
+    console.log("ID do usuário:", usuarioId);
+
     if (!usuarioId) {
       console.error("ID do usuário não encontrado no localStorage.");
+      setFetchError(
+        "ID do usuário não encontrado. Não foi possível carregar o perfil."
+      );
+      setLoading(false);
       return;
     }
 
     try {
-      const response = await getUserById("b3e4688e-4383-4100-b016-de4931b23e27");
-      console.log("Dados do usuário:", response);
-      // Aqui você pode atualizar o estado com os dados, ex:
+      const response = await getUserById(usuarioId);
       setUsuario({
-        nome: response.nome_usuario,
+        nome: response.nome_usuario || "Nome não informado",
         cargo: response.cargo || "Cargo não informado",
-        email: response.email,
-        github: response.github,
-        foto_perfil: response.foto_perfil,
-        criado_em: response.criado_em,
+        email: response.email || "E-mail não informado",
+        github: response.github || "GitHub não informado",
+        foto_perfil: response.foto_perfil || "",
+        criado_em: response.criado_em || "",
       });
     } catch (error: any) {
       console.error("Erro ao buscar dados do usuário:", error.message || error);
+      setFetchError(
+        "Falha ao carregar os dados do perfil. Tente novamente mais tarde."
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     carregarPerfil();
   }, []);
+
+  if (loading) {
+    return (
+      <>
+        <NavbarHome />
+        <div style={{ textAlign: "center", marginTop: "50px" }}>
+          Carregando perfil...
+        </div>
+      </>
+    );
+  }
+
+  if (fetchError) {
+    return (
+      <>
+        <NavbarHome />
+        <div style={{ textAlign: "center", marginTop: "50px", color: "red" }}>
+          {fetchError}
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
@@ -83,10 +119,12 @@ const Perfil = () => {
       <div className="container_perfil">
         <div className="card_perfil">
           <div className="div_foto_perfil">
-            <img src={imgPerfil} alt="testes" className="foto_perfil" />
-            <h2 className="texto_foto_perfil">
-              {usuario.nome || "Nome não informado"}
-            </h2>
+            <img
+              src={usuario.foto_perfil || imgPerfil}
+              alt={`Foto de perfil de ${usuario.nome}`}
+              className="foto_perfil"
+            />
+            <h2 className="texto_foto_perfil">{usuario.nome}</h2>
             <h2 className="texto_cargo">{usuario.cargo}</h2>
           </div>
           <div className="container_icones_perfil">
@@ -100,25 +138,11 @@ const Perfil = () => {
             </div>
             <div className="div_icones_perfil">
               <i className="fa-regular fa-calendar icones_perfil"></i>
-              <h2 className="texto_dados">{usuario.criado_em}</h2>
+              <h2 className="texto_dados">
+                {formatarDataParaDDMMYYYY(usuario.criado_em)}
+              </h2>
             </div>
           </div>
-
-          <button className="btn_editar">Editar Perfil</button>
-        </div>
-
-        <div className="container_editar sumir" id="editar_modal">
-          <div className="card_editar">
-            <h2 className="titulo_input">Nome</h2>
-            <input type="text" name="" id="" className="input_modal" />
-            <h2 className="titulo_input">Cargo</h2>
-            <input type="text" name="" id="" className="input_modal" />
-            <h2 className="titulo_input">E-mail</h2>
-            <input type="text" name="" id="" className="input_modal" />
-            <h2 className="titulo_input">GitHub</h2>
-            <input type="text" name="" id="" className="input_modal" />
-          </div>
-          <button className="btn_conectar">Salvar</button>
         </div>
 
         <div className="container_sessoes_perfil">
