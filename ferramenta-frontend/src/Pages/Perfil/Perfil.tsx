@@ -165,7 +165,7 @@ const Perfil = () => {
               {categoriaSelecionada === "Tempo" && (
                 <div className="container_atividades">
                   <div className="card_atividades">
-                    <i className="fa-regular fa-clock"></i>
+                    <i className="fa-regular fa-clock icone_tempo_perfil"></i>
                     <div>
                       <h2 className="textos_atividades">Desenvolvimento do módulo de relatórios</h2>
                       <div className="div_descricao_atividade">
