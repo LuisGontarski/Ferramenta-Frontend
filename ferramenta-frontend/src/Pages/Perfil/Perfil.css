@@ -257,6 +257,26 @@
     border-radius: 50%;
 }
 
+.container_graficos {
+  margin-top: 2rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+.grafico {
+  background-color: #fff;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.titulo_graficos {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+}
+
+
 @media (max-width: 915px) {
     .container_perfil {
         flex-direction: column;

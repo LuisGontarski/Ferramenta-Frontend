@@ -1,8 +1,43 @@
 import "./Perfil.css";
 import imgPerfil from "../../assets/img_perfil.jpeg";
 import NavbarHome from "../../Components/Navbar/NavbarHome";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LineChart, Line, PieChart, Pie, Cell, ResponsiveContainer, AreaChart, Area, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from 'recharts';
 import { getUserById } from "../../services/userDataService";
 import { useEffect, useState } from "react";
+
+const dataCommits = [
+  { projeto: 'Projeto A', commits: 30, linhas: 500 },
+  { projeto: 'Projeto B', commits: 50, linhas: 800 },
+  { projeto: 'Projeto C', commits: 20, linhas: 300 },
+];
+
+const dataHoras = [
+  { dia: 'Seg', total: 8, produtivas: 6 },
+  { dia: 'Ter', total: 7, produtivas: 5 },
+  { dia: 'Qua', total: 9, produtivas: 7 },
+  { dia: 'Qui', total: 8, produtivas: 6 },
+  { dia: 'Sex', total: 6, produtivas: 4 },
+];
+
+const dataTarefas = [
+  { status: 'Concluídas', value: 50 },
+  { status: 'Em Progresso', value: 30 },
+  { status: 'Pendente', value: 20 },
+];
+
+
+const dataAtividadeSemanal = [
+  { dia: 'Seg', commits: 4, reviews: 2, reunioes: 1 },
+  { dia: 'Ter', commits: 3, reviews: 3, reunioes: 2 },
+  { dia: 'Qua', commits: 5, reviews: 2, reunioes: 1 },
+  { dia: 'Qui', commits: 4, reviews: 1, reunioes: 2 },
+  { dia: 'Sex', commits: 2, reviews: 3, reunioes: 1 },
+  { dia: 'Sab', commits: 1, reviews: 1, reunioes: 0 },
+  { dia: 'Dom', commits: 0, reviews: 0, reunioes: 0 },
+];
+
+const coresTarefas = ['#0088FE', '#00C49F', '#FFBB28'];
+
 
 
 const abrirModalEditar = () => {
@@ -181,6 +216,73 @@ const Perfil = () => {
             </div>
         </div>
       </div>
+      <div className="container_graficos">
+
+  <h2 className="titulo_graficos">📊 Gráficos de Desempenho</h2>
+
+  <div className="grafico">
+    <h3>Commits por Projeto</h3>
+    <ResponsiveContainer width="100%" height={300}>
+      <BarChart data={dataCommits}>
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="projeto" />
+        <YAxis />
+        <Tooltip />
+        <Legend />
+        <Bar dataKey="commits" fill="#8884d8" />
+        <Bar dataKey="linhas" fill="#82ca9d" />
+      </BarChart>
+    </ResponsiveContainer>
+  </div>
+
+  <div className="grafico">
+    <h3>Horas Trabalhadas por Dia</h3>
+    <ResponsiveContainer width="100%" height={300}>
+      <LineChart data={dataHoras}>
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="dia" />
+        <YAxis />
+        <Tooltip />
+        <Legend />
+        <Line type="monotone" dataKey="total" stroke="#8884d8" />
+        <Line type="monotone" dataKey="produtivas" stroke="#82ca9d" />
+      </LineChart>
+    </ResponsiveContainer>
+  </div>
+
+  <div className="grafico">
+    <h3>Status das Tarefas</h3>
+    <ResponsiveContainer width="100%" height={300}>
+      <BarChart data={dataTarefas}>
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="status" />
+        <YAxis />
+        <Tooltip />
+        <Legend />
+        <Bar dataKey="value" fill="#8884d8" />
+      </BarChart>
+    </ResponsiveContainer>
+  </div>
+
+
+  <div className="grafico">
+    <h3>Padrão de Atividade Semanal</h3>
+    <ResponsiveContainer width="100%" height={300}>
+      <AreaChart data={dataAtividadeSemanal}>
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="dia" />
+        <YAxis />
+        <Tooltip />
+        <Legend />
+        <Area type="monotone" dataKey="commits" stackId="1" stroke="#8884d8" fill="#8884d8" />
+        <Area type="monotone" dataKey="reviews" stackId="2" stroke="#82ca9d" fill="#82ca9d" />
+        <Area type="monotone" dataKey="reunioes" stackId="3" stroke="#ffc658" fill="#ffc658" />
+      </AreaChart>
+    </ResponsiveContainer>
+  </div>
+
+</div>
+
 
       <div className="container_editar sumir" id="editar_modal">
         <div className="card_editar">
