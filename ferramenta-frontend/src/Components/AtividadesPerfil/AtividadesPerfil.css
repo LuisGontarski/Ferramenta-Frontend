@@ -1,0 +1,53 @@
+.div_tipo_atividade{
+    display: flex;
+    gap: 0.4rem;
+    justify-content: space-between;
+    background-color: #0000001a;
+    padding: 0.4rem;
+    border-radius: 0.6rem;
+    align-items: center;
+}
+
+.textos_atividades{
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.descricao_atividade{
+    font-size: 12px;
+    color: #71717A;
+    margin: 0;
+}
+
+.icone_descricao_atividade{
+    font-size: 0.3rem;
+    color: #71717A;
+}
+
+.div_descricao_atividade{
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.container_atividades{
+    display: flex;
+    gap: 0.4rem;
+    flex-direction: column;
+}
+
+.card_atividades{
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.icone_tempo_perfil{
+    height: 40px;
+    width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
