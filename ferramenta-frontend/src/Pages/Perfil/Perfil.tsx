@@ -1,7 +1,7 @@
 import "./Perfil.css";
 import imgPerfil from "../../assets/img_perfil.jpeg";
 import NavbarHome from "../../Components/Navbar/NavbarHome";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LineChart, Line, PieChart, Pie, Cell, ResponsiveContainer, AreaChart, Area, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LineChart, Line, ResponsiveContainer, AreaChart, Area,} from 'recharts';
 import { getUserById } from "../../services/userDataService";
 import { useEffect, useState } from "react";
 import AtividadesPerfil from "../../Components/AtividadesPerfil/AtividadesPerfil";
@@ -249,7 +249,7 @@ const Perfil = () => {
           </ResponsiveContainer>
         </div>
       </div>
-      
+
       <div className="container_editar sumir" id="editar_modal">
         <div className="card_editar">
           <h2 onClick={fecharModalEditar}>X</h2>
