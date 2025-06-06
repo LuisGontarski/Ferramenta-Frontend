@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from "axios";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -9,14 +9,13 @@ export interface LoginPayload {
 
 export interface LoginResponse {
   token: string;
-  user: {
-    id: string;
-    nome: string;
-    email: string;
-  };
+  usuario_id: string;
 }
 
 export const login = async (payload: LoginPayload): Promise<LoginResponse> => {
-  const response = await axios.post<LoginResponse>(`${API_URL}/auth/login`, payload);
+  const response = await axios.post<LoginResponse>(
+    `${API_URL}/auth/login`,
+    payload
+  );
   return response.data;
 };
