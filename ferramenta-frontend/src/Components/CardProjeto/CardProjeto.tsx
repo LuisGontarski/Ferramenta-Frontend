@@ -40,7 +40,7 @@ const CardProjeto = (props: CardProjetoProps) => {
         </div>
       </div>
 
-      <Link to={`/projetos/${props.id}`} className="btn_entrar_projetos">
+      <Link to={`/ProjetosDetalhes`} className="btn_entrar_projetos">
         Entrar no Projeto
       </Link>
     </div>

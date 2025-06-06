@@ -1,0 +1,120 @@
+.kanban_container{
+    margin: 1rem;
+    margin-top: 58px;
+}
+
+.kanban{
+    display: flex;
+    gap: 14px;
+    padding: 24px;
+    width: 100%;
+    height: 90vh;
+    overflow-x: auto;
+}
+
+.kanban_column{
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    height: 100%;
+    overflow-y: auto;
+    background-color: rgb(81, 130, 202);
+    border-radius: 12px;
+    box-shadow: 0px 10px 15px -3px rgba(0, 0, 0, 0.1);
+    padding: 12px;
+    overflow: hidden;
+    position: relative;
+    min-width: 252px;
+}
+
+.kanban_column::after{
+    position: absolute;
+    content: "";
+    height: 5px;
+    width: 100%;
+    top: 0;
+    left: 0;
+}
+
+.kanban_column[data-id="1"]::after{
+    background-color: brown;
+}
+
+.kanban_column[data-id="2"]::after{
+    background-color: rgb(25, 153, 85);
+}
+
+.kanban_column[data-id="3"]::after{
+    background-color: rgb(147, 165, 42);
+}
+
+.kanban_title{
+    display: flex;
+    justify-content: space-between;
+}
+
+.kanban_title h2{
+    font-size: 18px;
+    color: black;
+    font-weight: 600;
+}
+
+.kanban_cards{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.kanban_card{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background-color: white;
+    border-radius: 14px;
+    box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+}
+
+.badge{
+    color: white;
+    width: fit-content;
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 12px;
+}
+
+.badge.high{
+    background-color: brown;
+}
+
+.badge.medium{
+    background-color: rgb(31, 14, 128);
+}
+
+.badge.low{
+    background-color: rgb(105, 29, 149);
+}
+
+.card_infos{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card_icons{
+    display: flex;
+    gap: 18px;
+}
+
+.dragging{
+    opacity: 0.5;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.cards_hover{
+    background-color: green;
+    border-radius: 8px;
+}

@@ -1,0 +1,73 @@
+.mainProjetosDetalhes{
+    margin-top: 58px;
+    padding: 1rem;
+}
+
+.container_informacoes_projeto_detalhes{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.div_informacoes_projeto_detalhes{
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 0.8rem;
+    background-color: white;
+    margin-bottom: 1rem;
+}
+
+.btn_kanban{
+    background-color: black;
+    color: white;
+    font-weight: 500;
+    font-size: 16px;
+    border: none;
+    padding: 0.6rem;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.div_kanban_projeto_detalhes{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.div_filtro{
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.div_datas_projeto{
+    display: flex;
+    justify-content: space-between;
+}
+
+.div_equipe_projeto{
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 0.8rem;
+    background-color: white;
+    margin-bottom: 1rem;
+    display: flex;
+}
+
+.imagemEquipe{
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+}
+
+.div_equipe_dados{
+    display: flex;
+    flex-direction: column;
+    margin-left: 1rem;
+}
+
+.div_equipe_tarefas{
+    display: flex;
+    gap: 0.8rem;
+}
