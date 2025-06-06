@@ -1,26 +1,49 @@
 import React, { useState } from "react";
 import "./Login.css";
 import { Link, useNavigate } from "react-router-dom";
-import { login } from "../../services/authService";
+import {
+  login,
+  type LoginPayload,
+  type LoginResponse,
+} from "../../services/authService";
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [loginError, setLoginError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const handleLogin = async () => {
+
+    setLoginError(null);
+    if (!email.trim() || !senha.trim()) {
+      setLoginError("E-mail e senha são obrigatórios.");
+      return;
+    }
+
+    setLoading(true);
     try {
-      const response = await login({ email, senha });
-      console.log("Login bem-sucedido:", response);
+      const payload: LoginPayload = { email, senha };
+      const response: LoginResponse = await login(payload);
+
       localStorage.setItem("token", response.token);
       localStorage.setItem("usuario_id", response.usuario_id);
-      navigate("/");
-      console.log(response.token);
-      console.log(response.token);
 
+      navigate("/perfil");
     } catch (error: any) {
-      console.error("Erro ao fazer login:", error.message || error);
-      alert("Login falhou: " + (error.message || "Verifique suas credenciais."));
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        "Falha no login. Verifique suas credenciais ou tente novamente mais tarde.";
+      setLoginError(errorMessage);
+      console.error(
+        "Erro ao fazer login:",
+        errorMessage,
+        error.response?.data || error
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -39,6 +62,7 @@ const Login: React.FC = () => {
             className="input"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            disabled={loading}
           />
           <input
             type="password"
@@ -46,20 +70,31 @@ const Login: React.FC = () => {
             className="input"
             value={senha}
             onChange={(e) => setSenha(e.target.value)}
+            disabled={loading}
           />
+
+          {loginError && (
+            <p style={{ color: "red", textAlign: "center", marginTop: "10px" }}>
+              {loginError}
+            </p>
+          )}
 
           <div className="options">
             <label className="checkbox">
-              <input type="checkbox" />
+              <input type="checkbox" disabled={loading} />
               Continuar conectado
             </label>
-            <a href="/" className="forgot">
+            <a href="#" className="forgot">
               Esqueceu sua senha?
             </a>
           </div>
 
-          <button className="btn-login" onClick={handleLogin}>
-            Entrar
+          <button
+            className="btn-login"
+            onClick={handleLogin}
+            disabled={loading}
+          >
+            {loading ? "Entrando..." : "Entrar"}
           </button>
 
           <p className="redirect">
