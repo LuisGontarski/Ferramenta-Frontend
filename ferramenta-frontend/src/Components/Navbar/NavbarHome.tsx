@@ -5,7 +5,7 @@ const NavbarHome = () => {
   return (
       <header className="headerNavBarHome">
         <a href="/" className="logo">
-          Logo
+          ReProject
         </a>
 
         <nav className="navbarHome">

@@ -3,9 +3,8 @@
   top: 0;
   left: 0;
   width: 100%;
-  height: 6%;
-  padding: 0px 300px 0px 300px;
-  background: orange;
+  padding: 0.3rem 0.6rem;
+  background: white;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -14,7 +13,7 @@
 
 .logo {
   font-size: 32px;
-  color: #fff;
+  color: #1d4ed8;
   font-weight: 700;
 }
 
