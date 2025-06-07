@@ -11,33 +11,74 @@ body {
 
 .mainLogin {
   display: flex;
-  justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  height: 100vh;
+  width: 100%;
 }
 
-.card-container {
+.left_card_login{
+  flex: 1;
+  height: 100%;
+  background: linear-gradient(to bottom right, #60a5fa, #3b82f6, #2563eb);
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.card_container_login {
   background-color: #fff;
   border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 40px 30px;
-  width: 100%;
-  max-width: 400px;
+  flex: 1;
+  height: 100%;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
 
-.card {
+.card_login {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  padding: 3rem;
+  height: 100%;
+  justify-content: center;
+}
+
+.left_card_login_content{
+  max-width: 550px;
+  text-align: center;
+  padding: 3rem;
+  color: white;
+}
+
+.header_login{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.left_card_titulo{
+  font-size: 40px;
+  font-weight: 700;
+}
+
+.left_card_slogan{
+  font-size: 24px;
+  font-weight: 400;
 }
 
 .logo-login {
-  font-size: 28px;
+  font-size: 30px;
   font-weight: 700;
   color: #333;
   text-align: center;
   text-decoration: none;
+}
+
+.titulos_inputs_login{
+  margin: 0;
+  font-size: 16px;
+  margin-bottom: 0.2rem;
 }
 
 .subtitle {
@@ -47,12 +88,17 @@ body {
   margin-bottom: 8px;
 }
 
-.input {
+.input_login {
   padding: 12px;
   border: 1px solid #cbd5e0;
-  border-radius: 4px;
+  border-radius: 6px;
   font-size: 14px;
   width: 100%;
+  outline: none; /* Remove o outline padrão */
+}
+
+.input_login:focus {
+  outline: 2px solid #2563eb; /* Adiciona a borda azul ao focar */
 }
 
 .options {
@@ -62,7 +108,13 @@ body {
   font-size: 13px;
 }
 
-.checkbox input {
+.checkbox_login {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.checkbox_login input {
   margin-right: 6px;
 }
 
@@ -84,23 +136,23 @@ body {
   font-size: 15px;
   cursor: pointer;
   transition: background 0.3s;
+  background: linear-gradient(to right, #60a5fa, #2563eb);
 }
 
 .btn-login:hover {
   background-color: #e27c1c;
 }
 
-.redirect {
+.redirect_login {
   font-size: 13px;
   text-align: center;
-  margin-top: 10px;
 }
 
-.redirect a {
+.redirect_login a {
   color: #3182ce;
   text-decoration: none;
 }
 
-.redirect a:hover {
+.redirect_login a:hover {
   text-decoration: underline;
 }

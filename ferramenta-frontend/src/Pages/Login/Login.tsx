@@ -49,29 +49,41 @@ const Login: React.FC = () => {
 
   return (
     <main className="mainLogin">
-      <div className="card-container">
-        <section className="card">
-          <Link to="/" className="logo-login">
-            Ferramenta
-          </Link>
-          <p className="subtitle">Entre para continuar</p>
+      <div className="left_card_login">
+        <div className="left_card_login_content">
+          <h2 className="left_card_titulo">ReProject</h2>
+          <h2><span>Organize</span> seus projetos <span>Conecte</span> seus repositórios <span>Simplifique</span> seu fluxo.</h2>
+        </div>
+      </div>
+      <div className="card_container_login">
+        <section className="card_login">
+          <div className="header_login">
+            <Link to="/" className="logo-login">Acesse sua conta</Link>
+            <p className="subtitle">Entre para continuar</p>
+          </div>
+          <div>
+            <h2 className="titulos_inputs_login">Email</h2>
+            <input
+              type="email"
+              placeholder="Insira seu e-mail"
+              className="input_login"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={loading}
+            />
+          </div>
+          <div>
+            <h2 className="titulos_inputs_login">Senha</h2>
+            <input
+              type="password"
+              placeholder="Insira sua senha"
+              className="input_login"
+              value={senha}
+              onChange={(e) => setSenha(e.target.value)}
+              disabled={loading}
+            />
+          </div>
 
-          <input
-            type="email"
-            placeholder="Insira seu e-mail"
-            className="input"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            disabled={loading}
-          />
-          <input
-            type="password"
-            placeholder="Insira sua senha"
-            className="input"
-            value={senha}
-            onChange={(e) => setSenha(e.target.value)}
-            disabled={loading}
-          />
 
           {loginError && (
             <p style={{ color: "red", textAlign: "center", marginTop: "10px" }}>
@@ -80,7 +92,7 @@ const Login: React.FC = () => {
           )}
 
           <div className="options">
-            <label className="checkbox">
+            <label className="checkbox_login">
               <input type="checkbox" disabled={loading} />
               Continuar conectado
             </label>
@@ -97,7 +109,7 @@ const Login: React.FC = () => {
             {loading ? "Entrando..." : "Entrar"}
           </button>
 
-          <p className="redirect">
+          <p className="redirect_login">
             Não tem uma conta? <Link to="/register">Cadastre-se</Link>
           </p>
         </section>
