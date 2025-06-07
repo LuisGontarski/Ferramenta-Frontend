@@ -96,9 +96,12 @@ const Login: React.FC = () => {
               <input type="checkbox" disabled={loading} />
               Continuar conectado
             </label>
+            <Link to={"/esqueceuSenha"}>
             <a href="#" className="forgot">
               Esqueceu sua senha?
             </a>
+            </Link>
+            
           </div>
 
           <button

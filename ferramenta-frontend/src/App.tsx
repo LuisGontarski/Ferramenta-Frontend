@@ -6,6 +6,7 @@ import Projetos from './Pages/Projetos/projetos';
 import Perfil from './Pages/Perfil/Perfil';
 import ProjetosDetalhes from './Pages/ProjetosDetalhes/ProjetosDetalhes';
 import Kanban from './Pages/Kanban/Kanban';
+import EsqueceuSenha from './Pages/EsqueceuSenha/EsqueceuSenha';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/perfil" element={<Perfil />} />
         <Route path="/projetosDetalhes" element={<ProjetosDetalhes />} />
         <Route path="/kanban" element={<Kanban />} />
+        <Route path="/esqueceuSenha" element={<EsqueceuSenha />} />
       </Routes>
     </Router>
   );

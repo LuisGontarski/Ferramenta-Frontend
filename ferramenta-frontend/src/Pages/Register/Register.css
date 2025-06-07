@@ -74,3 +74,225 @@
 .redirect a:hover {
   text-decoration: underline;
 }
+
+
+
+.cargo-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cargo-option {
+  display: flex;
+  align-items: center;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  padding: 15px;
+  cursor: pointer;
+  background-color: #f7f7f7;
+  transition: all 0.2s ease;
+}
+
+.cargo-option:hover {
+  background-color: #eaeaea;
+}
+
+.cargo-option.selected {
+  border-color: #3b82f6;
+  background-color: #e0edff;
+}
+
+.icon {
+  font-size: 24px;
+  margin-right: 15px;
+  padding: 10px;
+  border-radius: 50%;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 45px;
+  height: 45px;
+}
+
+.icon.blue {
+  background-color: #3b82f6;
+}
+
+.icon.green {
+  background-color: #22c55e;
+}
+
+.icon.purple {
+  background-color: #a855f7;
+}
+
+.icon.gray {
+  background-color: #6b7280;
+}
+
+.cargo-option strong {
+  font-size: 16px;
+}
+
+.cargo-option p {
+  margin: 3px 0 0 0;
+  font-size: 14px;
+  color: #555;
+}
+
+.cargo-outro-input {
+  margin-top: 15px;
+}
+
+.cargo-outro-input .label-register {
+  margin-bottom: 5px;
+  display: block;
+}
+
+
+.github-card {
+  background-color: #0d1117;
+  color: #ffffff;
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 0 0 1px #30363d;
+}
+
+.github-icon {
+  width: 40px;
+  margin-bottom: 1rem;
+}
+
+.github-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.github-description {
+  font-size: 0.95rem;
+  color: #8b949e;
+  margin-bottom: 1rem;
+}
+
+.github-connect-button {
+  background-color: #010409;
+  color: white;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 auto;
+}
+
+.github-btn-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.github-input {
+  margin-top: 1rem;
+}
+
+.icone_git_maior{
+  font-size: 40px;
+}
+
+.icone_git_menor{
+  font-size: 18px;
+}
+
+.div_cargo{
+  display: flex;
+  flex-direction: column;
+}
+
+.etapas-indicador {
+  margin-top: 40px;
+  text-align: left;
+}
+
+.etapas-texto {
+  font-size: 18px;
+  font-weight: 500;
+  color: white;
+  margin-bottom: 8px;
+}
+
+.etapas-numeros {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.etapa {
+  width: 32px;
+  height: 32px;
+  background-color: #333;
+  color: #aaa;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  font-weight: bold;
+}
+
+.etapa.ativa {
+  background-color: #00c2b2;
+  color: #fff;
+}
+
+.etapas-indicador {
+  margin-top: 40px;
+  text-align: left;
+}
+
+.etapas-texto {
+  font-size: 18px;
+  font-weight: 500;
+  color: white;
+  margin-bottom: 8px;
+}
+
+.etapas-numeros {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.etapa {
+  width: 40px;
+  height: 40px;
+  background-color: #333;
+  color: #aaa;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  font-weight: bold;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.etapa.ativa {
+  background-color: #00c2b2;
+  color: #fff;
+}
+
+.barra {
+  width: 40px;
+  height: 4px;
+  background-color: #555;
+  border-radius: 2px;
+  transition: background-color 0.3s ease;
+}
+
+.barra.ativa {
+  background-color: #00c2b2;
+}
+
