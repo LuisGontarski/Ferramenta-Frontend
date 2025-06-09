@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./ProjetosDetalhes.css";
 import NavbarHome from "../../Components/Navbar/NavbarHome";
-import imgPerfil from "../../assets/img_perfil.jpeg";
+import imgPerfil from "../../assets/desenvolvedor1.jpeg";
 
 const ProjetosDetalhes = () => {
   return (

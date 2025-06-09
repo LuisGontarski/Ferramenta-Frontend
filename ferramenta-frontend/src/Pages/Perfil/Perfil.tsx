@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./Perfil.css";
-import imgPerfil from "../../assets/img_perfil.jpeg";
+import imgPerfil from "../../assets/desenvolvedor1.jpeg";
 import NavbarHome from "../../Components/Navbar/NavbarHome";
 import {
   BarChart,
