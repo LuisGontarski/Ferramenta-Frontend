@@ -10,11 +10,8 @@ const NavbarHome = () => {
 
         <nav className="navbarHome">
           <div className="div-menu">
-            <a href="/">Home</a>
-            <a href="/projetos">Projetos</a>
+            <a href="/kanban">Kanban</a>
             <a href="/perfil">Perfil</a>
-            <a href="/">Repositório</a>
-            <a href="/">Board</a>
           </div>
 
           <div className="div-other">

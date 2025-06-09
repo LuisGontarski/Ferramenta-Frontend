@@ -317,7 +317,7 @@ const Perfil = () => {
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Bar dataKey="total" fill="#8884d8" />
+                  <Bar dataKey="value" fill="#8884d8" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -326,30 +326,48 @@ const Perfil = () => {
               <h3>Atividade Semanal</h3>
               <ResponsiveContainer width="100%" height={300}>
                 <AreaChart data={dataAtividadeSemanal}>
-                  <defs>
-                    <linearGradient
-                      id="colorAtividades"
-                      x1="0"
-                      y1="0"
-                      x2="0"
-                      y2="1"
-                    >
-                      <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8} />
-                      <stop offset="95%" stopColor="#8884d8" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <XAxis dataKey="dia" />
-                  <YAxis />
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <Tooltip />
-                  <Area
-                    type="monotone"
-                    dataKey="atividade"
-                    stroke="#8884d8"
-                    fillOpacity={1}
-                    fill="url(#colorAtividades)"
-                  />
-                </AreaChart>
+  <defs>
+    <linearGradient id="colorCommits" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8} />
+      <stop offset="95%" stopColor="#8884d8" stopOpacity={0} />
+    </linearGradient>
+    <linearGradient id="colorReviews" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.8} />
+      <stop offset="95%" stopColor="#82ca9d" stopOpacity={0} />
+    </linearGradient>
+    <linearGradient id="colorReunioes" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="5%" stopColor="#ffc658" stopOpacity={0.8} />
+      <stop offset="95%" stopColor="#ffc658" stopOpacity={0} />
+    </linearGradient>
+  </defs>
+  <XAxis dataKey="dia" />
+  <YAxis />
+  <CartesianGrid strokeDasharray="3 3" />
+  <Tooltip />
+  <Legend />
+  <Area
+    type="monotone"
+    dataKey="commits"
+    stroke="#8884d8"
+    fillOpacity={1}
+    fill="url(#colorCommits)"
+  />
+  <Area
+    type="monotone"
+    dataKey="reviews"
+    stroke="#82ca9d"
+    fillOpacity={1}
+    fill="url(#colorReviews)"
+  />
+  <Area
+    type="monotone"
+    dataKey="reunioes"
+    stroke="#ffc658"
+    fillOpacity={1}
+    fill="url(#colorReunioes)"
+  />
+</AreaChart>
+
               </ResponsiveContainer>
             </div>
           </div>

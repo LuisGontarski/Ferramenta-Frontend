@@ -20,10 +20,6 @@ const MenuLateral = () => {
           <h2 className="nome_nav_menu_lateral">Projetos</h2>
         </div>
       </Link>
-      <div className="div_menu_lateral">
-        <img src={calendario} className="icone_menu" alt="Cronograma" />
-        <h2 className="nome_nav_menu_lateral">Cronograma</h2>
-      </div>
     </div>
   );
 };
