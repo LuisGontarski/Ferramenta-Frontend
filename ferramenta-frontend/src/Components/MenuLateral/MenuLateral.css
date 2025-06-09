@@ -1,0 +1,24 @@
+.menu_lateral{
+  width: 250px;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding-top: 0.6rem;
+  padding-left: 0.6rem;
+}
+
+.div_menu_lateral{
+ display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.nome_nav_menu_lateral{
+  font-size: 18px;
+}
+
+.icone_menu{
+  font-size: 16px;
+  width: 16px;
+}

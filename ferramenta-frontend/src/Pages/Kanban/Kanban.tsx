@@ -1,6 +1,7 @@
 import "./Kanban.css";
 import NavbarHome from "../../Components/Navbar/NavbarHome";
 import { useEffect, useState } from "react";
+import MenuLateral from "../../Components/MenuLateral/MenuLateral";
 
 const Kanban = () => {
     const [showModal, setShowModal] = useState(false);
@@ -83,7 +84,11 @@ const Kanban = () => {
         <>
             <div>
                 <NavbarHome />
-                <div className="kanban_container">
+            </div>
+            <div className="container_conteudos">
+                <MenuLateral />
+                <div className="container_vertical_conteudos">
+                    <div className="kanban_container">
                     <button onClick={() => setShowModal(true)} className="add_card_button">
                         + Novo Card
                     </button>
@@ -119,6 +124,7 @@ const Kanban = () => {
                             <div className="kanban_cards"></div>
                         </div>
                     </div>
+                </div>
                 </div>
             </div>
 

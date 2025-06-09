@@ -7,14 +7,15 @@ import desenvolvedor1 from "../../Assets/desenvolvedor1.jpeg";
 import desenvolvedor2 from "../../Assets/desenvolvedor2.jpeg";
 import desenvolvedor3 from "../../Assets/desenvolvedor3.jpeg";  
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area } from "recharts";
+import MenuLateral from "../../Components/MenuLateral/MenuLateral";
     const value = 5.5;
-const max = 10;
+    const max = 10;
 
-const fillPercent = (value / max) * 100;
+    const fillPercent = (value / max) * 100;
 
-const gradientStyle = {
-  background: `linear-gradient(to right, #4facfe 0%, #00f2fe ${fillPercent}%, #e0e0e0 ${fillPercent}%)`
-};
+    const gradientStyle = {
+      background: `linear-gradient(to right, #4facfe 0%, #00f2fe ${fillPercent}%, #e0e0e0 ${fillPercent}%)`
+    };
 
   const data = [
     { dia: "Seg", commits: 12, issues: 3 },
@@ -34,24 +35,7 @@ const HomePage = () => {
       </div>
 
       <main className="container_conteudos">
-        <div className="menu_lateral">
-          <Link to="/">
-            <div className="div_menu_lateral">
-              <img src={img} className="icone_menu"/>
-              <h2 className="nome_nav_menu_lateral">Dashboard</h2>
-            </div>
-          </Link>
-          <Link to="/projetos">
-            <div className="div_menu_lateral">
-              <i className="fa-regular fa-folder icone_menu"></i>
-              <h2 className="nome_nav_menu_lateral">Projetos</h2>
-            </div>
-          </Link>
-          <div className="div_menu_lateral">
-            <img src={calendario} className="icone_menu" />
-            <h2 className="nome_nav_menu_lateral">Cronograma</h2>
-          </div>
-        </div>
+        <MenuLateral />
         <div className="container_vertical_conteudos">
           <div className="container_dashboard">
             <div className="container_metricas_dashboard">

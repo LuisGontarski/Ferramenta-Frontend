@@ -19,6 +19,7 @@ import {
 import { getUserById } from "../../services/userDataService";
 import { formatarDataParaDDMMYYYY } from "../../utils/dateUtils";
 import AtividadesPerfil from "../../Components/AtividadesPerfil/AtividadesPerfil";
+import MenuLateral from "../../Components/MenuLateral/MenuLateral";
 
 const dataCommits = [
   { projeto: "Projeto A", commits: 30, linhas: 500 },
@@ -147,208 +148,213 @@ const Perfil = () => {
   return (
     <>
       <NavbarHome />
-      <div className="container_perfil">
-        <div className="card_perfil">
-          <div className="div_foto_perfil">
-            <img
-              src={usuario.foto_perfil || imgPerfil}
-              alt={`Foto de perfil de ${usuario.nome}`}
-              className="foto_perfil"
-            />
-            <h2 className="texto_foto_perfil">{usuario.nome}</h2>
-            <h2 className="texto_cargo">{usuario.cargo}</h2>
-          </div>
-          <div className="container_icones_perfil">
-            <div className="div_icones_perfil">
-              <i className="fa-regular fa-envelope icones_perfil"></i>
-              <h2 className="texto_dados">{usuario.email}</h2>
-            </div>
-            <div className="div_icones_perfil">
-              <i className="fa-brands fa-github icones_perfil"></i>
-              <h2 className="texto_dados">{usuario.github}</h2>
-            </div>
-            <div className="div_icones_perfil">
-              <i className="fa-regular fa-calendar icones_perfil"></i>
-              <h2 className="texto_dados">
-                {formatarDataParaDDMMYYYY(usuario.criado_em)}
-              </h2>
-            </div>
-          </div>
-
-          <button
-            className="btn_editar"
-            id="btn_editar"
-            onClick={abrirModalEditar}
-          >
-            Editar Perfil
-          </button>
-          <button className="btn_excluir" id="btn_excluir">
-            Excluir Perfil
-          </button>
-        </div>
-      </div>
-
-      <div className="container_cards">
-        <div className="container_sessoes_perfil">
-          <div className="card_perfil">
-            <h2 className="titulo_card">Atividades</h2>
-            <div className="div_tipo_atividade">
-              {["Commits", "Tarefas", "Pull Requests", "Tempo"].map(
-                (categoria) => (
-                  <h2
-                    key={categoria}
-                    className={`texto_categorias ${
-                      categoriaSelecionada === categoria
-                        ? "categoria_selecionada"
-                        : ""
-                    }`}
-                    onClick={() => handleCategoriaClick(categoria)}
-                  >
-                    {categoria}
+      <main className="container_conteudos">
+        <MenuLateral />
+        <div className="container_vertical_conteudos">
+          <div className="container_perfil">
+            <div className="card_perfil">
+              <div className="div_foto_perfil">
+                <img
+                  src={usuario.foto_perfil || imgPerfil}
+                  alt={`Foto de perfil de ${usuario.nome}`}
+                  className="foto_perfil"
+                />
+                <h2 className="texto_foto_perfil">{usuario.nome}</h2>
+                <h2 className="texto_cargo">{usuario.cargo}</h2>
+              </div>
+              <div className="container_icones_perfil">
+                <div className="div_icones_perfil">
+                  <i className="fa-regular fa-envelope icones_perfil"></i>
+                  <h2 className="texto_dados">{usuario.email}</h2>
+                </div>
+                <div className="div_icones_perfil">
+                  <i className="fa-brands fa-github icones_perfil"></i>
+                  <h2 className="texto_dados">{usuario.github}</h2>
+                </div>
+                <div className="div_icones_perfil">
+                  <i className="fa-regular fa-calendar icones_perfil"></i>
+                  <h2 className="texto_dados">
+                    {formatarDataParaDDMMYYYY(usuario.criado_em)}
                   </h2>
-                )
-              )}
+                </div>
+              </div>
+
+              <button
+                className="btn_editar"
+                id="btn_editar"
+                onClick={abrirModalEditar}
+              >
+                Editar Perfil
+              </button>
+              <button className="btn_excluir" id="btn_excluir">
+                Excluir Perfil
+              </button>
+            </div>
+          </div>
+
+          <div className="container_cards">
+            <div className="container_sessoes_perfil">
+              <div className="card_perfil">
+                <h2 className="titulo_card">Atividades</h2>
+                <div className="div_tipo_atividade">
+                  {["Commits", "Tarefas", "Pull Requests", "Tempo"].map(
+                    (categoria) => (
+                      <h2
+                        key={categoria}
+                        className={`texto_categorias ${
+                          categoriaSelecionada === categoria
+                            ? "categoria_selecionada"
+                            : ""
+                        }`}
+                        onClick={() => handleCategoriaClick(categoria)}
+                      >
+                        {categoria}
+                      </h2>
+                    )
+                  )}
+                </div>
+
+                {categoriaSelecionada === "Commits" && (
+                  <div className="container_atividades">
+                    <AtividadesPerfil
+                      id="1"
+                      titulo="Refatoração do backend"
+                      projeto="API de Pagamentos"
+                      realizadoEm="há 1 hora"
+                      icone="fa-solid fa-code-commit"
+                      cor="#2563eb"
+                      backgroundCor="#dbeafe"
+                    />
+                    {/* demais atividades commits */}
+                  </div>
+                )}
+
+                {categoriaSelecionada === "Tarefas" && (
+                  <div className="container_atividades">
+                    <AtividadesPerfil
+                      id="1"
+                      titulo="Finalizar relatório semanal"
+                      projeto="Equipe de Marketing"
+                      realizadoEm="há 30 minutos"
+                      icone="fa-solid fa-check"
+                      cor="#16a34a"
+                      backgroundCor="#dcfce7"
+                    />
+                    {/* demais tarefas */}
+                  </div>
+                )}
+
+                {categoriaSelecionada === "Pull Requests" && (
+                  <div className="container_atividades">
+                    <AtividadesPerfil
+                      id="1"
+                      titulo="Merge da feature de autenticação"
+                      projeto="App Mobile"
+                      realizadoEm="há 20 minutos"
+                      icone="fa-solid fa-code-pull-request"
+                      cor="#9333ea"
+                      backgroundCor="#f3e8ff"
+                    />
+                    {/* demais pull requests */}
+                  </div>
+                )}
+
+                {categoriaSelecionada === "Tempo" && (
+                  <div className="container_atividades">
+                    <AtividadesPerfil
+                      id="1"
+                      titulo="2 horas de planejamento"
+                      projeto="Sprint Atual"
+                      realizadoEm="há 1 hora"
+                      icone="fa-solid fa-clock"
+                      cor="#d97706"
+                      backgroundCor="#fef3c7"
+                    />
+                    {/* demais atividades de tempo */}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="container_graficos">
+            <div className="grafico">
+              <h3>Commits por Projeto</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={dataCommits}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="projeto" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="commits" fill="#8884d8" />
+                  <Bar dataKey="linhas" fill="#82ca9d" />
+                </BarChart>
+              </ResponsiveContainer>
             </div>
 
-            {categoriaSelecionada === "Commits" && (
-              <div className="container_atividades">
-                <AtividadesPerfil
-                  id="1"
-                  titulo="Refatoração do backend"
-                  projeto="API de Pagamentos"
-                  realizadoEm="há 1 hora"
-                  icone="fa-solid fa-code-commit"
-                  cor="#2563eb"
-                  backgroundCor="#dbeafe"
-                />
-                {/* demais atividades commits */}
-              </div>
-            )}
+            <div className="grafico">
+              <h3>Horas Trabalhadas por Dia</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={dataHoras}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="dia" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Line type="monotone" dataKey="total" stroke="#8884d8" />
+                  <Line type="monotone" dataKey="produtivas" stroke="#82ca9d" />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
 
-            {categoriaSelecionada === "Tarefas" && (
-              <div className="container_atividades">
-                <AtividadesPerfil
-                  id="1"
-                  titulo="Finalizar relatório semanal"
-                  projeto="Equipe de Marketing"
-                  realizadoEm="há 30 minutos"
-                  icone="fa-solid fa-check"
-                  cor="#16a34a"
-                  backgroundCor="#dcfce7"
-                />
-                {/* demais tarefas */}
-              </div>
-            )}
+            <div className="grafico">
+              <h3>Tarefas por Status</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={dataTarefas}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="status" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="total" fill="#8884d8" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
 
-            {categoriaSelecionada === "Pull Requests" && (
-              <div className="container_atividades">
-                <AtividadesPerfil
-                  id="1"
-                  titulo="Merge da feature de autenticação"
-                  projeto="App Mobile"
-                  realizadoEm="há 20 minutos"
-                  icone="fa-solid fa-code-pull-request"
-                  cor="#9333ea"
-                  backgroundCor="#f3e8ff"
-                />
-                {/* demais pull requests */}
-              </div>
-            )}
-
-            {categoriaSelecionada === "Tempo" && (
-              <div className="container_atividades">
-                <AtividadesPerfil
-                  id="1"
-                  titulo="2 horas de planejamento"
-                  projeto="Sprint Atual"
-                  realizadoEm="há 1 hora"
-                  icone="fa-solid fa-clock"
-                  cor="#d97706"
-                  backgroundCor="#fef3c7"
-                />
-                {/* demais atividades de tempo */}
-              </div>
-            )}
+            <div className="grafico">
+              <h3>Atividade Semanal</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <AreaChart data={dataAtividadeSemanal}>
+                  <defs>
+                    <linearGradient
+                      id="colorAtividades"
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="1"
+                    >
+                      <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8} />
+                      <stop offset="95%" stopColor="#8884d8" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <XAxis dataKey="dia" />
+                  <YAxis />
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <Tooltip />
+                  <Area
+                    type="monotone"
+                    dataKey="atividade"
+                    stroke="#8884d8"
+                    fillOpacity={1}
+                    fill="url(#colorAtividades)"
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
           </div>
         </div>
-      </div>
-
-      <div className="container_graficos">
-        <div className="grafico">
-          <h3>Commits por Projeto</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={dataCommits}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="projeto" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="commits" fill="#8884d8" />
-              <Bar dataKey="linhas" fill="#82ca9d" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-
-        <div className="grafico">
-          <h3>Horas Trabalhadas por Dia</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={dataHoras}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="dia" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Line type="monotone" dataKey="total" stroke="#8884d8" />
-              <Line type="monotone" dataKey="produtivas" stroke="#82ca9d" />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-
-        <div className="grafico">
-          <h3>Tarefas por Status</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={dataTarefas}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="status" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="total" fill="#8884d8" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-
-        <div className="grafico">
-          <h3>Atividade Semanal</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <AreaChart data={dataAtividadeSemanal}>
-              <defs>
-                <linearGradient
-                  id="colorAtividades"
-                  x1="0"
-                  y1="0"
-                  x2="0"
-                  y2="1"
-                >
-                  <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8} />
-                  <stop offset="95%" stopColor="#8884d8" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <XAxis dataKey="dia" />
-              <YAxis />
-              <CartesianGrid strokeDasharray="3 3" />
-              <Tooltip />
-              <Area
-                type="monotone"
-                dataKey="atividade"
-                stroke="#8884d8"
-                fillOpacity={1}
-                fill="url(#colorAtividades)"
-              />
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
+      </main>
     </>
   );
 };

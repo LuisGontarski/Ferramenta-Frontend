@@ -24,15 +24,6 @@
 }
 
 
-.menu_lateral{
-  width: 250px;
-  background-color: #ffffff;
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-  padding-top: 0.6rem;
-  padding-left: 0.6rem;
-}
 
 a{
   text-decoration: none;
@@ -219,20 +210,6 @@ h1 {
   cursor: pointer;
 }
 
-.icone_menu{
-  font-size: 16px;
-  width: 16px;
-}
-
-.div_menu_lateral{
- display: flex;
-  align-items: center;
-  gap: 0.6rem;
-}
-
-.nome_nav_menu_lateral{
-  font-size: 18px;
-}
 
 .titulo_metricas_dashboard{
   font-size: 16px;

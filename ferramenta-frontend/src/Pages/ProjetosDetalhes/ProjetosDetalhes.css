@@ -7,6 +7,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 0.6rem;
 }
 
 .div_informacoes_projeto_detalhes{
@@ -15,6 +16,7 @@
     padding: 0.8rem;
     background-color: white;
     margin-bottom: 1rem;
+    flex: 1;
 }
 
 .btn_kanban{
@@ -53,11 +55,12 @@
     background-color: white;
     margin-bottom: 1rem;
     display: flex;
+    align-items: center;
 }
 
 .imagemEquipe{
-    width: 90px;
-    height: 90px;
+    width: 64px;
+    height: 64px;
     border-radius: 50%;
 }
 
@@ -69,5 +72,37 @@
 
 .div_equipe_tarefas{
     display: flex;
+    gap: 0.8rem;
+}
+
+.titulo_metricas_detalhes_projetos{
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.valor_metricas_detalhes_projetos{
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.adicional_metricas_detalhes_projetos{
+    font-size: 14px;
+    font-weight: 400;
+    color: #71717a;
+}
+
+.titulo_card_projeto_detalhes{
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.sub_titulo_card_projeto_detalhes{
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.container_atividade_recente_card{
+    display: flex;
+    flex-direction: column;
     gap: 0.8rem;
 }
