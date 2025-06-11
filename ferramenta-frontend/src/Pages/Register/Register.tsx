@@ -121,7 +121,7 @@ const Register: React.FC = () => {
       </div>
       <div className="card_container_login">
         <section className="card_login">
-          <Link to="/home" className="logo-register">Crie sua conta</Link>
+          <Link to="/" className="logo-register">Crie sua conta</Link>
 
           {error && <p className="error-message">{error}</p>}
 
@@ -281,7 +281,7 @@ const Register: React.FC = () => {
                   <button
                     className="github-connect-button"
                     onClick={() => {
-                      alert("Integração com GitHub em breve!");
+                      window.location.href = 'https://ferramenta-backend.onrender.com/api/auth/github/login';
                     }}
                   >
                     <i className="fa-brands fa-github icone_git_menor"></i>

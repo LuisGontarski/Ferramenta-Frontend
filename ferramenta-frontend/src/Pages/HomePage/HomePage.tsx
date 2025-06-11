@@ -10,6 +10,12 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 import MenuLateral from "../../Components/MenuLateral/MenuLateral";
     const value = 5.5;
     const max = 10;
+    const params = new URLSearchParams(window.location.search);
+    const accessToken = params.get("access_token");
+
+    if (accessToken) {
+      localStorage.setItem("access_token", accessToken);
+    }
 
     const fillPercent = (value / max) * 100;
 

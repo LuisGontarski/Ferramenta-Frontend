@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState, type SetStateAction } from "react";
 import "./projetos.css";
 import NavbarHome from "../../Components/Navbar/NavbarHome";
 import CardProjeto from "../../Components/CardProjeto/CardProjeto";
@@ -11,11 +11,49 @@ const Projetos = () => {
   const [nomeUsuario, setNomeUsuario] = useState("");
   const [nomeRepositorio, setNomeRepositorio] = useState("");
   const [numeroCommits, setNumeroCommits] = useState("");
+  type Repositorio = { id: number; name: string; full_name: string };
+  const [repositorios, setRepositorios] = useState<Repositorio[]>([]);
+  const [repositorioSelecionado, setRepositorioSelecionado] = useState("");
+
+  
+  const handleSelectChange = (e: { target: { value: SetStateAction<string>; }; }) => {
+    setRepositorioSelecionado(e.target.value);
+    console.log("Repositório selecionado:", e.target.value);
+  };
 
   function abrirModal() {
-    var modal = document.getElementById("card_modal");
-    if (modal) modal.style.display = "flex";
+  const modal = document.getElementById("card_modal");
+  if (modal) modal.style.display = "flex";
+
+  const accessToken = localStorage.getItem("access_token");
+
+  if (!accessToken) {
+    console.error("Access token não encontrado.");
+    return;
   }
+
+  fetch("https://ferramenta-backend.onrender.com/api/github/repos", {
+    method: "GET",
+    headers: {
+      "Authorization": `Bearer ${accessToken}`,
+      "Content-Type": "application/json"
+    }
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Erro na requisição: " + response.status);
+      }
+      return response.json();
+    })
+    .then((data) => {
+      console.log("Repos retornados:", data);
+      setRepositorios(data); // <- Atualiza o select com os repositórios reais
+    })
+    .catch((error) => {
+      console.error("Erro ao buscar repositórios:", error);
+    });
+}
+
 
   function fecharModal() {
     var modal = document.getElementById("card_modal");
@@ -163,22 +201,17 @@ const Projetos = () => {
               className="input_modal"
             />
             <h2 className="titulo_input">Nome do repositório</h2>
-            <input
-              type="text"
-              name=""
-              id=""
-              onChange={(e) => setNomeRepositorio(e.target.value)}
-              className="input_modal"
-            />
-            <h2 className="titulo_input">Número de commits</h2>
-            <input
-              type="text"
-              name=""
-              id=""
-              className="input_modal"
-              value={numeroCommits}
-              readOnly
-            />
+            <div>
+              <h2>Selecione um repositório:</h2>
+              <select value={repositorioSelecionado} onChange={handleSelectChange}>
+                <option value="">-- Selecione --</option>
+                {repositorios.map((repo) => (
+                  <option key={repo.id} value={repo.name}>
+                    {repo.full_name}
+                  </option>
+                ))}
+              </select>
+            </div>
             <button className="btn_conectar" onClick={buscarRepositorio}>
               Buscar repositório <i className="fa-brands fa-github"></i>{" "}
             </button>

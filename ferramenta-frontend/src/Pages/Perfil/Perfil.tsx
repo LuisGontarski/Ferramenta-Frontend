@@ -186,6 +186,15 @@ const Perfil = () => {
               >
                 Editar Perfil
               </button>
+              <button
+                className="btn_excluir"
+                id="btn_excluir"
+                onClick={() => {
+                  window.location.href = "";
+                }}
+              >
+                Logout
+              </button>
               <button className="btn_excluir" id="btn_excluir">
                 Excluir Perfil
               </button>
