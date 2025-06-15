@@ -1,0 +1,147 @@
+
+
+/* Estilos do Gantt */
+.gantt-container {
+    margin-top: 30px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    overflow-x: auto;
+}
+
+.gantt-header {
+    display: flex;
+    border-bottom: 1px solid #ddd;
+    background-color: #f5f5f5;
+    font-weight: bold;
+    min-width: 100%;
+}
+
+.gantt-header-task-name {
+    width: 200px;
+    padding: 10px;
+    border-right: 1px solid #ddd;
+    position: sticky;
+    left: 0;
+    background-color: #f5f5f5;
+    z-index: 2;
+}
+
+.gantt-header-months {
+    display: flex;
+    flex: 1;
+}
+
+.gantt-header-month {
+    padding: 10px;
+    text-align: center;
+    border-right: 1px solid #e0e0e0;
+    flex-shrink: 0;
+    flex: 1;
+}
+
+.gantt-body {
+    display: flex;
+    flex-direction: column;
+    min-width: 100%;
+}
+
+.gantt-row {
+    display: flex;
+    border-bottom: 1px solid #eee;
+    height: 50px;
+    position: relative;
+}
+
+.gantt-task-name {
+    width: 200px;
+    padding: 10px;
+    border-right: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    position: sticky;
+    left: 0;
+    background-color: white;
+    z-index: 1;
+}
+
+.gantt-bars-container {
+    flex: 1;
+    position: relative;
+    height: 100%;
+}
+
+.gantt-bar {
+    position: absolute;
+    height: 30px;
+    top: 10px;
+    background-color: rgba(100, 149, 237, 0.5);
+    border-radius: 3px;
+    border: 1px solid #6495ed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.gantt-bar-label {
+    font-size: 12px;
+    color: #333;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0 5px;
+}
+
+/* Formulário para adicionar tarefas */
+.add-task-form {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    max-width: 500px;
+}
+
+.add-task-form h3 {
+    margin-top: 0;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.add-task-form button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.add-task-form button:hover {
+    background-color: #45a049;
+}
+
+/* Barra de rolagem */
+::-webkit-scrollbar {
+    height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}

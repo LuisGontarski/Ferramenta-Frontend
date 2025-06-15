@@ -192,6 +192,8 @@ body {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  height: 80%;
+  overflow: auto;
 }
 
 .div_inputs_modal{
@@ -290,3 +292,18 @@ body {
   outline: none;
   transition: box-shadow 0.2s ease, border-color 0.2s ease;
 }
+
+.container_criacao_equipe {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.card_equipe_criada {
+  border: 1px solid #ddd;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+

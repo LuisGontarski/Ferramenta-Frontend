@@ -7,6 +7,9 @@ import Perfil from './Pages/Perfil/Perfil';
 import ProjetosDetalhes from './Pages/ProjetosDetalhes/ProjetosDetalhes';
 import Kanban from './Pages/Kanban/Kanban';
 import EsqueceuSenha from './Pages/EsqueceuSenha/EsqueceuSenha';
+import Documentos from './Pages/Documentos/Documentos';
+import Requisitos from './Pages/Requisitos/Requisitos';
+import Cronograma from './Pages/Cronograma/Cronograma';
 
 function App() {
   return (
@@ -20,6 +23,9 @@ function App() {
         <Route path="/projetosDetalhes" element={<ProjetosDetalhes />} />
         <Route path="/kanban" element={<Kanban />} />
         <Route path="/esqueceuSenha" element={<EsqueceuSenha />} />
+        <Route path="/documentos" element={<Documentos />} />
+        <Route path="/requisitos" element={<Requisitos />} />
+        <Route path="/cronograma" element={<Cronograma />} />
       </Routes>
     </Router>
   );

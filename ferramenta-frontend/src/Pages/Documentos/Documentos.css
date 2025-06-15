@@ -1,0 +1,77 @@
+.titulo_documentos{
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.subtitulo_documentos{
+    font-size: 14px;
+    font-weight: 400;
+    margin: 0;
+    color: #71717A;
+}
+
+.div_nenhum_arquivo_documentos{
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    height: 120px;
+}
+
+.button_adicionar_arquivo{
+    color: white;
+    font-weight: 500;
+    background-color: #0d9488;
+    border: none;
+    padding: 0.6rem 0.8rem;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.lista_documentos {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.documento_item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f9f9f9;
+    padding: 10px 15px;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.documento_nome {
+    font-size: 14px;
+    color: #333;
+    word-break: break-all;
+}
+
+.documento_download {
+    font-size: 20px;
+    text-decoration: none;
+    color: #2563eb;
+    transition: transform 0.2s;
+}
+
+.documento_download:hover {
+    transform: scale(1.2);
+}
+
+.div_adicionar_arquivo_documentos{
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+}
+
+.div_titulo_documentos{
+    display: flex;
+    flex-direction: column;
+}

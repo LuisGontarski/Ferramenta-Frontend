@@ -15,6 +15,46 @@ const Projetos = () => {
   const [repositorios, setRepositorios] = useState<Repositorio[]>([]);
   const [repositorioSelecionado, setRepositorioSelecionado] = useState("");
 
+  const [equipes, setEquipes] = useState<
+  { id: number; nome: string; membros: string[] }[]
+>([]);
+
+const [novoNomeEquipe, setNovoNomeEquipe] = useState("");
+
+const adicionarEquipe = () => {
+  if (novoNomeEquipe.trim() === "") return;
+
+  const novaEquipe = {
+    id: Date.now(),
+    nome: novoNomeEquipe,
+    membros: [],
+  };
+  setEquipes([...equipes, novaEquipe]);
+  setNovoNomeEquipe("");
+};
+
+const toggleMembroNaEquipe = (idEquipe: number, membro: string) => {
+  setEquipes((prev) =>
+    prev.map((equipe) =>
+      equipe.id === idEquipe
+        ? {
+            ...equipe,
+            membros: equipe.membros.includes(membro)
+              ? equipe.membros.filter((m) => m !== membro)
+              : [...equipe.membros, membro],
+          }
+        : equipe
+    )
+  );
+};
+
+const membrosDisponiveis = [
+  "João Silva",
+  "Maria Souza",
+  "Carlos Oliveira",
+  "Ana Lima",
+];
+
   
   const handleSelectChange = (e: { target: { value: SetStateAction<string>; }; }) => {
     setRepositorioSelecionado(e.target.value);
@@ -130,77 +170,42 @@ const Projetos = () => {
             </div>
           </div>
           <div className="div_inputs_modal">
-            <h2 className="titulo_input">Membros da equipe</h2>
-            <div className="container_membros">
-              <div className="card_membros_equipe">
-                <input type="checkbox" name="" id="" />
-                <div className="img_perfil"></div>
-                <div>
-                  <h2 className="titulo_input">João Silva</h2>
-                  <h2 className="descricao_membros">Desenvolvedor Frontend</h2>
-                </div>
-              </div>
-              <div className="card_membros_equipe">
-                <input type="checkbox" name="" id="" />
-                <div className="img_perfil"></div>
-                <div>
-                  <h2 className="titulo_input">João Silva</h2>
-                  <h2 className="descricao_membros">Desenvolvedor Frontend</h2>
-                </div>
-              </div>
-              <div className="card_membros_equipe">
-                <input type="checkbox" name="" id="" />
-                <div className="img_perfil"></div>
-                <div>
-                  <h2 className="titulo_input">João Silva</h2>
-                  <h2 className="descricao_membros">Desenvolvedor Frontend</h2>
-                </div>
-              </div>
-              <div className="card_membros_equipe">
-                <input type="checkbox" name="" id="" />
-                <div className="img_perfil"></div>
-                <div>
-                  <h2 className="titulo_input">João Silva</h2>
-                  <h2 className="descricao_membros">Desenvolvedor Frontend</h2>
-                </div>
-              </div>
-              <div className="card_membros_equipe">
-                <input type="checkbox" name="" id="" />
-                <div className="img_perfil"></div>
-                <div>
-                  <h2 className="titulo_input">João Silva</h2>
-                  <h2 className="descricao_membros">Desenvolvedor Frontend</h2>
-                </div>
-              </div>
-              <div className="card_membros_equipe">
-                <input type="checkbox" name="" id="" />
-                <div className="img_perfil"></div>
-                <div>
-                  <h2 className="titulo_input">João Silva</h2>
-                  <h2 className="descricao_membros">Desenvolvedor Frontend</h2>
-                </div>
-              </div>
-              <div className="card_membros_equipe">
-                <input type="checkbox" name="" id="" />
-                <div className="img_perfil"></div>
-                <div>
-                  <h2 className="titulo_input">João Silva</h2>
-                  <h2 className="descricao_membros">Desenvolvedor Frontend</h2>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="div_inputs_modal">
-            <h2 className="titulo_input">Repositório (Opcional)</h2>
-            <h2 className="titulo_input">Nome de usuário</h2>
+  <h2 className="titulo_input">Equipes</h2>
+  <div className="container_criacao_equipe">
+    <input
+      type="text"
+      placeholder="Nome da nova equipe (ex: Frontend)"
+      value={novoNomeEquipe}
+      onChange={(e) => setNovoNomeEquipe(e.target.value)}
+      className="input_modal"
+    />
+    <button onClick={adicionarEquipe}>Adicionar Equipe</button>
+  </div>
+
+  {equipes.map((equipe) => (
+    <div key={equipe.id} className="card_equipe_criada">
+      <h3>{equipe.nome}</h3>
+      <div className="container_membros">
+        {membrosDisponiveis.map((membro) => (
+          <label key={membro} className="card_membros_equipe">
             <input
-              type="text"
-              name=""
-              id=""
-              onChange={(e) => setNomeUsuario(e.target.value)}
-              className="input_modal"
+              type="checkbox"
+              checked={equipe.membros.includes(membro)}
+              onChange={() => toggleMembroNaEquipe(equipe.id, membro)}
             />
-            <h2 className="titulo_input">Nome do repositório</h2>
+            <div className="img_perfil"></div>
+            <div>
+              <h2 className="titulo_input">{membro}</h2>
+              <h2 className="descricao_membros">Função desconhecida</h2>
+            </div>
+          </label>
+        ))}
+      </div>
+    </div>
+  ))}
+</div>
+          <div className="div_inputs_modal">
+            <h2 className="titulo_input">Repositório</h2>
             <div>
               <h2>Selecione um repositório:</h2>
               <select value={repositorioSelecionado} onChange={handleSelectChange}>
@@ -212,9 +217,17 @@ const Projetos = () => {
                 ))}
               </select>
             </div>
-            <button className="btn_conectar" onClick={buscarRepositorio}>
-              Buscar repositório <i className="fa-brands fa-github"></i>{" "}
-            </button>
+            <div>
+              <h2>Ou crie um novo repositório para o projeto</h2>
+              <h2>Nome</h2>
+              <input type="text" name="" id="" className="input_modal" />
+              <h2>Descrição</h2>
+              <input type="text" name="" id="" className="input_modal"/>
+              <h2>Privado?</h2>
+              <input type="checkbox" name="" id=""/>
+            </div>
+            <button>Criar novo repositório</button>
+            <button className="btn_conectar">Criar Projeto</button>
           </div>
         </div>
       </div>

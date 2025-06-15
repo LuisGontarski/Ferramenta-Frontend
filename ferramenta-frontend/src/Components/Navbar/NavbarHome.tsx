@@ -11,7 +11,9 @@ const NavbarHome = () => {
         <nav className="navbarHome">
           <div className="div-menu">
             <a href="/kanban">Kanban</a>
-            <a href="/perfil">Perfil</a>
+            <a href="/cronograma">Cronograma</a>
+            <a href="/documentos">Documentos</a>
+            <a href="/requisitos">Requisitos</a>
           </div>
 
           <div className="div-other">

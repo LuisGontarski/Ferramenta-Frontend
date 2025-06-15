@@ -1,0 +1,182 @@
+.tabela_container {
+  margin-top: 8px;
+  overflow-x: auto;
+}
+
+.tabela_requisitos {
+  width: 100%;
+  border-collapse: separate;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.tabela_requisitos th, .tabela_requisitos td {
+  padding: 12px;
+  border: 1px solid #ddd;
+  text-align: left;
+  font-size: 14px;
+}
+
+.tabela_requisitos th {
+  background-color: #2563eb;
+  color: white;
+}
+
+.prioridade.alta {
+  color: red;
+  font-weight: bold;
+}
+
+.prioridade.média {
+  color: orange;
+  font-weight: bold;
+}
+
+.prioridade.baixa {
+  color: green;
+  font-weight: bold;
+}
+
+
+.titulo_requisitos {
+  margin-bottom: 10px;
+}
+
+.button_adicionar_requisito {
+  background-color: #2563eb;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  margin-bottom: 16px;
+  cursor: pointer;
+}
+
+.modal_overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal_conteudo {
+  background: white;
+  padding: 24px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 400px;
+  max-width: 90%;
+}
+
+.modal_conteudo textarea,
+.modal_conteudo select,
+.modal_conteudo input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.botoes_form {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.botoes_form button {
+  padding: 8px 14px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+}
+
+.botoes_form button:first-child {
+  background-color: #2563eb;
+  color: white;
+}
+
+.botoes_form button:last-child {
+  background-color: #e5e7eb;
+  color: #333;
+}
+
+.subtitulo_requisitos {
+  margin-top: 30px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.tabela_requisitos {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+.tabela_requisitos th,
+.tabela_requisitos td {
+  padding: 8px;
+  text-align: left;
+  border: 1px solid #ccc;
+}
+
+.col-id {
+  width: 8%;
+}
+
+.col-tipo {
+  width: 16%;
+}
+
+.col-criticidade {
+  width: 16%;
+}
+
+.col-categoria {
+  width: 20%;
+}
+
+.col-descricao {
+  width: 40%;
+}
+
+.criticidade.alta {
+  color: red;
+}
+
+.criticidade.média {
+  color: orange;
+}
+
+.criticidade.baixa {
+  color: green;
+}
+
+.div_titulo_requisitos{
+    display: flex;
+    justify-content: space-between;
+}
+
+.tabela_requisitos tbody tr:nth-child(even) {
+  background-color: #e9e9e9;
+}
+
+.tabela_requisitos tbody tr:nth-child(odd) {
+  background-color: #ffffff;
+}
+
+.linha-vazia {
+  text-align: center !important;
+  padding: 16px;
+  color: #6b7280; /* cinza */
+  background-color: #f3f4f6;
+}
+
