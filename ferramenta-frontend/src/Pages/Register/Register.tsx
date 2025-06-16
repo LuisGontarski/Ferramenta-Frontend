@@ -281,7 +281,7 @@ const Register: React.FC = () => {
                   <button
                     className="github-connect-button"
                     onClick={() => {
-                      window.location.href = 'https://ferramenta-backend.onrender.com/api/auth/github/login';
+                      window.location.href = 'https://localhost:3000/api/auth/github/login';
                     }}
                   >
                     <i className="fa-brands fa-github icone_git_menor"></i>
