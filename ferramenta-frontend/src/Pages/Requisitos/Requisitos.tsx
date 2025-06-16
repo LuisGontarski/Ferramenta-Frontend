@@ -87,10 +87,13 @@ const Requisitos = () => {
       <div className="container_conteudos">
         <MenuLateral />
         <div className="container_vertical_conteudos requisitos_container">
-          <div className="card_atualizacoes">
+          <div className="card_documentos">
             <div className="div_titulo_requisitos">
-              <h2 className="titulo_requisitos">Documentação de Requisitos</h2>
-              <button onClick={abrirModal} className="button_adicionar_requisito">+ Adicionar Requisito</button>
+                <div className="div_titulo_documentos">
+                    <h2 className="titulo_documentos">Documentação de Requisitos</h2>
+                    <h2 className="subtitulo_documentos">Requisitos funcionais e não funcionais definidos para o projeto.</h2>
+                </div>
+              <button onClick={abrirModal} className="button_adicionar_arquivo">+ Adicionar Requisito</button>
             </div>
 
             {renderTabela("Requisitos Funcionais", requisitosFuncionais, "RFN")}

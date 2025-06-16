@@ -17,12 +17,7 @@ const NavbarHome = () => {
           </div>
 
           <div className="div-other">
-            <input
-              type="search"
-              placeholder="Buscar..."
-              className="search-input"
-            />
-           <Link to="/login">Entrar</Link>
+           <h2>Perfil</h2>
           </div>
         </nav>
       </header>

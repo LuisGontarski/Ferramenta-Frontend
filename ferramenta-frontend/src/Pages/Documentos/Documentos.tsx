@@ -22,7 +22,7 @@ const Documentos = () => {
             <div className="container_conteudos">
                 <MenuLateral />
                 <div className="container_vertical_conteudos">
-                    <div className="card_atualizacoes">
+                    <div className="card_documentos">
                         <div className="div_adicionar_arquivo_documentos">
                             <div className="div_titulo_documentos">
                                 <h2 className="titulo_documentos">Arquivos do Projeto</h2>
