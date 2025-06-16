@@ -1,11 +1,16 @@
 .headerNavBarHome {
   width: 100%;
-  padding: 0.3rem 0.6rem;
+  padding: 0.3rem 2rem;
   background: white;
   display: flex;
   justify-content: space-between;
   align-items: center;
   z-index: 100;
+}
+
+.nav_perfil{
+    display: flex;
+    align-items: center;
 }
 
 .logo {
@@ -24,9 +29,7 @@
 .navbarHome a {
   position: relative;
   font-size: 18px;
-
   font-weight: 600;
-  margin-right: 30px;
 }
 
 .navbarHome a::before {
@@ -46,7 +49,8 @@
 
 .div-menu {
   display: flex;
-  margin-left: 20px;
+  margin-left: 24px;
+  gap: 1rem;
 }
 
 .div-other {
@@ -56,7 +60,6 @@
 }
 
 .div-other a {
-  margin-left: 20px;
   font-size: 18px;
   color: #fff;
   font-weight: 600;
@@ -74,4 +77,11 @@
 .search-input:focus {
   outline: none;
   border-color: #3b82f6;
+}
+
+.img_perfil_navbar{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #3d3d3dab;
 }

@@ -17,7 +17,9 @@ const NavbarHome = () => {
           </div>
 
           <div className="div-other">
-           <h2>Perfil</h2>
+            <a href="/perfil" className="nav_perfil">
+              <img className="img_perfil_navbar" src="/src/assets/desenvolvedor1.jpeg"></img>
+            </a>
           </div>
         </nav>
       </header>

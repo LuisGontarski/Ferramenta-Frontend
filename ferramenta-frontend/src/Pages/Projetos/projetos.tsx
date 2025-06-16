@@ -6,7 +6,7 @@ import { getGithubCommitCount } from "../../services/githubCommitService";
 import MenuLateral from "../../Components/MenuLateral/MenuLateral";
 
 const Projetos = () => {
-  const categorias = ["Todos", "Ativos", "Concluídos", "Arquivados"];
+  const categorias = ["Todos", "Ativo", "Concluído", "Arquivado"];
   const [categoriaSelecionada, setCategoriaSelecionada] = useState("Todos");
   const [nomeUsuario, setNomeUsuario] = useState("");
   const [nomeRepositorio, setNomeRepositorio] = useState("");
@@ -14,10 +14,99 @@ const Projetos = () => {
   type Repositorio = { id: number; name: string; full_name: string };
   const [repositorios, setRepositorios] = useState<Repositorio[]>([]);
   const [repositorioSelecionado, setRepositorioSelecionado] = useState("");
+  const [novoTitulo, setNovoTitulo] = useState("");
+  const [novaDescricao, setNovaDescricao] = useState("");
+  const [novaDataInicio, setNovaDataInicio] = useState("");
+  const [novaDataTermino, setNovaDataTermino] = useState("");
+  const [novoStatus, setNovoStatus] = useState("Ativo"); // pode criar um select se quiser escolher status
+
 
   const [equipes, setEquipes] = useState<
   { id: number; nome: string; membros: string[] }[]
 >([]);
+
+type Projeto = {
+  id: string;
+  titulo: string;
+  descricao: string;
+  atualizadoEm: string;
+  membros: number;
+  branches: number;
+  status: string;
+};
+
+const [projetos, setProjetos] = useState<Projeto[]>([
+  {
+    id: "1",
+    titulo: "Projeto 1",
+    descricao: "Esse projeto consiste no desenvolvimento de um aplicativo de academia",
+    atualizadoEm: "Atualizado há 2 dias",
+    membros: 5,
+    branches: 3,
+    status: "Ativo"
+  },
+  {
+    id: "2",
+    titulo: "Projeto 2",
+    descricao: "Esse projeto consiste no desenvolvimento de um aplicativo de academia",
+    atualizadoEm: "Atualizado há 2 dias",
+    membros: 5,
+    branches: 3,
+    status: "Concluído"
+  },
+  {
+    id: "3",
+    titulo: "Projeto 3",
+    descricao: "Esse projeto consiste no desenvolvimento de um aplicativo de academia",
+    atualizadoEm: "Atualizado há 2 dias",
+    membros: 5,
+    branches: 3,
+    status: "Arquivado"
+  },
+]);
+
+const [busca, setBusca] = useState("");
+
+const projetosFiltrados = projetos.filter((projeto) => {
+  const nomeCorresponde = projeto.titulo.toLowerCase().includes(busca.toLowerCase());
+  const categoriaCorresponde =
+    categoriaSelecionada === "Todos" ||
+    projeto.status.toLowerCase() === categoriaSelecionada.toLowerCase();
+
+  return nomeCorresponde && categoriaCorresponde;
+});
+
+const criarProjeto = () => {
+  if (!novoTitulo.trim() || !novaDescricao.trim()) {
+    alert("Preencha título e descrição");
+    return;
+  }
+
+  const novoProjeto: Projeto = {
+    id: Date.now().toString(),
+    titulo: novoTitulo,
+    descricao: novaDescricao,
+    atualizadoEm: `Atualizado agora`, // ou pode criar lógica para data atual
+    membros: 0, // ou inicialize como preferir
+    branches: 0, // idem
+    status: novoStatus,
+  };
+
+  setProjetos((prev) => [novoProjeto, ...prev]);
+  fecharModal();
+
+  // Limpa os inputs para a próxima criação
+  setNovoTitulo("");
+  setNovaDescricao("");
+  setNovaDataInicio("");
+  setNovaDataTermino("");
+  setNovoStatus("Ativo");
+};
+
+
+
+
+
 
 const [novoNomeEquipe, setNovoNomeEquipe] = useState("");
 
@@ -87,7 +176,7 @@ const membrosDisponiveis = [
     })
     .then((data) => {
       console.log("Repos retornados:", data);
-      setRepositorios(data); // <- Atualiza o select com os repositórios reais
+      setRepositorios(data);
     })
     .catch((error) => {
       console.error("Erro ao buscar repositórios:", error);
@@ -143,20 +232,20 @@ const membrosDisponiveis = [
             <h2 className="titulo_input">Nome do projeto</h2>
             <input
               type="text"
-              name=""
-              id=""
               className="input_modal"
               placeholder="Digite o nome do projeto"
+              value={novoTitulo}
+              onChange={(e) => setNovoTitulo(e.target.value)}
             />
           </div>
           <div className="div_inputs_modal">
             <h2 className="titulo_input">Descrição</h2>
             <input
               type="text"
-              name=""
-              id=""
               className="input_modal"
               placeholder="Descreva o objetivo do projeto"
+              value={novaDescricao}
+              onChange={(e) => setNovaDescricao(e.target.value)}
             />
           </div>
           <div className="container_data">
@@ -170,46 +259,45 @@ const membrosDisponiveis = [
             </div>
           </div>
           <div className="div_inputs_modal">
-  <h2 className="titulo_input">Equipes</h2>
-  <div className="container_criacao_equipe">
-    <input
-      type="text"
-      placeholder="Nome da nova equipe (ex: Frontend)"
-      value={novoNomeEquipe}
-      onChange={(e) => setNovoNomeEquipe(e.target.value)}
-      className="input_modal"
-    />
-    <button onClick={adicionarEquipe}>Adicionar Equipe</button>
-  </div>
-
-  {equipes.map((equipe) => (
-    <div key={equipe.id} className="card_equipe_criada">
-      <h3>{equipe.nome}</h3>
-      <div className="container_membros">
-        {membrosDisponiveis.map((membro) => (
-          <label key={membro} className="card_membros_equipe">
+          <h2 className="titulo_input">Equipes</h2>
+          <div className="container_criacao_equipe">
             <input
-              type="checkbox"
-              checked={equipe.membros.includes(membro)}
-              onChange={() => toggleMembroNaEquipe(equipe.id, membro)}
+              type="text"
+              placeholder="Nome da nova equipe (ex: Frontend)"
+              value={novoNomeEquipe}
+              onChange={(e) => setNovoNomeEquipe(e.target.value)}
+              className="input_modal"
             />
-            <div className="img_perfil"></div>
-            <div>
-              <h2 className="titulo_input">{membro}</h2>
-              <h2 className="descricao_membros">Função desconhecida</h2>
+            <button onClick={adicionarEquipe} className="btn_adicionar_equipe_projeto">Adicionar Equipe</button>
+          </div>
+
+          {equipes.map((equipe) => (
+            <div key={equipe.id} className="card_equipe_criada">
+              <h3>{equipe.nome}</h3>
+              <div className="container_membros">
+                {membrosDisponiveis.map((membro) => (
+                  <label key={membro} className="card_membros_equipe">
+                    <input
+                      type="checkbox"
+                      checked={equipe.membros.includes(membro)}
+                      onChange={() => toggleMembroNaEquipe(equipe.id, membro)}
+                    />
+                    <div className="img_perfil"></div>
+                    <div>
+                      <h2 className="titulo_input">{membro}</h2>
+                      <h2 className="descricao_membros">Função desconhecida</h2>
+                    </div>
+                  </label>
+                ))}
+              </div>
             </div>
-          </label>
-        ))}
-      </div>
-    </div>
-  ))}
-</div>
+          ))}
+        </div>
           <div className="div_inputs_modal">
-            <h2 className="titulo_input">Repositório</h2>
             <div>
-              <h2>Selecione um repositório:</h2>
-              <select value={repositorioSelecionado} onChange={handleSelectChange}>
-                <option value="">-- Selecione --</option>
+              <h2 className="titulo_input">Selecione um repositório</h2>
+              <select value={repositorioSelecionado} onChange={handleSelectChange} className="input_modal">
+                <option value="">Selecione</option>
                 {repositorios.map((repo) => (
                   <option key={repo.id} value={repo.name}>
                     {repo.full_name}
@@ -217,18 +305,8 @@ const membrosDisponiveis = [
                 ))}
               </select>
             </div>
-            <div>
-              <h2>Ou crie um novo repositório para o projeto</h2>
-              <h2>Nome</h2>
-              <input type="text" name="" id="" className="input_modal" />
-              <h2>Descrição</h2>
-              <input type="text" name="" id="" className="input_modal"/>
-              <h2>Privado?</h2>
-              <input type="checkbox" name="" id=""/>
-            </div>
-            <button>Criar novo repositório</button>
-            <button className="btn_conectar">Criar Projeto</button>
           </div>
+            <button className="btn_conectar" onClick={criarProjeto}>Criar Projeto</button>
         </div>
       </div>
       <main className="container_conteudos">
@@ -236,7 +314,14 @@ const membrosDisponiveis = [
         <div className="container_vertical_conteudos">
           <div className="container_dashboard">
             <div className="div_titulo_projetos">
-              <input type="text" className="input_pesquisa_projetos" />
+              <input
+                type="text"
+                className="input_pesquisa_projetos"
+                placeholder="Pesquise por projetos"
+                value={busca}
+                onChange={(e) => setBusca(e.target.value)}
+              />
+
               <button className="btn_novo_projeto" onClick={abrirModal}> Novo projeto </button>
             </div>
 
@@ -257,16 +342,24 @@ const membrosDisponiveis = [
             </div>
 
             <div className="container_projetos">
-              <CardProjeto
-                id="1"
-                titulo="Projeto 1"
-                descricao="Esse projeto consiste no desenvolvimento de um aplicativo de academia"
-                atualizadoEm="Atualizado há 2 dias"
-                membros={5}
-                branches={3}
-                status="Ativo"
-              />
+              {projetosFiltrados.length > 0 ? (
+                projetosFiltrados.map((projeto) => (
+                  <CardProjeto
+                    key={projeto.id}
+                    id={projeto.id}
+                    titulo={projeto.titulo}
+                    descricao={projeto.descricao}
+                    atualizadoEm={projeto.atualizadoEm}
+                    membros={projeto.membros}
+                    branches={projeto.branches}
+                    status={projeto.status}
+                  />
+                ))
+              ) : (
+                <p>Nenhum projeto encontrado.</p>
+              )}
             </div>
+
           </div>
         </div>
       </main>

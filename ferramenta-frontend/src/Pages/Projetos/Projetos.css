@@ -39,11 +39,16 @@ body {
 }
 
 .input_pesquisa_projetos{
-    width: 100%;
-    border: 1px solid grey;
-    border-radius: 4px;
-    padding: 0.4rem;
+    display: flex;
     height: 40px;
+    width: 100%;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    outline: none;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .card-container {
@@ -163,6 +168,7 @@ body {
 .container_projetos{
     display: flex;
     margin-top: 0.5rem;
+    flex-wrap: wrap;
 }
 
 .div_titulo_modal{
@@ -192,7 +198,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  height: 80%;
+  max-height: 80%;
   overflow: auto;
 }
 
@@ -297,13 +303,25 @@ body {
   display: flex;
   gap: 10px;
   align-items: center;
-  margin-bottom: 1rem;
 }
 
 .card_equipe_criada {
   border: 1px solid #ddd;
   padding: 1rem;
   border-radius: 8px;
-  margin-bottom: 1rem;
+  margin-top: 0.6rem;
 }
 
+.btn_adicionar_equipe_projeto{
+    width: 100%;
+    border: none;
+    background-color: black;
+    color: white;
+    font-weight: 500;
+    font-size: 14px;
+    padding: 0.6rem;
+    border-radius: 6px;
+    height: 40px;
+    cursor: pointer;
+    text-align: center;
+}
