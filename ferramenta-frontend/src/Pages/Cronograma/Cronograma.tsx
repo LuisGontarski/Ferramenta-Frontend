@@ -5,6 +5,7 @@ import MenuLateral from "../../Components/MenuLateral/MenuLateral";
 
 const Cronograma = () => {
     const [mostrarModal, setMostrarModal] = useState(false);
+    const cargo = localStorage.getItem("cargo");
 
     const abrirModal = () => setMostrarModal(true);
     
@@ -129,7 +130,10 @@ const Cronograma = () => {
                                 <h2 className="titulo_documentos">Cronograma do Projeto</h2>
                                 <h2 className="subtitulo_documentos">Planejamento das etapas e prazos do projeto.</h2>
                             </div>
-                            <button onClick={abrirModal} className="button_adicionar_arquivo">+ Adicionar Data</button>
+                            {cargo === "Scrum Master" && (
+                                <button onClick={abrirModal} className="button_adicionar_arquivo">+ Adicionar Data</button>
+                            )}
+                            
                         </div>
                         
                         {mostrarModal && (

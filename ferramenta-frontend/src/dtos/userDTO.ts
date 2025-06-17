@@ -13,4 +13,6 @@ export interface ResponseUserDTO {
   message: string;
   usuario_id: string; // O backend SEMPRE retorna o ID do usuário criado
   token?: string;     // Opcional: se o backend enviar um token para auto-login
+  cargo?: string;
+  github_token?: string;
 }

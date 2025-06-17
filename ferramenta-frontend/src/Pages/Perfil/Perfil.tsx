@@ -190,7 +190,8 @@ const Perfil = () => {
                 className="btn_excluir"
                 id="btn_excluir"
                 onClick={() => {
-                  window.location.href = "";
+                  localStorage.clear();
+                  window.location.href = "/login";
                 }}
               >
                 Logout

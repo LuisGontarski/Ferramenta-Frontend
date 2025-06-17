@@ -7,6 +7,7 @@ import MenuLateral from "../../Components/MenuLateral/MenuLateral";
 
 const Projetos = () => {
   const categorias = ["Todos", "Ativo", "Concluído", "Arquivado"];
+  const cargo = localStorage.getItem("cargo");
   const [categoriaSelecionada, setCategoriaSelecionada] = useState("Todos");
   const [nomeUsuario, setNomeUsuario] = useState("");
   const [nomeRepositorio, setNomeRepositorio] = useState("");
@@ -295,15 +296,48 @@ const membrosDisponiveis = [
         </div>
           <div className="div_inputs_modal">
             <div>
-              <h2 className="titulo_input">Selecione um repositório</h2>
-              <select value={repositorioSelecionado} onChange={handleSelectChange} className="input_modal">
-                <option value="">Selecione</option>
-                {repositorios.map((repo) => (
-                  <option key={repo.id} value={repo.name}>
-                    {repo.full_name}
-                  </option>
-                ))}
-              </select>
+              <h2 className="titulo_input">Selecione um repositório ou crie um</h2>
+              <div className="div_criar_repositorio">
+                <select value={repositorioSelecionado} onChange={handleSelectChange} className="input_modal">
+                  <option value="">Selecione</option>
+                  {repositorios.map((repo) => (
+                    <option key={repo.id} value={repo.name}>
+                      {repo.full_name}
+                    </option>
+                  ))}
+                </select>
+                <button className="btn_adicionar_equipe_projeto">Criar repositório</button>
+              </div>
+            </div>
+            <div>
+              <h2 className="titulo_input">Nome do repositório</h2>
+              <input
+                type="text"
+                placeholder="Nome da nova equipe (ex: Frontend)"
+                value={novoNomeEquipe}
+                onChange={(e) => setNovoNomeEquipe(e.target.value)}
+                className="input_modal"
+              />
+            </div>
+            <div>
+              <h2 className="titulo_input">Descrição</h2>
+              <input
+                type="text"
+                placeholder="Nome da nova equipe (ex: Frontend)"
+                value={novoNomeEquipe}
+                onChange={(e) => setNovoNomeEquipe(e.target.value)}
+                className="input_modal"
+              />
+            </div>
+            <div className="div_privado">
+              <h2 className="titulo_input">É privado?</h2>
+              <input
+                type="checkbox"
+                placeholder="Nome da nova equipe (ex: Frontend)"
+                value={novoNomeEquipe}
+                onChange={(e) => setNovoNomeEquipe(e.target.value)}
+                className="checkbox_privado"
+              />
             </div>
           </div>
             <button className="btn_conectar" onClick={criarProjeto}>Criar Projeto</button>
@@ -322,7 +356,11 @@ const membrosDisponiveis = [
                 onChange={(e) => setBusca(e.target.value)}
               />
 
-              <button className="btn_novo_projeto" onClick={abrirModal}> Novo projeto </button>
+              {cargo === "Product Owner" && (
+                <button className="btn_novo_projeto" onClick={abrirModal}>
+                  Novo projeto
+                </button>
+              )}
             </div>
 
             <div className="divCategorias">

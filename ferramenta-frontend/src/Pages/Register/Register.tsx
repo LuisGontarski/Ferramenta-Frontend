@@ -86,6 +86,9 @@ const Register: React.FC = () => {
         if (response.token) {
           localStorage.setItem("authToken", response.token);
         }
+
+        localStorage.setItem("cargo", payloadToSend.cargo || "Não informar");
+
         navigate("/");
       } else {
         setError("Erro ao processar o cadastro após o envio. Tente novamente.");
@@ -281,7 +284,8 @@ const Register: React.FC = () => {
                   <button
                     className="github-connect-button"
                     onClick={() => {
-                      window.location.href = 'https://localhost:3000/api/auth/github/login';
+                      handleRegister
+                      window.location.href = 'http://localhost:3000/api/auth/github/login';
                     }}
                   >
                     <i className="fa-brands fa-github icone_git_menor"></i>

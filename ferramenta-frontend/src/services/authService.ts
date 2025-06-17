@@ -8,6 +8,8 @@ export interface LoginPayload {
 }
 
 export interface LoginResponse {
+  github_token: string;
+  cargo: string;
   token: string;
   usuario_id: string;
 }

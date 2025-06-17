@@ -325,3 +325,19 @@ body {
     cursor: pointer;
     text-align: center;
 }
+
+
+.div_criar_repositorio{
+  display: flex;
+  gap: 0.8rem;
+}
+
+.div_privado{
+  display: flex;
+}
+
+.checkbox_privado{
+  transform: scale(1.5);
+  margin-left: 8px;   
+  cursor: pointer;
+}

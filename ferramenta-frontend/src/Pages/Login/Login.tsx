@@ -29,6 +29,8 @@ const Login: React.FC = () => {
 
       localStorage.setItem("token", response.token);
       localStorage.setItem("usuario_id", response.usuario_id);
+      localStorage.setItem("cargo", response.cargo || "Não informar");
+      localStorage.setItem("github_token", response.github_token || "Não informar");
 
       navigate("/perfil");
     } catch (error: any) {

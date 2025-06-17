@@ -14,6 +14,7 @@ const Requisitos = () => {
   const [requisitosFuncionais, setRequisitosFuncionais] = useState<Requisito[]>([]);
   const [requisitosNaoFuncionais, setRequisitosNaoFuncionais] = useState<Requisito[]>([]);
   const [mostrarModal, setMostrarModal] = useState(false);
+  const cargo = localStorage.getItem("cargo");
 
   const [tipo, setTipo] = useState<"Funcional" | "Não Funcional">("Funcional");
   const [prioridade, setPrioridade] = useState<"Alta" | "Média" | "Baixa">("Média");
@@ -93,7 +94,12 @@ const Requisitos = () => {
                     <h2 className="titulo_documentos">Documentação de Requisitos</h2>
                     <h2 className="subtitulo_documentos">Requisitos funcionais e não funcionais definidos para o projeto.</h2>
                 </div>
-              <button onClick={abrirModal} className="button_adicionar_arquivo">+ Adicionar Requisito</button>
+                {(cargo === "Scrum Master" || cargo === "Product Owner") && (
+                  <button onClick={abrirModal} className="button_adicionar_arquivo">
+                    + Adicionar Requisito
+                  </button>
+                )}
+
             </div>
 
             {renderTabela("Requisitos Funcionais", requisitosFuncionais, "RFN")}
