@@ -1,7 +1,29 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { supabase } from "./supabaseClient.js";
 
 const EsqueceuSenha = () => {
+  const [email, setEmail] = useState("");
+  const [mensagem, setMensagem] = useState("");
+  const [erro, setErro] = useState("");
+
+  const handleResetPassword = async () => {
+    setMensagem("");
+    setErro("");
+
+    if (!email) {
+      setErro("Por favor, digite seu email.");
+      return;
+    }
+
+    const { error } = await supabase.auth.resetPasswordForEmail(email);
+    if (error) {
+      setErro(error.message);
+    } else {
+      setMensagem("Enviamos um link para redefinição de senha no seu email.");
+    }
+  };
+
   return (
     <main className="mainLogin">
       <div className="left_card_login">
@@ -16,15 +38,24 @@ const EsqueceuSenha = () => {
             <Link to="/" className="logo-login">Esqueceu sua senha?</Link>
             <p className="subtitle">Digite seu email para receber as instruções de recuperação</p>
           </div>
+
           <div>
             <h2 className="titulos_inputs_login">Email</h2>
             <input
               type="email"
               placeholder="seu@gmail.com"
               className="input_login"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
-          <button className="btn-login">Enviar instruções</button>
+
+          <button onClick={handleResetPassword} className="btn-login">
+            Enviar instruções
+          </button>
+
+          {mensagem && <p style={{ color: "green" }}>{mensagem}</p>}
+          {erro && <p style={{ color: "red" }}>{erro}</p>}
 
           <p className="redirect_login">
             Lembrou da senha? <Link to="/login">Login</Link>
