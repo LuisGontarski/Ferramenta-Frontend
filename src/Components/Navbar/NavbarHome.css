@@ -6,6 +6,8 @@
   justify-content: space-between;
   align-items: center;
   z-index: 100;
+  border-bottom: 1px solid #00000014;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
 }
 
 .nav_perfil{
@@ -51,6 +53,17 @@
   display: flex;
   margin-left: 24px;
   gap: 1rem;
+}
+
+.div-menu a {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+}
+
+.div-menu a span {
+  font-size: 16px;
 }
 
 .div-other {
