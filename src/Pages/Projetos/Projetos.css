@@ -267,7 +267,7 @@ body {
 
 .titulo_modal {
 	font-weight: 600;
-	font-size: 18px;
+	font-size: 16px;
 }
 
 .descricao_modal {
@@ -306,12 +306,11 @@ body {
 	height: 40px;
 	width: 100%;
 	border-radius: 0.375rem;
-	border: 1px solid #ccc;
+	border: 1px solid #8080804a;
 	background-color: #fff;
 	padding: 0.5rem 0.75rem;
 	font-size: 0.875rem;
 	outline: none;
-	transition: box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .container_criacao_equipe {

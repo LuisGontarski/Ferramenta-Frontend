@@ -120,7 +120,7 @@ const HomePage = () => {
 						<div className="card_atualizacoes">
 							<div className="div_titulo_projetos">
 								<div>
-									<h2 className="titulo_projetos">Projetos Recentes</h2>
+									<h2 className="titulo_homepage">Projetos Recentes</h2>
 									<h2 className="descricao_projetos">Você tem 12 projetos ativos no momento.</h2>
 								</div>
 								<NavLink to={'/projetos'} className="div_ver_projetos">
@@ -128,126 +128,156 @@ const HomePage = () => {
 									<FaChevronRight color="black" size={'12px'} />
 								</NavLink>
 							</div>
-							<div className="div_card_dois_projetos_recentes">
-								<div className="div_projetos">
-									<div className="container_projetos">
-										<div className="card_projetos_recentes">
-											<div>
-												<h2 className="texto_projetos">Projeto AllLuga</h2>
-												<h2 className="texto_atualizacao">Sistema completo de alugueis de todos os itens</h2>
-											</div>
-											<div className="div_progresso_projeto">
-												<div className="div_dois_projetos_recentes">
-													<h2 className="texto_progresso">Progresso</h2>
-													<h2 className="texto_progresso">55%</h2>
-												</div>
-												<input type="range" className="custom-range" max={max} min={0} value={value} style={gradientStyle} />
-											</div>
-											<div className="div_icones_projetos">
-												<div className="div_items_icones">
-													<MdAccessTime size={'16px'} color="grey" />
-													<h2 className="texto_atualizacao">Atualizado há 2 horas</h2>
-												</div>
-												<div className="div_items_icones">
-													<GoPeople size={'16px'} color="grey" />
-													<h2 className="texto_atualizacao">6 membros</h2>
-												</div>
-											</div>
-											<NavLink to={'/ProjetosDetalhes'} className="btn_entrar_projeto">Acessar projeto</NavLink>
+							<div className="container_card_projetos_recentes">
+								<div className="card_projetos_recentes">
+									<div>
+										<h2 className="texto_projetos">Projeto AllLuga</h2>
+										<h2 className="texto_atualizacao">Sistema completo de alugueis de todos os itens</h2>
+									</div>
+									<div className="div_progresso_projeto">
+										<div className="div_dois_projetos_recentes">
+											<h2 className="texto_progresso">Progresso</h2>
+											<h2 className="texto_progresso">55%</h2>
+										</div>
+										<input type="range" className="custom-range" max={max} min={0} defaultValue={value}  style={gradientStyle} />
+									</div>
+									<div className="div_icones_projetos">
+										<div className="div_items_icones">
+											<MdAccessTime size={'16px'} color="grey" />
+											<h2 className="texto_atualizacao">Atualizado há 2 horas</h2>
+										</div>
+										<div className="div_items_icones">
+											<GoPeople size={'16px'} color="grey" />
+											<h2 className="texto_atualizacao">6 membros</h2>
 										</div>
 									</div>
+									<NavLink to={'/ProjetosDetalhes'} className="btn_entrar_projeto">Acessar projeto</NavLink>
 								</div>
-								<div className="div_projetos">
-									<div className="container_projetos">
-										<div className="card_projetos_recentes">
-											<div>
-												<h2 className="texto_projetos">Projeto AllLuga</h2>
-												<h2 className="texto_atualizacao">Sistema completo de alugueis de todos os itens</h2>
-											</div>
-											<div className="div_progresso_projeto">
-												<div className="div_dois_projetos_recentes">
-													<h2 className="texto_progresso">Progresso</h2>
-													<h2 className="texto_progresso">55%</h2>
-												</div>
-												<input type="range" className="custom-range" max={max} min={0} value={value} style={gradientStyle} />
-											</div>
-											<div className="div_icones_projetos">
-												<div className="div_items_icones">
-													<MdAccessTime size={'16px'} color="grey" />
-													<h2 className="texto_atualizacao">Atualizado há 2 horas</h2>
-												</div>
-												<div className="div_items_icones">
-													<GoPeople size={'16px'} color="grey" />
-													<h2 className="texto_atualizacao">3 membros</h2>
-												</div>
-											</div>
-											<NavLink to={'/ProjetosDetalhes'} className="btn_entrar_projeto">Acessar projeto</NavLink>
+								<div className="card_projetos_recentes">
+									<div>
+										<h2 className="texto_projetos">Projeto AllLuga</h2>
+										<h2 className="texto_atualizacao">Sistema completo de alugueis de todos os itens</h2>
+									</div>
+									<div className="div_progresso_projeto">
+										<div className="div_dois_projetos_recentes">
+											<h2 className="texto_progresso">Progresso</h2>
+											<h2 className="texto_progresso">55%</h2>
+										</div>
+										<input type="range" className="custom-range" max={max} min={0} defaultValue={value}  style={gradientStyle} />
+									</div>
+									<div className="div_icones_projetos">
+										<div className="div_items_icones">
+											<MdAccessTime size={'16px'} color="grey" />
+											<h2 className="texto_atualizacao">Atualizado há 2 horas</h2>
+										</div>
+										<div className="div_items_icones">
+											<GoPeople size={'16px'} color="grey" />
+											<h2 className="texto_atualizacao">6 membros</h2>
 										</div>
 									</div>
+									<NavLink to={'/ProjetosDetalhes'} className="btn_entrar_projeto">Acessar projeto</NavLink>
 								</div>
-							</div>
-							<div className="div_card_dois_projetos_recentes">
-								<div className="div_projetos">
-									<div className="container_projetos">
-										<div className="card_projetos_recentes">
-											<div>
-												<h2 className="texto_projetos">Projeto AllLuga</h2>
-												<h2 className="texto_atualizacao">Sistema completo de alugueis de todos os itens</h2>
-											</div>
-											<div className="div_progresso_projeto">
-												<div className="div_dois_projetos_recentes">
-													<h2 className="texto_progresso">Progresso</h2>
-													<h2 className="texto_progresso">55%</h2>
-												</div>
-												<input type="range" className="custom-range" max={max} min={0} value={value} style={gradientStyle} />
-											</div>
-											<div className="div_icones_projetos">
-												<div className="div_items_icones">
-													<MdAccessTime size={'16px'} color="grey" />
-													<h2 className="texto_atualizacao">Atualizado há 2 horas</h2>
-												</div>
-												<div className="div_items_icones">
-													<GoPeople size={'16px'} color="grey" />
-													<h2 className="texto_atualizacao">7 membros</h2>
-												</div>
-											</div>
-											<NavLink to={'/ProjetosDetalhes'} className="btn_entrar_projeto">Acessar projeto</NavLink>
+								<div className="card_projetos_recentes">
+									<div>
+										<h2 className="texto_projetos">Projeto AllLuga</h2>
+										<h2 className="texto_atualizacao">Sistema completo de alugueis de todos os itens</h2>
+									</div>
+									<div className="div_progresso_projeto">
+										<div className="div_dois_projetos_recentes">
+											<h2 className="texto_progresso">Progresso</h2>
+											<h2 className="texto_progresso">55%</h2>
+										</div>
+										<input type="range" className="custom-range" max={max} min={0} defaultValue={value}  style={gradientStyle} />
+									</div>
+									<div className="div_icones_projetos">
+										<div className="div_items_icones">
+											<MdAccessTime size={'16px'} color="grey" />
+											<h2 className="texto_atualizacao">Atualizado há 2 horas</h2>
+										</div>
+										<div className="div_items_icones">
+											<GoPeople size={'16px'} color="grey" />
+											<h2 className="texto_atualizacao">6 membros</h2>
 										</div>
 									</div>
+									<NavLink to={'/ProjetosDetalhes'} className="btn_entrar_projeto">Acessar projeto</NavLink>
 								</div>
-								<div className="div_projetos">
-									<div className="container_projetos">
-										<div className="card_projetos_recentes">
-											<div>
-												<h2 className="texto_projetos">Projeto AllLuga</h2>
-												<h2 className="texto_atualizacao">Sistema completo de alugueis de todos os itens</h2>
-											</div>
-											<div className="div_progresso_projeto">
-												<div className="div_dois_projetos_recentes">
-													<h2 className="texto_progresso">Progresso</h2>
-													<h2 className="texto_progresso">55%</h2>
-												</div>
-												<input type="range" className="custom-range" max={max} min={0} value={value} style={gradientStyle} />
-											</div>
-											<div className="div_icones_projetos">
-												<div className="div_items_icones">
-													<MdAccessTime size={'16px'} color="grey" />
-													<h2 className="texto_atualizacao">Atualizado há 2 horas</h2>
-												</div>
-												<div className="div_items_icones">
-													<GoPeople size={'16px'} color="grey" />
-													<h2 className="texto_atualizacao">4 membros</h2>
-												</div>
-											</div>
-											<NavLink to={'/ProjetosDetalhes'} className="btn_entrar_projeto">Acessar projeto</NavLink>
+								<div className="card_projetos_recentes">
+									<div>
+										<h2 className="texto_projetos">Projeto AllLuga</h2>
+										<h2 className="texto_atualizacao">Sistema completo de alugueis de todos os itens</h2>
+									</div>
+									<div className="div_progresso_projeto">
+										<div className="div_dois_projetos_recentes">
+											<h2 className="texto_progresso">Progresso</h2>
+											<h2 className="texto_progresso">55%</h2>
+										</div>
+										<input type="range" className="custom-range" max={max} min={0} defaultValue={value}  style={gradientStyle} />
+									</div>
+									<div className="div_icones_projetos">
+										<div className="div_items_icones">
+											<MdAccessTime size={'16px'} color="grey" />
+											<h2 className="texto_atualizacao">Atualizado há 2 horas</h2>
+										</div>
+										<div className="div_items_icones">
+											<GoPeople size={'16px'} color="grey" />
+											<h2 className="texto_atualizacao">6 membros</h2>
 										</div>
 									</div>
+									<NavLink to={'/ProjetosDetalhes'} className="btn_entrar_projeto">Acessar projeto</NavLink>
+								</div>
+								<div className="card_projetos_recentes">
+									<div>
+										<h2 className="texto_projetos">Projeto AllLuga</h2>
+										<h2 className="texto_atualizacao">Sistema completo de alugueis de todos os itens</h2>
+									</div>
+									<div className="div_progresso_projeto">
+										<div className="div_dois_projetos_recentes">
+											<h2 className="texto_progresso">Progresso</h2>
+											<h2 className="texto_progresso">55%</h2>
+										</div>
+										<input type="range" className="custom-range" max={max} min={0} defaultValue={value}  style={gradientStyle} />
+									</div>
+									<div className="div_icones_projetos">
+										<div className="div_items_icones">
+											<MdAccessTime size={'16px'} color="grey" />
+											<h2 className="texto_atualizacao">Atualizado há 2 horas</h2>
+										</div>
+										<div className="div_items_icones">
+											<GoPeople size={'16px'} color="grey" />
+											<h2 className="texto_atualizacao">6 membros</h2>
+										</div>
+									</div>
+									<NavLink to={'/ProjetosDetalhes'} className="btn_entrar_projeto">Acessar projeto</NavLink>
+								</div>
+								<div className="card_projetos_recentes">
+									<div>
+										<h2 className="texto_projetos">Projeto AllLuga</h2>
+										<h2 className="texto_atualizacao">Sistema completo de alugueis de todos os itens</h2>
+									</div>
+									<div className="div_progresso_projeto">
+										<div className="div_dois_projetos_recentes">
+											<h2 className="texto_progresso">Progresso</h2>
+											<h2 className="texto_progresso">55%</h2>
+										</div>
+										<input type="range" className="custom-range" max={max} min={0} defaultValue={value}  style={gradientStyle} />
+									</div>
+									<div className="div_icones_projetos">
+										<div className="div_items_icones">
+											<MdAccessTime size={'16px'} color="grey" />
+											<h2 className="texto_atualizacao">Atualizado há 2 horas</h2>
+										</div>
+										<div className="div_items_icones">
+											<GoPeople size={'16px'} color="grey" />
+											<h2 className="texto_atualizacao">6 membros</h2>
+										</div>
+									</div>
+									<NavLink to={'/ProjetosDetalhes'} className="btn_entrar_projeto">Acessar projeto</NavLink>
 								</div>
 							</div>
 						</div>
 
 						<div className="card_atualizacoes">
-							<h2 className="titulo_projetos">Atividades Recentes</h2>
+							<h2 className="titulo_homepage">Atividades Recentes</h2>
 							<div className="div_atividades_recentes">
 								<div className="container_projetos">
 									<img src={desenvolvedor1} className="img_atividade_recente" />

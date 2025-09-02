@@ -11,7 +11,7 @@ const ProjetosDetalhes = () => {
     const fillPercent = (value / max) * 100;
 
     const gradientStyle = {
-      background: `linear-gradient(to right, #4facfe 0%, #00f2fe ${fillPercent}%, #e0e0e0 ${fillPercent}%)`
+      background: `linear-gradient(to right, #155dfc 0%, #155dfc ${fillPercent}%, #e0e0e0 ${fillPercent}%)`
     };
 
   return (
@@ -25,10 +25,9 @@ const ProjetosDetalhes = () => {
             <div className="container_dashboard">
                 <div className="div_kanban_projeto_detalhes">
                     <div>
-                        <h1>Projeto 1</h1>
-                        <h2>Sistema de gestão de projetos com interface moderna e funcionalidades avançadas</h2>
+                        <h1 className="titulo_projetos">Projeto All Gym</h1>
+                        <span className="descricao_titulo_projetos">Sistema de gestão de projetos com interface moderna e funcionalidades avançadas</span>
                     </div>
-                    <button className="btn_kanban">Kanban</button>
                 </div>
                 <div className="container_informacoes_projeto_detalhes">
                     <div className="div_informacoes_projeto_detalhes">

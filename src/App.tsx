@@ -10,6 +10,7 @@ import EsqueceuSenha from './Pages/EsqueceuSenha/EsqueceuSenha';
 import Documentos from './Pages/Documentos/Documentos';
 import Requisitos from './Pages/Requisitos/Requisitos';
 import Cronograma from './Pages/Cronograma/Cronograma';
+import Metricas from './Pages/Metricas/Metricas';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route path="/documentos" element={<Documentos />} />
         <Route path="/requisitos" element={<Requisitos />} />
         <Route path="/cronograma" element={<Cronograma />} />
+        <Route path="/metricas" element={<Metricas />} />
       </Routes>
     </Router>
   );

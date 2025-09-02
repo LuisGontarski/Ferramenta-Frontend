@@ -400,3 +400,11 @@ input[type="range"].custom-range::-moz-range-thumb {
 	font-size: 18px;
 	font-weight: 500;
 }
+
+.cards_resumo{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 1rem;
+}

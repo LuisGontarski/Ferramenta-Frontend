@@ -79,7 +79,25 @@ const Projetos = () => {
 			atualizadoEm: "Atualizado há 2 dias",
 			membros: 5,
 			branches: 3,
+			status: "Ativo"
+		},
+		{
+			id: "4",
+			titulo: "Projeto 4",
+			descricao: "Esse projeto consiste no desenvolvimento de um aplicativo de academia",
+			atualizadoEm: "Atualizado há 2 dias",
+			membros: 5,
+			branches: 3,
 			status: "Arquivado"
+		},
+		{
+			id: "5",
+			titulo: "Projeto 5",
+			descricao: "Esse projeto consiste no desenvolvimento de um aplicativo de academia",
+			atualizadoEm: "Atualizado há 2 dias",
+			membros: 5,
+			branches: 3,
+			status: "Concluído"
 		},
 	]);
 
@@ -93,6 +111,7 @@ const Projetos = () => {
 
 		return nomeCorresponde && categoriaCorresponde;
 	});
+
 
 	const criarProjeto = () => {
 		if (!novoTitulo.trim() || !novaDescricao.trim()) {
@@ -405,82 +424,56 @@ const Projetos = () => {
 						</div>
 
 						<div>
-							<div className="div_card_dois_projetos_recentes">
-								<div className="div_projetos">
-									<div className="container_projetos">
-										<div className="card_projetos_recentes">
+							<div className="container_card_projetos">
+								{projetosFiltrados.length > 0 ? (
+									projetosFiltrados.map((projeto) => (
+										<div key={projeto.id} className="card_projetos_recentes">
 											<div>
-												<h2 className="texto_projetos">Projeto AllLuga</h2>
-												<h2 className="texto_atualizacao">Sistema completo de alugueis de todos os itens</h2>
+												<h2 className="texto_projetos">{projeto.titulo}</h2>
+												<h2 className="texto_atualizacao">{projeto.descricao}</h2>
 											</div>
 											<div className="div_progresso_projeto">
 												<div className="div_dois_projetos_recentes">
 													<h2 className="texto_progresso">Progresso</h2>
 													<h2 className="texto_progresso">55%</h2>
 												</div>
-												<input type="range" className="custom-range" max={max} min={0} value={value} style={gradientStyle} />
+												<input
+													type="range"
+													className="custom-range"
+													max={max}
+													min={0}
+													defaultValue={value} // só visual
+													style={gradientStyle}
+													readOnly
+												/>
 											</div>
 											<div className="div_icones_projetos">
 												<div className="div_items_icones">
 													<MdAccessTime size={'16px'} color="grey" />
-													<h2 className="texto_atualizacao">Atualizado há 2 horas</h2>
+													<h2 className="texto_atualizacao">{projeto.atualizadoEm}</h2>
 												</div>
 												<div className="div_items_icones">
 													<GoPeople size={'16px'} color="grey" />
-													<h2 className="texto_atualizacao">6 membros</h2>
+													<h2 className="texto_atualizacao">{projeto.membros} membros</h2>
 												</div>
 											</div>
 											<div className="div_icones_projetos">
 												<div className="div_items_icones">
 													<IoIosGitBranch size={'16px'} color="grey" />
-													<h2 className="texto_atualizacao">3 branches</h2>
+													<h2 className="texto_atualizacao">{projeto.branches} branches</h2>
 												</div>
 												<div className="div_items_icones">
-													<h2 className="texto_atualizacao">Ativo</h2>
+													<h2 className="texto_atualizacao">{projeto.status}</h2>
 												</div>
 											</div>
-											<NavLink to={'/ProjetosDetalhes'} className="btn_entrar_projeto">Entrar no Projeto</NavLink>
+											<NavLink to={'/ProjetosDetalhes'} className="btn_entrar_projeto">
+												Entrar no Projeto
+											</NavLink>
 										</div>
-									</div>
-								</div>
-								
-								<div className="div_projetos">
-									<div className="container_projetos">
-										<div className="card_projetos_recentes">
-											<div>
-												<h2 className="texto_projetos">Projeto AllLuga</h2>
-												<h2 className="texto_atualizacao">Sistema completo de alugueis de todos os itens</h2>
-											</div>
-											<div className="div_progresso_projeto">
-												<div className="div_dois_projetos_recentes">
-													<h2 className="texto_progresso">Progresso</h2>
-													<h2 className="texto_progresso">55%</h2>
-												</div>
-												<input type="range" className="custom-range" max={max} min={0} value={value} style={gradientStyle} />
-											</div>
-											<div className="div_icones_projetos">
-												<div className="div_items_icones">
-													<MdAccessTime size={'16px'} color="grey" />
-													<h2 className="texto_atualizacao">Atualizado há 2 horas</h2>
-												</div>
-												<div className="div_items_icones">
-													<GoPeople size={'16px'} color="grey" />
-													<h2 className="texto_atualizacao">6 membros</h2>
-												</div>
-											</div>
-											<div className="div_icones_projetos">
-												<div className="div_items_icones">
-													<IoIosGitBranch size={'16px'} color="grey" />
-													<h2 className="texto_atualizacao">3 branches</h2>
-												</div>
-												<div className="div_items_icones">
-													<h2 className="texto_atualizacao">Ativo</h2>
-												</div>
-											</div>
-											<NavLink to={'/ProjetosDetalhes'} className="btn_entrar_projeto">Entrar no Projeto</NavLink>
-										</div>
-									</div>
-								</div>
+									))
+								) : (
+									<p>Nenhum projeto encontrado.</p>
+								)}
 							</div>
 						</div>
 					</div>

@@ -11,12 +11,12 @@
 }
 
 .div_informacoes_projeto_detalhes{
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 0.8rem;
+        width: 100%;
     background-color: white;
-    margin-bottom: 1rem;
-    flex: 1;
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    border: 1px solid #8080804a;
 }
 
 .btn_kanban{
@@ -76,7 +76,7 @@
 }
 
 .titulo_metricas_detalhes_projetos{
-    font-size: 16px;
+        font-size: 14px;
     font-weight: 500;
 }
 
@@ -86,18 +86,18 @@
 }
 
 .adicional_metricas_detalhes_projetos{
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 400;
     color: #71717a;
 }
 
 .titulo_card_projeto_detalhes{
-    font-size: 24px;
-    font-weight: 700;
+    font-size: 16px;
+    font-weight: 500;
 }
 
 .sub_titulo_card_projeto_detalhes{
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 400;
 }
 

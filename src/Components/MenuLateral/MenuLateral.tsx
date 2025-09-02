@@ -8,6 +8,7 @@ import { AiOutlineFolderOpen } from "react-icons/ai";
 import { BiUser } from "react-icons/bi";
 import { TbLogout2 } from "react-icons/tb";
 import { NavLink } from "react-router-dom";
+import { TfiRulerAlt2 } from "react-icons/tfi";
 
 const MenuLateral = () => {
 	return (
@@ -38,6 +39,9 @@ const MenuLateral = () => {
 
 				<NavLink to="/requisitos" className={({ isActive }) => isActive ? "menu_lateral_item selecionado" : "menu_lateral_item"}>
 					<IoMdCheckboxOutline size={'16px'} /> <span>Requisitos</span>
+				</NavLink>
+				<NavLink to="/metricas" className={({ isActive }) => isActive ? "menu_lateral_item selecionado" : "menu_lateral_item"}>
+					<TfiRulerAlt2 size={'16px'}/> <span>Métricas</span>
 				</NavLink>
 			</div>
 
