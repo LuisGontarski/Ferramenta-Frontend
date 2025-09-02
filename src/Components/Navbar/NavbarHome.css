@@ -1,6 +1,6 @@
 .headerNavBarHome {
   width: 100%;
-  padding: 0.3rem 2rem;
+  padding: 0.3rem 0.6rem;
   background: white;
   display: flex;
   justify-content: space-between;
@@ -16,7 +16,7 @@
 }
 
 .logo {
-  font-size: 32px;
+  font-size: 28px;
   color: #1d4ed8;
   font-weight: 700;
 }
@@ -63,7 +63,7 @@
 }
 
 .div-menu a span {
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .div-other {
@@ -93,8 +93,7 @@
 }
 
 .img_perfil_navbar{
-    width: 40px;
-    height: 40px;
+    width: 46px;
+    height: 46px;
     border-radius: 50%;
-    border: 2px solid #3d3d3dab;
 }

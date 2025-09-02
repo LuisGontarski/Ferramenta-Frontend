@@ -167,7 +167,6 @@ body {
 
 .container_projetos{
     display: flex;
-    margin-top: 0.5rem;
     flex-wrap: wrap;
 }
 

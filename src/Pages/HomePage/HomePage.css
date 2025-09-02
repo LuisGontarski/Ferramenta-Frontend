@@ -125,22 +125,23 @@ h1 {
   padding: 1rem;
   border-radius: 10px;
   box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-}
-
-
-.texto_projetos{
-  font-size: 16px;
-  font-weight: 600;
+  border: 1px solid #8080804a;
 }
 
 .texto_atualizacao{
-  font-size: 16px;
+  font-size: 14px;
+  font-weight: 400;
+  color: grey;
+}
+
+.texto_recente_atualizacao{
+  font-size: 12px;
   font-weight: 400;
   color: grey;
 }
 
 .texto_progresso{
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 400;
   color: black;
 }
@@ -169,11 +170,18 @@ h1 {
 }
 
 .div_atividades_recentes{
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.8rem;
-  margin-top: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8rem;
+    margin-top: 0.8rem;
+    padding: 0.4rem;
+    border-radius: 8px;
+}
+
+.div_atividades_recentes:hover{
+    background-color: #f0f0f0ee;
+    cursor: pointer;
 }
 
 .container_projetos{
@@ -190,30 +198,49 @@ h1 {
 }
 
 .img_atividade_recente{
-  width: 64px;
-  height: 64px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
-  border: 2px solid #1d4fd8ab;
 }
 
 .texto_projetos{
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .descricao_projetos{
-  font-weight: 400;
-  font-size: 16px;
-  color: grey;
+    font-weight: 400;
+    font-size: 14px;
+    color: grey;
 }
 
 .fa-arrow-right{
   cursor: pointer;
 }
 
+.titulo_projetos{
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.texto_atividade_recente{
+  font-size: 14px;
+  font-weight: 400;
+  color: rgb(0, 0, 0);
+}
+
+.responsavel_atividade_recente{
+  font-weight: 500;
+}
+
+.projeto_atividade_recente{
+  color: #1d4ed8;
+  font-weight: 500;
+}
+
 
 .titulo_metricas_dashboard{
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 500;
 }
 
@@ -223,7 +250,7 @@ h1 {
 }
 
 .adicional_metricas_dashboard{
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 400;
   color: #71717a;
 }
@@ -231,12 +258,12 @@ h1 {
 .card_projetos_recentes{
   width: 100%;
   background-color: white;
-  padding: 0.4rem;
+  padding: 0.6rem;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
-  border: 1px solid #8080804f;
+  border: 1px solid #80808042;
 }
 
 .btn_entrar_projeto{
@@ -246,10 +273,9 @@ h1 {
   color: white;
   font-weight: 500;
   font-size: 14px;
-  padding: 0.6rem;
+  padding: 0.4rem;
   border-radius: 6px;
   cursor: pointer;
-  margin-top: 0.4rem;
   text-align: center;
 }
 
@@ -270,6 +296,14 @@ input[type="range"].custom-range::-webkit-slider-thumb {
   background: transparent;
 }
 
+.metricas_ganhos{
+  color: #1cbb6d;
+}
+
+.metricas_perdas{
+  color: #dc2626;
+}
+
 input[type="range"].custom-range::-moz-range-thumb {
   width: 0;
   height: 0;
@@ -280,5 +314,15 @@ input[type="range"].custom-range::-moz-range-thumb {
 .div_dois_projetos_recentes{
   display: flex;
   justify-content: space-between;
+}
+
+.titulo_grafico_dashboard{
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.titulo_cards{
+  font-size: 18px;
+  font-weight: 500;
 }
 

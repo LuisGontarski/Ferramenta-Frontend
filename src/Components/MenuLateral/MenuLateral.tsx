@@ -1,27 +1,57 @@
-// Components/MenuLateral/SidebarMenu.jsx
 import React from "react";
-import { Link } from "react-router-dom";
-import "./MenuLateral.css"; // crie esse arquivo ou reutilize o estilo existente
-import img from "../../Assets/pulse.png";
-import calendario from "../../Assets/calendar.png";
+import "./MenuLateral.css";
+import { IoDocumentTextOutline } from "react-icons/io5";
+import { LuChartColumn, LuCalendar } from "react-icons/lu";
+import { IoMdCheckboxOutline } from "react-icons/io";
+import { MdOutlineDashboard } from "react-icons/md";
+import { AiOutlineFolderOpen } from "react-icons/ai";
+import { BiUser } from "react-icons/bi";
+import { TbLogout2 } from "react-icons/tb";
+import { NavLink } from "react-router-dom";
 
 const MenuLateral = () => {
-  return (
-    <div className="menu_lateral">
-      <Link to="/">
-        <div className="div_menu_lateral">
-          <img src={img} className="icone_menu" alt="Dashboard" />
-          <h2 className="nome_nav_menu_lateral">Dashboard</h2>
-        </div>
-      </Link>
-      <Link to="/projetos">
-        <div className="div_menu_lateral">
-          <i className="fa-regular fa-folder icone_menu"></i>
-          <h2 className="nome_nav_menu_lateral">Projetos</h2>
-        </div>
-      </Link>
-    </div>
-  );
+	return (
+		<div className="menu_lateral">
+			<div className="container_menu_lateral_nav">
+				<NavLink 
+					to="/" 
+					className={({ isActive }) => isActive ? "menu_lateral_item selecionado" : "menu_lateral_item"}
+				>
+					<MdOutlineDashboard size={'16px'} /> <span>Dashboard</span>
+				</NavLink>
+
+				<NavLink to="/projetos" className={({ isActive }) => isActive ? "menu_lateral_item selecionado" : "menu_lateral_item"}>
+					<AiOutlineFolderOpen size={'16px'} /> <span>Projetos</span>
+				</NavLink>
+
+				<NavLink to="/kanban" className={({ isActive }) => isActive ? "menu_lateral_item selecionado" : "menu_lateral_item"}>
+					<LuChartColumn size={'16px'} /> <span>Kanban</span>
+				</NavLink>
+
+				<NavLink to="/cronograma" className={({ isActive }) => isActive ? "menu_lateral_item selecionado" : "menu_lateral_item"}>
+					<LuCalendar size={'16px'} /> <span>Cronograma</span>
+				</NavLink>
+
+				<NavLink to="/documentos" className={({ isActive }) => isActive ? "menu_lateral_item selecionado" : "menu_lateral_item"}>
+					<IoDocumentTextOutline size={'16px'} /> <span>Documentos</span>
+				</NavLink>
+
+				<NavLink to="/requisitos" className={({ isActive }) => isActive ? "menu_lateral_item selecionado" : "menu_lateral_item"}>
+					<IoMdCheckboxOutline size={'16px'} /> <span>Requisitos</span>
+				</NavLink>
+			</div>
+
+			<div className="footer_menu_lateral">
+				<NavLink to="/perfil" className={({ isActive }) => isActive ? "menu_lateral_item selecionado" : "menu_lateral_item"}>
+					<BiUser size={'16px'}/> <span>Perfil</span>
+				</NavLink>
+
+				<NavLink to="/logout" className="menu_lateral_item">
+					<TbLogout2 size={'16px'} /> <span>Sair</span>
+				</NavLink>
+			</div>
+		</div>
+	);
 };
 
 export default MenuLateral;
