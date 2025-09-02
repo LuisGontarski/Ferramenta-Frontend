@@ -80,40 +80,47 @@ const Perfil = () => {
   const [categoriaSelecionada, setCategoriaSelecionada] = useState("Commits");
 
   const carregarPerfil = async () => {
-    setLoading(true);
-    setFetchError(null);
-    const usuarioId = localStorage.getItem("usuario_id");
-    console.log("ID do usuário:", usuarioId);
+  setLoading(true);
+  setFetchError(null);
 
-    if (!usuarioId) {
-      console.error("ID do usuário não encontrado no localStorage.");
-      setFetchError(
-        "ID do usuário não encontrado. Não foi possível carregar o perfil."
-      );
-      setLoading(false);
-      return;
+  const usuarioId = localStorage.getItem("usuario_id");
+  console.log("ID do usuário:", usuarioId);
+
+  try {
+    let response;
+
+    if (usuarioId) {
+      // Tenta buscar os dados reais
+      response = await getUserById(usuarioId);
+    } else {
+      console.warn("ID do usuário não encontrado. Carregando perfil padrão.");
+      // Perfil padrão caso não haja ID
+      response = {
+        nome_usuario: "Usuário Padrão",
+        cargo: "Cargo não definido",
+        email: "email@exemplo.com",
+        github: "github.com/usuario",
+        foto_perfil: "",
+        criado_em: new Date().toISOString(),
+      };
     }
 
-    try {
-      const response = await getUserById(usuarioId);
+    setUsuario({
+      nome: response.nome_usuario || "Nome não informado",
+      cargo: response.cargo || "Cargo não informado",
+      email: response.email || "E-mail não informado",
+      github: response.github || "GitHub não informado",
+      foto_perfil: response.foto_perfil || "",
+      criado_em: response.criado_em || "",
+    });
+  } catch (error: any) {
+    console.error("Erro ao buscar dados do usuário:", error.message || error);
+    setFetchError("Falha ao carregar os dados do perfil. Tente novamente mais tarde.");
+  } finally {
+    setLoading(false);
+  }
+};
 
-      setUsuario({
-        nome: response.nome_usuario || "Nome não informado",
-        cargo: response.cargo || "Cargo não informado",
-        email: response.email || "E-mail não informado",
-        github: response.github || "GitHub não informado",
-        foto_perfil: response.foto_perfil || "",
-        criado_em: response.criado_em || "",
-      });
-    } catch (error: any) {
-      console.error("Erro ao buscar dados do usuário:", error.message || error);
-      setFetchError(
-        "Falha ao carregar os dados do perfil. Tente novamente mais tarde."
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
     carregarPerfil();
