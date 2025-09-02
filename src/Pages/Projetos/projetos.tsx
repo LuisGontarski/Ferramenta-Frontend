@@ -4,405 +4,490 @@ import NavbarHome from "../../Components/Navbar/NavbarHome";
 import CardProjeto from "../../Components/CardProjeto/CardProjeto";
 import { getGithubCommitCount } from "../../services/githubCommitService";
 import MenuLateral from "../../Components/MenuLateral/MenuLateral";
+import { HiPlus } from "react-icons/hi";
+import { LuSearch } from "react-icons/lu";
+import { FaChevronRight } from "react-icons/fa6";
+import { MdAccessTime } from "react-icons/md";
+import { GoPeople } from "react-icons/go";
+import { NavLink } from "react-router-dom";
+import { IoIosGitBranch } from "react-icons/io";
+
+const value = 5.5;
+const max = 10;
+
+
+const fillPercent = (value / max) * 100;
+
+const gradientStyle = {
+	background: `linear-gradient(to right, #155DFC 0%, #155DFC ${fillPercent}%, #e0e0e0 ${fillPercent}%)`
+};
 
 const Projetos = () => {
-  const categorias = ["Todos", "Ativo", "Concluído", "Arquivado"];
-  const cargo = localStorage.getItem("cargo");
-  const [categoriaSelecionada, setCategoriaSelecionada] = useState("Todos");
-  const [nomeUsuario, setNomeUsuario] = useState("");
-  const [nomeRepositorio, setNomeRepositorio] = useState("");
-  const [numeroCommits, setNumeroCommits] = useState("");
-  type Repositorio = { id: number; name: string; full_name: string };
-  const [repositorios, setRepositorios] = useState<Repositorio[]>([]);
-  const [repositorioSelecionado, setRepositorioSelecionado] = useState("");
-  const [novoTitulo, setNovoTitulo] = useState("");
-  const [novaDescricao, setNovaDescricao] = useState("");
-  const [novaDataInicio, setNovaDataInicio] = useState("");
-  const [novaDataTermino, setNovaDataTermino] = useState("");
-  const [novoStatus, setNovoStatus] = useState("Ativo"); // pode criar um select se quiser escolher status
+	const categorias = ["Todos", "Ativo", "Concluído", "Arquivado"];
+	const cargo = localStorage.getItem("cargo");
+	const [categoriaSelecionada, setCategoriaSelecionada] = useState("Todos");
+	const [nomeUsuario, setNomeUsuario] = useState("");
+	const [nomeRepositorio, setNomeRepositorio] = useState("");
+	const [numeroCommits, setNumeroCommits] = useState("");
+	type Repositorio = { id: number; name: string; full_name: string };
+	const [repositorios, setRepositorios] = useState<Repositorio[]>([]);
+	const [repositorioSelecionado, setRepositorioSelecionado] = useState("");
+	const [novoTitulo, setNovoTitulo] = useState("");
+	const [novaDescricao, setNovaDescricao] = useState("");
+	const [novaDataInicio, setNovaDataInicio] = useState("");
+	const [novaDataTermino, setNovaDataTermino] = useState("");
+	const [novoStatus, setNovoStatus] = useState("Ativo"); // pode criar um select se quiser escolher status
 
 
-  const [equipes, setEquipes] = useState<
-  { id: number; nome: string; membros: string[] }[]
->([]);
+	const [equipes, setEquipes] = useState<
+		{ id: number; nome: string; membros: string[] }[]
+	>([]);
 
-type Projeto = {
-  id: string;
-  titulo: string;
-  descricao: string;
-  atualizadoEm: string;
-  membros: number;
-  branches: number;
-  status: string;
-};
+	type Projeto = {
+		id: string;
+		titulo: string;
+		descricao: string;
+		atualizadoEm: string;
+		membros: number;
+		branches: number;
+		status: string;
+	};
 
-const [projetos, setProjetos] = useState<Projeto[]>([
-  {
-    id: "1",
-    titulo: "Projeto 1",
-    descricao: "Esse projeto consiste no desenvolvimento de um aplicativo de academia",
-    atualizadoEm: "Atualizado há 2 dias",
-    membros: 5,
-    branches: 3,
-    status: "Ativo"
-  },
-  {
-    id: "2",
-    titulo: "Projeto 2",
-    descricao: "Esse projeto consiste no desenvolvimento de um aplicativo de academia",
-    atualizadoEm: "Atualizado há 2 dias",
-    membros: 5,
-    branches: 3,
-    status: "Concluído"
-  },
-  {
-    id: "3",
-    titulo: "Projeto 3",
-    descricao: "Esse projeto consiste no desenvolvimento de um aplicativo de academia",
-    atualizadoEm: "Atualizado há 2 dias",
-    membros: 5,
-    branches: 3,
-    status: "Arquivado"
-  },
-]);
+	const [projetos, setProjetos] = useState<Projeto[]>([
+		{
+			id: "1",
+			titulo: "Projeto 1",
+			descricao: "Esse projeto consiste no desenvolvimento de um aplicativo de academia",
+			atualizadoEm: "Atualizado há 2 dias",
+			membros: 5,
+			branches: 3,
+			status: "Ativo"
+		},
+		{
+			id: "2",
+			titulo: "Projeto 2",
+			descricao: "Esse projeto consiste no desenvolvimento de um aplicativo de academia",
+			atualizadoEm: "Atualizado há 2 dias",
+			membros: 5,
+			branches: 3,
+			status: "Concluído"
+		},
+		{
+			id: "3",
+			titulo: "Projeto 3",
+			descricao: "Esse projeto consiste no desenvolvimento de um aplicativo de academia",
+			atualizadoEm: "Atualizado há 2 dias",
+			membros: 5,
+			branches: 3,
+			status: "Arquivado"
+		},
+	]);
 
-const [busca, setBusca] = useState("");
+	const [busca, setBusca] = useState("");
 
-const projetosFiltrados = projetos.filter((projeto) => {
-  const nomeCorresponde = projeto.titulo.toLowerCase().includes(busca.toLowerCase());
-  const categoriaCorresponde =
-    categoriaSelecionada === "Todos" ||
-    projeto.status.toLowerCase() === categoriaSelecionada.toLowerCase();
+	const projetosFiltrados = projetos.filter((projeto) => {
+		const nomeCorresponde = projeto.titulo.toLowerCase().includes(busca.toLowerCase());
+		const categoriaCorresponde =
+			categoriaSelecionada === "Todos" ||
+			projeto.status.toLowerCase() === categoriaSelecionada.toLowerCase();
 
-  return nomeCorresponde && categoriaCorresponde;
-});
+		return nomeCorresponde && categoriaCorresponde;
+	});
 
-const criarProjeto = () => {
-  if (!novoTitulo.trim() || !novaDescricao.trim()) {
-    alert("Preencha título e descrição");
-    return;
-  }
+	const criarProjeto = () => {
+		if (!novoTitulo.trim() || !novaDescricao.trim()) {
+			alert("Preencha título e descrição");
+			return;
+		}
 
-  const novoProjeto: Projeto = {
-    id: Date.now().toString(),
-    titulo: novoTitulo,
-    descricao: novaDescricao,
-    atualizadoEm: `Atualizado agora`, // ou pode criar lógica para data atual
-    membros: 0, // ou inicialize como preferir
-    branches: 0, // idem
-    status: novoStatus,
-  };
+		const novoProjeto: Projeto = {
+			id: Date.now().toString(),
+			titulo: novoTitulo,
+			descricao: novaDescricao,
+			atualizadoEm: `Atualizado agora`, // ou pode criar lógica para data atual
+			membros: 0, // ou inicialize como preferir
+			branches: 0, // idem
+			status: novoStatus,
+		};
 
-  setProjetos((prev) => [novoProjeto, ...prev]);
-  fecharModal();
+		setProjetos((prev) => [novoProjeto, ...prev]);
+		fecharModal();
 
-  // Limpa os inputs para a próxima criação
-  setNovoTitulo("");
-  setNovaDescricao("");
-  setNovaDataInicio("");
-  setNovaDataTermino("");
-  setNovoStatus("Ativo");
-};
-
-
-
+		// Limpa os inputs para a próxima criação
+		setNovoTitulo("");
+		setNovaDescricao("");
+		setNovaDataInicio("");
+		setNovaDataTermino("");
+		setNovoStatus("Ativo");
+	};
 
 
 
-const [novoNomeEquipe, setNovoNomeEquipe] = useState("");
-
-const adicionarEquipe = () => {
-  if (novoNomeEquipe.trim() === "") return;
-
-  const novaEquipe = {
-    id: Date.now(),
-    nome: novoNomeEquipe,
-    membros: [],
-  };
-  setEquipes([...equipes, novaEquipe]);
-  setNovoNomeEquipe("");
-};
-
-const toggleMembroNaEquipe = (idEquipe: number, membro: string) => {
-  setEquipes((prev) =>
-    prev.map((equipe) =>
-      equipe.id === idEquipe
-        ? {
-            ...equipe,
-            membros: equipe.membros.includes(membro)
-              ? equipe.membros.filter((m) => m !== membro)
-              : [...equipe.membros, membro],
-          }
-        : equipe
-    )
-  );
-};
-
-const membrosDisponiveis = [
-  "João Silva",
-  "Maria Souza",
-  "Carlos Oliveira",
-  "Ana Lima",
-];
-
-  
-  const handleSelectChange = (e: { target: { value: SetStateAction<string>; }; }) => {
-    setRepositorioSelecionado(e.target.value);
-    console.log("Repositório selecionado:", e.target.value);
-  };
-
-  function abrirModal() {
-  const modal = document.getElementById("card_modal");
-  if (modal) modal.style.display = "flex";
-
-  const accessToken = localStorage.getItem("access_token");
-
-  if (!accessToken) {
-    console.error("Access token não encontrado.");
-    return;
-  }
-
-  fetch("https://ferramenta-backend.onrender.com/api/github/repos", {
-    method: "GET",
-    headers: {
-      "Authorization": `Bearer ${accessToken}`,
-      "Content-Type": "application/json"
-    }
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Erro na requisição: " + response.status);
-      }
-      return response.json();
-    })
-    .then((data) => {
-      console.log("Repos retornados:", data);
-      setRepositorios(data);
-    })
-    .catch((error) => {
-      console.error("Erro ao buscar repositórios:", error);
-    });
-}
 
 
-  function fecharModal() {
-    var modal = document.getElementById("card_modal");
-    if (modal) modal.style.display = "none";
-  }
 
-  const buscarRepositorio = async () => {
-    if (!nomeUsuario || !nomeRepositorio) {
-      console.warn("Informe o nome do usuário e do repositório.");
-      return;
-    }
+	const [novoNomeEquipe, setNovoNomeEquipe] = useState("");
 
-    try {
-      const data = await getGithubCommitCount({
-        user: nomeUsuario,
-        repo_name: nomeRepositorio,
-      });
+	const adicionarEquipe = () => {
+		if (novoNomeEquipe.trim() === "") return;
 
-      console.log("Quantidade de commits:", data.quant_commits);
-      setNumeroCommits(String(data.quant_commits));
-    } catch (error: any) {
-      console.error("Erro ao buscar commits:", error.message || error);
-    }
-  };
+		const novaEquipe = {
+			id: Date.now(),
+			nome: novoNomeEquipe,
+			membros: [],
+		};
+		setEquipes([...equipes, novaEquipe]);
+		setNovoNomeEquipe("");
+	};
 
-  return (
-    <>
-      <div>
-        <NavbarHome />
-      </div>
+	const toggleMembroNaEquipe = (idEquipe: number, membro: string) => {
+		setEquipes((prev) =>
+			prev.map((equipe) =>
+				equipe.id === idEquipe
+					? {
+						...equipe,
+						membros: equipe.membros.includes(membro)
+							? equipe.membros.filter((m) => m !== membro)
+							: [...equipe.membros, membro],
+					}
+					: equipe
+			)
+		);
+	};
 
-      <div className="container_modal sumir" id="card_modal">
-        <div className="modal_adicionar_projeto">
-          <div>
-            <div className="div_titulo_modal">
-              <h1 className="titulo_modal">Criar novo projeto</h1>
-              <h2 onClick={fecharModal}>
-                <i className="fa-solid fa-xmark"></i>
-              </h2>
-            </div>
-            <h2 className="descricao_modal">
-              Preencha as informações abaixo para criar um novo projeto. Clique
-              em salvar quando terminar.
-            </h2>
-          </div>
-          <div className="div_inputs_modal">
-            <h2 className="titulo_input">Nome do projeto</h2>
-            <input
-              type="text"
-              className="input_modal"
-              placeholder="Digite o nome do projeto"
-              value={novoTitulo}
-              onChange={(e) => setNovoTitulo(e.target.value)}
-            />
-          </div>
-          <div className="div_inputs_modal">
-            <h2 className="titulo_input">Descrição</h2>
-            <input
-              type="text"
-              className="input_modal"
-              placeholder="Descreva o objetivo do projeto"
-              value={novaDescricao}
-              onChange={(e) => setNovaDescricao(e.target.value)}
-            />
-          </div>
-          <div className="container_data">
-            <div className="div_data">
-              <h2 className="titulo_input">Data de Início</h2>
-              <input type="date" name="" id="" className="input_modal" />
-            </div>
-            <div className="div_data">
-              <h2 className="titulo_input">Data de Término</h2>
-              <input type="date" name="" id="" className="input_modal" />
-            </div>
-          </div>
-          <div className="div_inputs_modal">
-          <h2 className="titulo_input">Equipes</h2>
-          <div className="container_criacao_equipe">
-            <input
-              type="text"
-              placeholder="Nome da nova equipe (ex: Frontend)"
-              value={novoNomeEquipe}
-              onChange={(e) => setNovoNomeEquipe(e.target.value)}
-              className="input_modal"
-            />
-            <button onClick={adicionarEquipe} className="btn_adicionar_equipe_projeto">Adicionar Equipe</button>
-          </div>
+	const membrosDisponiveis = [
+		"João Silva",
+		"Maria Souza",
+		"Carlos Oliveira",
+		"Ana Lima",
+	];
 
-          {equipes.map((equipe) => (
-            <div key={equipe.id} className="card_equipe_criada">
-              <h3>{equipe.nome}</h3>
-              <div className="container_membros">
-                {membrosDisponiveis.map((membro) => (
-                  <label key={membro} className="card_membros_equipe">
-                    <input
-                      type="checkbox"
-                      checked={equipe.membros.includes(membro)}
-                      onChange={() => toggleMembroNaEquipe(equipe.id, membro)}
-                    />
-                    <div className="img_perfil"></div>
-                    <div>
-                      <h2 className="titulo_input">{membro}</h2>
-                      <h2 className="descricao_membros">Função desconhecida</h2>
-                    </div>
-                  </label>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-          <div className="div_inputs_modal">
-            <div>
-              <h2 className="titulo_input">Selecione um repositório ou crie um</h2>
-              <div className="div_criar_repositorio">
-                <select value={repositorioSelecionado} onChange={handleSelectChange} className="input_modal">
-                  <option value="">Selecione</option>
-                  {repositorios.map((repo) => (
-                    <option key={repo.id} value={repo.name}>
-                      {repo.full_name}
-                    </option>
-                  ))}
-                </select>
-                <button className="btn_adicionar_equipe_projeto">Criar repositório</button>
-              </div>
-            </div>
-            <div>
-              <h2 className="titulo_input">Nome do repositório</h2>
-              <input
-                type="text"
-                placeholder="Nome da nova equipe (ex: Frontend)"
-                value={novoNomeEquipe}
-                onChange={(e) => setNovoNomeEquipe(e.target.value)}
-                className="input_modal"
-              />
-            </div>
-            <div>
-              <h2 className="titulo_input">Descrição</h2>
-              <input
-                type="text"
-                placeholder="Nome da nova equipe (ex: Frontend)"
-                value={novoNomeEquipe}
-                onChange={(e) => setNovoNomeEquipe(e.target.value)}
-                className="input_modal"
-              />
-            </div>
-            <div className="div_privado">
-              <h2 className="titulo_input">É privado?</h2>
-              <input
-                type="checkbox"
-                placeholder="Nome da nova equipe (ex: Frontend)"
-                value={novoNomeEquipe}
-                onChange={(e) => setNovoNomeEquipe(e.target.value)}
-                className="checkbox_privado"
-              />
-            </div>
-          </div>
-            <button className="btn_conectar" onClick={criarProjeto}>Criar Projeto</button>
-        </div>
-      </div>
-      <main className="container_conteudos">
-        <MenuLateral />
-        <div className="container_vertical_conteudos">
-          <div className="container_dashboard">
-            <div className="div_titulo_projetos">
-              <input
-                type="text"
-                className="input_pesquisa_projetos"
-                placeholder="Pesquise por projetos"
-                value={busca}
-                onChange={(e) => setBusca(e.target.value)}
-              />
 
-              {cargo === "Product Owner" && (
-                <button className="btn_novo_projeto" onClick={abrirModal}>
-                  Novo projeto
-                </button>
-              )}
-            </div>
+	const handleSelectChange = (e: { target: { value: SetStateAction<string>; }; }) => {
+		setRepositorioSelecionado(e.target.value);
+		console.log("Repositório selecionado:", e.target.value);
+	};
 
-            <div className="divCategorias">
-              {categorias.map((categoria) => (
-                <h2
-                  key={categoria}
-                  className={`texto_categoria ${
-                    categoriaSelecionada === categoria
-                      ? "categoria_selecionada"
-                      : ""
-                  }`}
-                  onClick={() => setCategoriaSelecionada(categoria)}
-                >
-                  {categoria}
-                </h2>
-              ))}
-            </div>
+	function abrirModal() {
+		const modal = document.getElementById("card_modal");
+		if (modal) modal.style.display = "flex";
 
-            <div className="container_projetos">
-              {projetosFiltrados.length > 0 ? (
-                projetosFiltrados.map((projeto) => (
-                  <CardProjeto
-                    key={projeto.id}
-                    id={projeto.id}
-                    titulo={projeto.titulo}
-                    descricao={projeto.descricao}
-                    atualizadoEm={projeto.atualizadoEm}
-                    membros={projeto.membros}
-                    branches={projeto.branches}
-                    status={projeto.status}
-                  />
-                ))
-              ) : (
-                <p>Nenhum projeto encontrado.</p>
-              )}
-            </div>
+		const accessToken = localStorage.getItem("access_token");
 
-          </div>
-        </div>
-      </main>
-    </>
-  );
+		if (!accessToken) {
+			console.error("Access token não encontrado.");
+			return;
+		}
+
+		fetch("https://ferramenta-backend.onrender.com/api/github/repos", {
+			method: "GET",
+			headers: {
+				"Authorization": `Bearer ${accessToken}`,
+				"Content-Type": "application/json"
+			}
+		})
+			.then((response) => {
+				if (!response.ok) {
+					throw new Error("Erro na requisição: " + response.status);
+				}
+				return response.json();
+			})
+			.then((data) => {
+				console.log("Repos retornados:", data);
+				setRepositorios(data);
+			})
+			.catch((error) => {
+				console.error("Erro ao buscar repositórios:", error);
+			});
+	}
+
+
+	function fecharModal() {
+		var modal = document.getElementById("card_modal");
+		if (modal) modal.style.display = "none";
+	}
+
+	const buscarRepositorio = async () => {
+		if (!nomeUsuario || !nomeRepositorio) {
+			console.warn("Informe o nome do usuário e do repositório.");
+			return;
+		}
+
+		try {
+			const data = await getGithubCommitCount({
+				user: nomeUsuario,
+				repo_name: nomeRepositorio,
+			});
+
+			console.log("Quantidade de commits:", data.quant_commits);
+			setNumeroCommits(String(data.quant_commits));
+		} catch (error: any) {
+			console.error("Erro ao buscar commits:", error.message || error);
+		}
+	};
+
+	return (
+		<>
+			<div>
+				<NavbarHome />
+			</div>
+
+			<div className="container_modal sumir" id="card_modal">
+				<div className="modal_adicionar_projeto">
+					<div>
+						<div className="div_titulo_modal">
+							<h1 className="titulo_modal">Criar novo projeto</h1>
+							<h2 onClick={fecharModal}>
+								<i className="fa-solid fa-xmark"></i>
+							</h2>
+						</div>
+						<h2 className="descricao_modal">
+							Preencha as informações abaixo para criar um novo projeto. Clique
+							em salvar quando terminar.
+						</h2>
+					</div>
+					<div className="div_inputs_modal">
+						<h2 className="titulo_input">Nome do projeto</h2>
+						<input
+							type="text"
+							className="input_modal"
+							placeholder="Digite o nome do projeto"
+							value={novoTitulo}
+							onChange={(e) => setNovoTitulo(e.target.value)}
+						/>
+					</div>
+					<div className="div_inputs_modal">
+						<h2 className="titulo_input">Descrição</h2>
+						<input
+							type="text"
+							className="input_modal"
+							placeholder="Descreva o objetivo do projeto"
+							value={novaDescricao}
+							onChange={(e) => setNovaDescricao(e.target.value)}
+						/>
+					</div>
+					<div className="container_data">
+						<div className="div_data">
+							<h2 className="titulo_input">Data de Início</h2>
+							<input type="date" name="" id="" className="input_modal" />
+						</div>
+						<div className="div_data">
+							<h2 className="titulo_input">Data de Término</h2>
+							<input type="date" name="" id="" className="input_modal" />
+						</div>
+					</div>
+					<div className="div_inputs_modal">
+						<h2 className="titulo_input">Equipes</h2>
+						<div className="container_criacao_equipe">
+							<input
+								type="text"
+								placeholder="Nome da nova equipe (ex: Frontend)"
+								value={novoNomeEquipe}
+								onChange={(e) => setNovoNomeEquipe(e.target.value)}
+								className="input_modal"
+							/>
+							<button onClick={adicionarEquipe} className="btn_adicionar_equipe_projeto">Adicionar Equipe</button>
+						</div>
+
+						{equipes.map((equipe) => (
+							<div key={equipe.id} className="card_equipe_criada">
+								<h3>{equipe.nome}</h3>
+								<div className="container_membros">
+									{membrosDisponiveis.map((membro) => (
+										<label key={membro} className="card_membros_equipe">
+											<input
+												type="checkbox"
+												checked={equipe.membros.includes(membro)}
+												onChange={() => toggleMembroNaEquipe(equipe.id, membro)}
+											/>
+											<div className="img_perfil"></div>
+											<div>
+												<h2 className="titulo_input">{membro}</h2>
+												<h2 className="descricao_membros">Função desconhecida</h2>
+											</div>
+										</label>
+									))}
+								</div>
+							</div>
+						))}
+					</div>
+					<div className="div_inputs_modal">
+						<div>
+							<h2 className="titulo_input">Selecione um repositório ou crie um</h2>
+							<div className="div_criar_repositorio">
+								<select value={repositorioSelecionado} onChange={handleSelectChange} className="input_modal">
+									<option value="">Selecione</option>
+									{repositorios.map((repo) => (
+										<option key={repo.id} value={repo.name}>
+											{repo.full_name}
+										</option>
+									))}
+								</select>
+								<button className="btn_adicionar_equipe_projeto">Criar repositório</button>
+							</div>
+						</div>
+						<div>
+							<h2 className="titulo_input">Nome do repositório</h2>
+							<input
+								type="text"
+								placeholder="Nome da nova equipe (ex: Frontend)"
+								value={novoNomeEquipe}
+								onChange={(e) => setNovoNomeEquipe(e.target.value)}
+								className="input_modal"
+							/>
+						</div>
+						<div>
+							<h2 className="titulo_input">Descrição</h2>
+							<input
+								type="text"
+								placeholder="Nome da nova equipe (ex: Frontend)"
+								value={novoNomeEquipe}
+								onChange={(e) => setNovoNomeEquipe(e.target.value)}
+								className="input_modal"
+							/>
+						</div>
+						<div className="div_privado">
+							<h2 className="titulo_input">É privado?</h2>
+							<input
+								type="checkbox"
+								placeholder="Nome da nova equipe (ex: Frontend)"
+								value={novoNomeEquipe}
+								onChange={(e) => setNovoNomeEquipe(e.target.value)}
+								className="checkbox_privado"
+							/>
+						</div>
+					</div>
+					<button className="btn_conectar" onClick={criarProjeto}>Criar Projeto</button>
+				</div>
+			</div>
+			<main className="container_conteudos">
+				<MenuLateral />
+				<div className="container_vertical_conteudos">
+					<div className="container_dashboard">
+						<div className="div_titulo_pagina_projetos">
+							<div>
+								<h1 className="titulo_projetos">Projetos</h1>
+								<p className="descricao_titulo_projetos">Gerencie todos os seus projetos em um só lugar</p>
+							</div>
+							{cargo === "Product Owner" && (
+								<button className="btn_novo_projeto" onClick={abrirModal}>
+									<HiPlus size={'14px'} />
+									Novo projeto
+								</button>
+							)}
+						</div>
+						<div className="div_titulo_projetos">
+							<div className="div_input_icone_projetos">
+								<LuSearch className="icone_busca_input" />
+								<input
+									type="text"
+									className="input_pesquisa_projetos"
+									placeholder="Pesquise por projetos"
+									value={busca}
+									onChange={(e) => setBusca(e.target.value)}
+								/>
+							</div>
+
+							<div className="divCategorias">
+								{categorias.map((categoria) => (
+									<h2
+										key={categoria}
+										className={`texto_projetos_categoria ${categoriaSelecionada === categoria
+											? "categoria_projetos_selecionada"
+											: ""
+											}`}
+										onClick={() => setCategoriaSelecionada(categoria)}
+									>
+										{categoria}
+									</h2>
+								))}
+							</div>
+						</div>
+
+						<div>
+							<div className="div_card_dois_projetos_recentes">
+								<div className="div_projetos">
+									<div className="container_projetos">
+										<div className="card_projetos_recentes">
+											<div>
+												<h2 className="texto_projetos">Projeto AllLuga</h2>
+												<h2 className="texto_atualizacao">Sistema completo de alugueis de todos os itens</h2>
+											</div>
+											<div className="div_progresso_projeto">
+												<div className="div_dois_projetos_recentes">
+													<h2 className="texto_progresso">Progresso</h2>
+													<h2 className="texto_progresso">55%</h2>
+												</div>
+												<input type="range" className="custom-range" max={max} min={0} value={value} style={gradientStyle} />
+											</div>
+											<div className="div_icones_projetos">
+												<div className="div_items_icones">
+													<MdAccessTime size={'16px'} color="grey" />
+													<h2 className="texto_atualizacao">Atualizado há 2 horas</h2>
+												</div>
+												<div className="div_items_icones">
+													<GoPeople size={'16px'} color="grey" />
+													<h2 className="texto_atualizacao">6 membros</h2>
+												</div>
+											</div>
+											<div className="div_icones_projetos">
+												<div className="div_items_icones">
+													<IoIosGitBranch size={'16px'} color="grey" />
+													<h2 className="texto_atualizacao">3 branches</h2>
+												</div>
+												<div className="div_items_icones">
+													<h2 className="texto_atualizacao">Ativo</h2>
+												</div>
+											</div>
+											<NavLink to={'/ProjetosDetalhes'} className="btn_entrar_projeto">Entrar no Projeto</NavLink>
+										</div>
+									</div>
+								</div>
+								
+								<div className="div_projetos">
+									<div className="container_projetos">
+										<div className="card_projetos_recentes">
+											<div>
+												<h2 className="texto_projetos">Projeto AllLuga</h2>
+												<h2 className="texto_atualizacao">Sistema completo de alugueis de todos os itens</h2>
+											</div>
+											<div className="div_progresso_projeto">
+												<div className="div_dois_projetos_recentes">
+													<h2 className="texto_progresso">Progresso</h2>
+													<h2 className="texto_progresso">55%</h2>
+												</div>
+												<input type="range" className="custom-range" max={max} min={0} value={value} style={gradientStyle} />
+											</div>
+											<div className="div_icones_projetos">
+												<div className="div_items_icones">
+													<MdAccessTime size={'16px'} color="grey" />
+													<h2 className="texto_atualizacao">Atualizado há 2 horas</h2>
+												</div>
+												<div className="div_items_icones">
+													<GoPeople size={'16px'} color="grey" />
+													<h2 className="texto_atualizacao">6 membros</h2>
+												</div>
+											</div>
+											<div className="div_icones_projetos">
+												<div className="div_items_icones">
+													<IoIosGitBranch size={'16px'} color="grey" />
+													<h2 className="texto_atualizacao">3 branches</h2>
+												</div>
+												<div className="div_items_icones">
+													<h2 className="texto_atualizacao">Ativo</h2>
+												</div>
+											</div>
+											<NavLink to={'/ProjetosDetalhes'} className="btn_entrar_projeto">Entrar no Projeto</NavLink>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</main>
+		</>
+	);
 };
 
 export default Projetos;
