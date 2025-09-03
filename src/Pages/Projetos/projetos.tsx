@@ -1,26 +1,20 @@
-import { useEffect, useState, type SetStateAction } from "react";
+import { useState, type SetStateAction } from "react";
 import "./projetos.css";
 import NavbarHome from "../../Components/Navbar/NavbarHome";
-import CardProjeto from "../../Components/CardProjeto/CardProjeto";
-import { getGithubCommitCount } from "../../services/githubCommitService";
 import MenuLateral from "../../Components/MenuLateral/MenuLateral";
 import { HiPlus } from "react-icons/hi";
 import { LuSearch } from "react-icons/lu";
-import { FaChevronRight } from "react-icons/fa6";
 import { MdAccessTime } from "react-icons/md";
 import { GoPeople } from "react-icons/go";
 import { NavLink } from "react-router-dom";
 import { IoIosGitBranch } from "react-icons/io";
+import { IoCloseOutline } from "react-icons/io5";
+import { FaRegTrashCan } from "react-icons/fa6";
 
 const value = 5.5;
 const max = 10;
-
-
 const fillPercent = (value / max) * 100;
-
-const gradientStyle = {
-	background: `linear-gradient(to right, #155DFC 0%, #155DFC ${fillPercent}%, #e0e0e0 ${fillPercent}%)`
-};
+const gradientStyle = { background: `linear-gradient(to right, #155DFC ${fillPercent}%, #e0e0e0 ${fillPercent}%)` };
 
 const Projetos = () => {
 	const categorias = ["Todos", "Ativo", "Concluído", "Arquivado"];
@@ -36,7 +30,13 @@ const Projetos = () => {
 	const [novaDescricao, setNovaDescricao] = useState("");
 	const [novaDataInicio, setNovaDataInicio] = useState("");
 	const [novaDataTermino, setNovaDataTermino] = useState("");
-	const [novoStatus, setNovoStatus] = useState("Ativo"); // pode criar um select se quiser escolher status
+	const [novoStatus, setNovoStatus] = useState("Ativo");
+	const [novoNomeRepositorio, setNovoNomeRepositorio] = useState("");
+	const [novaDescricaoRepositorio, setNovaDescricaoRepositorio] = useState("");
+	const [repositorioPrivado, setRepositorioPrivado] = useState(false);
+	const [criandoRepositorio, setCriandoRepositorio] = useState(true);
+
+
 
 
 	const [equipes, setEquipes] = useState<
@@ -108,10 +108,8 @@ const Projetos = () => {
 		const categoriaCorresponde =
 			categoriaSelecionada === "Todos" ||
 			projeto.status.toLowerCase() === categoriaSelecionada.toLowerCase();
-
 		return nomeCorresponde && categoriaCorresponde;
 	});
-
 
 	const criarProjeto = () => {
 		if (!novoTitulo.trim() || !novaDescricao.trim()) {
@@ -123,27 +121,20 @@ const Projetos = () => {
 			id: Date.now().toString(),
 			titulo: novoTitulo,
 			descricao: novaDescricao,
-			atualizadoEm: `Atualizado agora`, // ou pode criar lógica para data atual
-			membros: 0, // ou inicialize como preferir
-			branches: 0, // idem
+			atualizadoEm: `Atualizado agora`,
+			membros: 0,
+			branches: 0,
 			status: novoStatus,
 		};
 
 		setProjetos((prev) => [novoProjeto, ...prev]);
 		fecharModal();
-
-		// Limpa os inputs para a próxima criação
 		setNovoTitulo("");
 		setNovaDescricao("");
 		setNovaDataInicio("");
 		setNovaDataTermino("");
 		setNovoStatus("Ativo");
 	};
-
-
-
-
-
 
 	const [novoNomeEquipe, setNovoNomeEquipe] = useState("");
 
@@ -189,7 +180,17 @@ const Projetos = () => {
 
 	function abrirModal() {
 		const modal = document.getElementById("card_modal");
-		if (modal) modal.style.display = "flex";
+		const conteudo_modal = document.getElementById("modal_adicionar_projeto");
+
+		if (modal) {
+			modal.style.opacity = "1";
+			modal.style.pointerEvents = "auto";
+			if (conteudo_modal) {
+				conteudo_modal.style.opacity = "1";
+				conteudo_modal.style.transform = "translateY(0)";
+			}
+		}
+
 
 		const accessToken = localStorage.getItem("access_token");
 
@@ -220,30 +221,24 @@ const Projetos = () => {
 			});
 	}
 
-
 	function fecharModal() {
-		var modal = document.getElementById("card_modal");
-		if (modal) modal.style.display = "none";
+		const modal = document.getElementById("card_modal");
+		const conteudo_modal = document.getElementById("modal_adicionar_projeto");
+
+		if (modal) {
+			modal.style.opacity = "0";
+			modal.style.pointerEvents = "none";
+			if (conteudo_modal) {
+				conteudo_modal.style.transform = "translateY(10px)";
+			}
+		}
 	}
 
-	const buscarRepositorio = async () => {
-		if (!nomeUsuario || !nomeRepositorio) {
-			console.warn("Informe o nome do usuário e do repositório.");
-			return;
-		}
-
-		try {
-			const data = await getGithubCommitCount({
-				user: nomeUsuario,
-				repo_name: nomeRepositorio,
-			});
-
-			console.log("Quantidade de commits:", data.quant_commits);
-			setNumeroCommits(String(data.quant_commits));
-		} catch (error: any) {
-			console.error("Erro ao buscar commits:", error.message || error);
-		}
+	const removerEquipe = (id: number) => {
+		setEquipes((prev) => prev.filter((equipe) => equipe.id !== id));
 	};
+
+
 
 	return (
 		<>
@@ -252,17 +247,14 @@ const Projetos = () => {
 			</div>
 
 			<div className="container_modal sumir" id="card_modal">
-				<div className="modal_adicionar_projeto">
+				<div className="modal_adicionar_projeto" id="modal_adicionar_projeto">
 					<div>
 						<div className="div_titulo_modal">
 							<h1 className="titulo_modal">Criar novo projeto</h1>
-							<h2 onClick={fecharModal}>
-								<i className="fa-solid fa-xmark"></i>
-							</h2>
+							<IoCloseOutline onClick={fecharModal} size={'24px'} color="black" className="icone_fechar_modal_projetos" />
 						</div>
 						<h2 className="descricao_modal">
-							Preencha as informações abaixo para criar um novo projeto. Clique
-							em salvar quando terminar.
+							Preencha as informações abaixo para criar um novo projeto.
 						</h2>
 					</div>
 					<div className="div_inputs_modal">
@@ -277,13 +269,10 @@ const Projetos = () => {
 					</div>
 					<div className="div_inputs_modal">
 						<h2 className="titulo_input">Descrição</h2>
-						<input
-							type="text"
-							className="input_modal"
+						<textarea className="input_modal_descricao"
 							placeholder="Descreva o objetivo do projeto"
 							value={novaDescricao}
-							onChange={(e) => setNovaDescricao(e.target.value)}
-						/>
+							onChange={(e) => setNovaDescricao(e.target.value)}></textarea>
 					</div>
 					<div className="container_data">
 						<div className="div_data">
@@ -310,79 +299,124 @@ const Projetos = () => {
 
 						{equipes.map((equipe) => (
 							<div key={equipe.id} className="card_equipe_criada">
-								<h3>{equipe.nome}</h3>
+								<FaRegTrashCan className="icone_lixo_equipe" onClick={() => removerEquipe(equipe.id)} />
+								<h3 className="nome_equipe_criada">{equipe.nome}</h3>
 								<div className="container_membros">
 									{membrosDisponiveis.map((membro) => (
-										<label key={membro} className="card_membros_equipe">
+										<label key={membro} className="checkbox_equipe_label">
 											<input
 												type="checkbox"
 												checked={equipe.membros.includes(membro)}
 												onChange={() => toggleMembroNaEquipe(equipe.id, membro)}
+												className="hidden"
+												id={`membro-${equipe.id}-${membro}`}
 											/>
+											<span
+												className={`checkbox_custom ${equipe.membros.includes(membro) ? "checked" : ""}`}
+											></span>
 											<div className="img_perfil"></div>
 											<div>
 												<h2 className="titulo_input">{membro}</h2>
-												<h2 className="descricao_membros">Função desconhecida</h2>
+												<h2 className="descricao_membros">Desenvolvedor Front-end</h2>
 											</div>
 										</label>
+
 									))}
 								</div>
 							</div>
 						))}
 					</div>
-					<div className="div_inputs_modal">
-						<div>
-							<h2 className="titulo_input">Selecione um repositório ou crie um</h2>
-							<div className="div_criar_repositorio">
-								<select value={repositorioSelecionado} onChange={handleSelectChange} className="input_modal">
-									<option value="">Selecione</option>
-									{repositorios.map((repo) => (
-										<option key={repo.id} value={repo.name}>
-											{repo.full_name}
-										</option>
-									))}
-								</select>
-								<button className="btn_adicionar_equipe_projeto">Criar repositório</button>
-							</div>
-						</div>
-						<div>
-							<h2 className="titulo_input">Nome do repositório</h2>
-							<input
-								type="text"
-								placeholder="Nome da nova equipe (ex: Frontend)"
-								value={novoNomeEquipe}
-								onChange={(e) => setNovoNomeEquipe(e.target.value)}
-								className="input_modal"
-							/>
-						</div>
-						<div>
-							<h2 className="titulo_input">Descrição</h2>
-							<input
-								type="text"
-								placeholder="Nome da nova equipe (ex: Frontend)"
-								value={novoNomeEquipe}
-								onChange={(e) => setNovoNomeEquipe(e.target.value)}
-								className="input_modal"
-							/>
-						</div>
-						<div className="div_privado">
-							<h2 className="titulo_input">É privado?</h2>
-							<input
-								type="checkbox"
-								placeholder="Nome da nova equipe (ex: Frontend)"
-								value={novoNomeEquipe}
-								onChange={(e) => setNovoNomeEquipe(e.target.value)}
-								className="checkbox_privado"
-							/>
-						</div>
+
+					<div className="div_criar_repositorio">
+						<button type="button" role="radio" aria-checked={criandoRepositorio} className={`radio-toggle ${criandoRepositorio ? "selected" : ""}`} onClick={() => setCriandoRepositorio(true)}>
+							<span className="dot-outer">
+								<span className="dot-inner" />
+							</span>
+							<span className="radio-label">Criar repositório novo</span>
+						</button>
+
+						<button type="button" role="radio" aria-checked={!criandoRepositorio} className={`radio-toggle ${!criandoRepositorio ? "selected" : ""}`} onClick={() => setCriandoRepositorio(false)}>
+							<span className="dot-outer">
+								<span className="dot-inner" />
+							</span>
+							<span className="radio-label">Selecionar repositório existente</span>
+						</button>
 					</div>
-					<button className="btn_conectar" onClick={criarProjeto}>Criar Projeto</button>
+
+
+					{!criandoRepositorio && (
+						<div className="div_inputs_modal">
+							<h2 className="titulo_input">Selecione um repositório</h2>
+							<select
+								className="input_modal"
+								value={repositorioSelecionado}
+								onChange={handleSelectChange}
+							>
+								<option value="">Selecione</option>
+								{repositorios.map((repo) => (
+									<option key={repo.id} value={repo.full_name}>
+										{repo.name}
+									</option>
+								))}
+							</select>
+						</div>
+					)}
+
+
+					{criandoRepositorio && (
+						<>
+							<div className="div_inputs_modal">
+								<h2 className="titulo_input">Nome do repositório</h2>
+								<input
+									type="text"
+									placeholder="Nome do repositório"
+									value={novoNomeRepositorio}
+									onChange={(e) => setNovoNomeRepositorio(e.target.value)}
+									className="input_modal"
+								/>
+							</div>
+							<div className="div_inputs_modal">
+								<h2 className="titulo_input">Descrição</h2>
+								<input
+									type="text"
+									placeholder="Descrição do repositório"
+									value={novaDescricaoRepositorio}
+									onChange={(e) => setNovaDescricaoRepositorio(e.target.value)}
+									className="input_modal"
+								/>
+							</div>
+							<div
+								className={`repositorio_privado ${repositorioPrivado ? "ativo" : ""}`}
+							>
+								<input
+									type="checkbox"
+									checked={repositorioPrivado}
+									onChange={(e) => setRepositorioPrivado(e.target.checked)}
+									className="hidden"
+									id="checkboxPrivado"
+								/>
+								<label htmlFor="checkboxPrivado" className="checkbox_privado_label">
+									<span className={`checkbox_custom ${repositorioPrivado ? "checked" : ""}`}></span>
+									<div className="textos_privado">
+										<span className="titulo_privado">Repositório privado</span>
+										<span className="descricao_privado">
+											Apenas membros da equipe poderão acessar este repositório
+										</span>
+									</div>
+								</label>
+							</div>
+
+
+						</>
+					)}
+
+					<button className="btn_criar_projeto" onClick={criarProjeto}>Criar Projeto</button>
 				</div>
 			</div>
 			<main className="container_conteudos">
 				<MenuLateral />
 				<div className="container_vertical_conteudos">
-					<div className="container_dashboard">
+					<div className="container_conteudo_projetos">
 						<div className="div_titulo_pagina_projetos">
 							<div>
 								<h1 className="titulo_projetos">Projetos</h1>
@@ -449,17 +483,17 @@ const Projetos = () => {
 											</div>
 											<div className="div_icones_projetos">
 												<div className="div_items_icones">
-													<MdAccessTime size={'16px'} color="grey" />
+													<MdAccessTime size={'16px'} color="#71717A" />
 													<h2 className="texto_atualizacao">{projeto.atualizadoEm}</h2>
 												</div>
 												<div className="div_items_icones">
-													<GoPeople size={'16px'} color="grey" />
+													<GoPeople size={'16px'} color="#71717A" />
 													<h2 className="texto_atualizacao">{projeto.membros} membros</h2>
 												</div>
 											</div>
 											<div className="div_icones_projetos">
 												<div className="div_items_icones">
-													<IoIosGitBranch size={'16px'} color="grey" />
+													<IoIosGitBranch size={'16px'} color="#71717A" />
 													<h2 className="texto_atualizacao">{projeto.branches} branches</h2>
 												</div>
 												<div className="div_items_icones">

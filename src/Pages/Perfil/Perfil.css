@@ -143,10 +143,6 @@
     gap: 1rem;
 }
 
-.sumir{
-    display: none;
-}
-
 .categorias_perfil{
     display: flex;
     justify-content: space-between;

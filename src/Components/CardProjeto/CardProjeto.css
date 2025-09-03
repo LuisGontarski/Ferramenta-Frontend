@@ -20,7 +20,7 @@
 .descricao_projeto{
     font-weight: 500;
     font-size: 14px;
-    color: rgb(113 113 122);
+    color: #71717A;
     margin-top: 0.3rem;
 }
 
@@ -57,11 +57,11 @@
 }
 
 .fa-solid{
-    color: grey;
+    color: #71717A;
 }
 
 .fas{
-    color: grey;
+    color: #71717A;
 }
 
 .container_informacoes{

@@ -50,7 +50,7 @@ const MenuLateral = () => {
 					<BiUser size={'16px'}/> <span>Perfil</span>
 				</NavLink>
 
-				<NavLink to="/logout" className="menu_lateral_item">
+				<NavLink to="/login" className="menu_lateral_item">
 					<TbLogout2 size={'16px'} /> <span>Sair</span>
 				</NavLink>
 			</div>

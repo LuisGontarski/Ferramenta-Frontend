@@ -39,19 +39,20 @@ body {
 	justify-content: center;
 	gap: 0.8rem;
 	align-items: center;
+	box-shadow: 0 2px 4px 0 rgb(0 0 0 / 0.05);
 }
 
-.div_input_icone_projetos{
+.div_input_icone_projetos {
 	position: relative;
 	width: 100%;
 }
 
-.icone_busca_input{
+.icone_busca_input {
 	position: absolute;
 	left: 8px;
 	top: 50%;
 	transform: translateY(-50%);
-	color: grey;
+	color: #71717A;
 
 }
 
@@ -67,6 +68,7 @@ body {
 	font-size: 0.875rem;
 	outline: none;
 	transition: box-shadow 0.2s ease, border-color 0.2s ease;
+	box-shadow: 0 2px 4px 0 rgb(0 0 0 / 0.05);
 }
 
 .card-container {
@@ -173,6 +175,7 @@ body {
 	background-color: white;
 	border: 1px solid #8080804a;
 	color: black;
+	box-shadow: 0 2px 4px 0 rgb(0 0 0 / 0.05);
 }
 
 .categoria_projetos_selecionada {
@@ -192,29 +195,49 @@ body {
 	justify-content: space-between;
 }
 
+.sumir {
+	opacity: 0;
+	pointer-events: none;
+	transition: 0.3s;
+}
 
 .container_modal {
 	width: 100%;
 	height: 100%;
 	background-color: rgba(0, 0, 0, 0.6);
 	top: 0px;
-	display: none;
 	position: absolute;
+	display: flex;
 	align-items: center;
+	backdrop-filter: blur(4px);
 	justify-content: center;
 	z-index: 101;
+	transition: opacity 0.3s ease-in-out;
 }
 
 .modal_adicionar_projeto {
 	background-color: white;
-	padding: 0.8rem;
+	padding: 1rem;
 	border-radius: 10px;
 	max-width: 800px;
 	display: flex;
 	flex-direction: column;
 	gap: 1rem;
 	max-height: 80%;
+	width: 70%;
 	overflow: auto;
+	opacity: 0;
+	transition: all 0.3s ease-out;
+	transform: translateY(10px);
+	transition: 0.3s ease-in;
+	position: relative;
+}
+
+.icone_fechar_modal_projetos {
+	position: absolute;
+	cursor: pointer;
+	right: 12px;
+	top: 12px;
 }
 
 .div_inputs_modal {
@@ -227,7 +250,7 @@ body {
 	height: 30px;
 	width: 30px;
 	border-radius: 50%;
-	background-color: grey;
+	background-color: #71717A;
 }
 
 .card_membros_equipe {
@@ -244,19 +267,17 @@ body {
 	overflow: auto;
 }
 
-.btn_conectar {
+.btn_criar_projeto {
 	width: 100%;
 	border: none;
 	background-color: black;
 	color: white;
-	font-size: 18px;
-	padding: 0.4rem;
+	font-size: 14px;
+	padding: 0.6rem;
 	border-radius: 6px;
 	cursor: pointer;
 	text-align: center;
-	display: flex;
-	align-items: center;
-	justify-content: center;
+	box-shadow: 0 2px 4px 0 rgb(0 0 0 / 0.05);
 	gap: 0.8rem;
 }
 
@@ -272,7 +293,7 @@ body {
 
 .descricao_modal {
 	font-weight: 400;
-	font-size: 14px;
+	font-size: 12px;
 	color: #71717A;
 }
 
@@ -285,6 +306,18 @@ body {
 	display: flex;
 	justify-content: space-between;
 	gap: 0.8rem;
+}
+
+.container_conteudo_projetos {
+	margin: 1rem;
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	background-color: white;
+	padding: 1rem;
+	border-radius: 10px;
+	box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+	border: 1px solid #8080804a;
 }
 
 .div_data {
@@ -304,13 +337,28 @@ body {
 .input_modal {
 	display: flex;
 	height: 40px;
-	width: 100%;
+	flex: 1;
 	border-radius: 0.375rem;
 	border: 1px solid #8080804a;
 	background-color: #fff;
 	padding: 0.5rem 0.75rem;
 	font-size: 0.875rem;
 	outline: none;
+	box-shadow: 0 2px 4px 0 rgb(0 0 0 / 0.05);
+}
+
+.input_modal_descricao {
+	display: flex;
+	resize: none;
+	flex: 1;
+	border-radius: 0.375rem;
+	border: 1px solid #8080804a;
+	background-color: #fff;
+	padding: 0.5rem 0.75rem;
+	font-size: 0.875rem;
+	outline: none;
+	box-shadow: 0 2px 4px 0 rgb(0 0 0 / 0.05);
+	box-sizing: border-box;
 }
 
 .container_criacao_equipe {
@@ -321,23 +369,228 @@ body {
 
 .card_equipe_criada {
 	border: 1px solid #ddd;
-	padding: 1rem;
+	background-color: #F8FAFC;
+	padding: 0.75rem;
 	border-radius: 8px;
 	margin-top: 0.6rem;
+	display: flex;
+	position: relative;
+	flex-direction: column;
+	gap: 0.75rem;
+	box-shadow: 0 2px 4px 0 rgb(0 0 0 / 0.05);
 }
 
-.btn_adicionar_equipe_projeto {
+.nome_equipe_criada {
+	font-size: 16px;
+	font-weight: 500;
+}
+
+
+.radio-toggle-group {
+	display: inline-flex;
+	gap: 10px;
+	align-items: center;
+}
+
+.radio-toggle {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	padding: 8px 14px;
+	border-radius: 8px;
+	flex: 1;
+	border: 1px solid #155DFC;
+	background: #ffffff;
+	color: #155DFC;
+	font-weight: 600;
+	cursor: pointer;
+	outline: none;
+	opacity: 0.4;
+	box-shadow: 0 2px 4px 0 rgb(0 0 0 / 0.05);
+}
+
+.checkbox_equipe_label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.checkbox_equipe_label .checkbox_custom {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #6b7280;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.checkbox_equipe_label .checkbox_custom.checked {
+  background: #155DFC;
+  border-color: #155DFC;
+  position: relative;
+}
+
+.input_modal[type="date"] {
+  position: relative;
+  padding-right: 32px;
+}
+
+/* Força o ícone do calendário para a direita */
+.input_modal[type="date"]::-webkit-calendar-picker-indicator {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+.icone_lixo_equipe{
+	position: absolute;
+    right: 10px;
+    top: 10px;
+    cursor: pointer;
+    background-color: red;
+    color: white;
+    border-radius: 4px;
+    font-size: 24px;
+    padding: 0.2rem;
+}
+
+
+.checkbox_equipe_label .checkbox_custom.checked::after {
+  content: "✔";
+  color: white;
+  font-size: 12px;
+}
+
+
+.radio-toggle.selected {
+	background: #155DFC;
+	color: #ffffff;
+	border-color: #155DFC;
+	opacity: 1;
+}
+
+.dot-outer {
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: 2px solid #155DFC;
+	background: #ffffff;
+	box-sizing: border-box;
+}
+
+.repositorio_privado {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	border: 1px solid #8080804a;
+	border-radius: 8px;
+	padding: 12px;
+	cursor: pointer;
+	box-shadow: 0 2px 4px 0 rgb(0 0 0 / 0.05);
+	transition: background 0.2s ease, border 0.2s ease;
+}
+
+.repositorio_privado:hover {
+	background: #f9fafb;
+}
+
+.repositorio_privado.ativo {
+	background: #e0ecff;
+	border-color:#155DFC;
+}
+
+.checkbox_privado_label {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	cursor: pointer;
 	width: 100%;
+}
+
+.checkbox_custom {
+	width: 16px;
+	height: 16px;
+	border: 2px solid #6b7280;
+	border-radius: 4px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.checkbox_custom.checked {
+	background: #155DFC;
+	border: 2px solid #155DFC;
+	position: relative;
+}
+
+.checkbox_custom.checked::after {
+	content: "✔";
+	color: white;
+	font-size: 12px;
+}
+
+.icone_cadeado {
+	font-size: 18px;
+	color: #155DFC;
+}
+
+.textos_privado {
+	display: flex;
+	flex-direction: column;
+}
+
+.titulo_privado {
+	font-size: 14px;
+	font-weight: 500;
+	color: #111827;
+}
+
+.descricao_privado {
+	font-size: 12px;
+	color: #6b7280;
+}
+
+.hidden {
+	display: none;
+}
+
+.dot-inner {
+	width: 12px;
+	height: 12px;
+	border-radius: 50%;
+	background: transparent;
+}
+
+.radio-toggle.selected .dot-outer {
+	background: #ffffff;
+	border-color: transparent;
+}
+
+.radio-toggle.selected .dot-inner {
+	background: #155DFC;
+	transform: scale(1);
+}
+
+
+.btn_adicionar_equipe_projeto {
+	width: 135px;
 	border: none;
 	background-color: black;
 	color: white;
-	font-weight: 500;
 	font-size: 14px;
 	padding: 0.6rem;
 	border-radius: 6px;
 	height: 40px;
 	cursor: pointer;
 	text-align: center;
+	box-shadow: 0 2px 4px 0 rgb(0 0 0 / 0.05);
 }
 
 
@@ -356,16 +609,14 @@ body {
 	cursor: pointer;
 }
 
-.titulo_projetos{
-	font-size: 26px;
-    font-weight: 500;
+.descricao_titulo_projetos {
+	font-size: 16px;
+	font-weight: 400;
+	margin: 0;
+	color: #71717A;
 }
 
-.descricao_titulo_projetos{
-	color: grey;
-}
-
-.div_titulo_pagina_projetos{
+.div_titulo_pagina_projetos {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;

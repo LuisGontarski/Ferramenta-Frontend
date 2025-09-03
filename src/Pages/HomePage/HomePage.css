@@ -133,13 +133,13 @@ h1 {
 .texto_atualizacao {
 	font-size: 14px;
 	font-weight: 400;
-	color: grey;
+	color: #71717A;
 }
 
 .texto_recente_atualizacao {
 	font-size: 12px;
 	font-weight: 400;
-	color: grey;
+	color: #71717A;
 }
 
 .texto_progresso {
@@ -242,7 +242,7 @@ h1 {
 .descricao_projetos {
 	font-weight: 400;
 	font-size: 14px;
-	color: grey;
+	color: #71717A;
 }
 
 .fa-arrow-right {
@@ -251,7 +251,7 @@ h1 {
 
 .titulo_projetos {
 	font-size: 18px;
-	font-weight: 500;
+	font-weight: 600;
 }
 
 .texto_atividade_recente {
@@ -325,7 +325,7 @@ h1 {
 	display: flex;
 	gap: 0.4rem;
 	border: 1px solid #e2e8f0;
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	box-shadow: 0 2px 4px 0 rgb(0 0 0 / 0.05);
 }
 
 .div_items_icones {

@@ -143,11 +143,11 @@ const HomePage = () => {
 									</div>
 									<div className="div_icones_projetos">
 										<div className="div_items_icones">
-											<MdAccessTime size={'16px'} color="grey" />
+											<MdAccessTime size={'16px'} color="#71717A" />
 											<h2 className="texto_atualizacao">Atualizado há 2 horas</h2>
 										</div>
 										<div className="div_items_icones">
-											<GoPeople size={'16px'} color="grey" />
+											<GoPeople size={'16px'} color="#71717A" />
 											<h2 className="texto_atualizacao">6 membros</h2>
 										</div>
 									</div>
@@ -167,11 +167,11 @@ const HomePage = () => {
 									</div>
 									<div className="div_icones_projetos">
 										<div className="div_items_icones">
-											<MdAccessTime size={'16px'} color="grey" />
+											<MdAccessTime size={'16px'} color="#71717A" />
 											<h2 className="texto_atualizacao">Atualizado há 2 horas</h2>
 										</div>
 										<div className="div_items_icones">
-											<GoPeople size={'16px'} color="grey" />
+											<GoPeople size={'16px'} color="#71717A" />
 											<h2 className="texto_atualizacao">6 membros</h2>
 										</div>
 									</div>
@@ -191,11 +191,11 @@ const HomePage = () => {
 									</div>
 									<div className="div_icones_projetos">
 										<div className="div_items_icones">
-											<MdAccessTime size={'16px'} color="grey" />
+											<MdAccessTime size={'16px'} color="#71717A" />
 											<h2 className="texto_atualizacao">Atualizado há 2 horas</h2>
 										</div>
 										<div className="div_items_icones">
-											<GoPeople size={'16px'} color="grey" />
+											<GoPeople size={'16px'} color="#71717A" />
 											<h2 className="texto_atualizacao">6 membros</h2>
 										</div>
 									</div>
@@ -215,11 +215,11 @@ const HomePage = () => {
 									</div>
 									<div className="div_icones_projetos">
 										<div className="div_items_icones">
-											<MdAccessTime size={'16px'} color="grey" />
+											<MdAccessTime size={'16px'} color="#71717A" />
 											<h2 className="texto_atualizacao">Atualizado há 2 horas</h2>
 										</div>
 										<div className="div_items_icones">
-											<GoPeople size={'16px'} color="grey" />
+											<GoPeople size={'16px'} color="#71717A" />
 											<h2 className="texto_atualizacao">6 membros</h2>
 										</div>
 									</div>
@@ -239,11 +239,11 @@ const HomePage = () => {
 									</div>
 									<div className="div_icones_projetos">
 										<div className="div_items_icones">
-											<MdAccessTime size={'16px'} color="grey" />
+											<MdAccessTime size={'16px'} color="#71717A" />
 											<h2 className="texto_atualizacao">Atualizado há 2 horas</h2>
 										</div>
 										<div className="div_items_icones">
-											<GoPeople size={'16px'} color="grey" />
+											<GoPeople size={'16px'} color="#71717A" />
 											<h2 className="texto_atualizacao">6 membros</h2>
 										</div>
 									</div>
@@ -263,11 +263,11 @@ const HomePage = () => {
 									</div>
 									<div className="div_icones_projetos">
 										<div className="div_items_icones">
-											<MdAccessTime size={'16px'} color="grey" />
+											<MdAccessTime size={'16px'} color="#71717A" />
 											<h2 className="texto_atualizacao">Atualizado há 2 horas</h2>
 										</div>
 										<div className="div_items_icones">
-											<GoPeople size={'16px'} color="grey" />
+											<GoPeople size={'16px'} color="#71717A" />
 											<h2 className="texto_atualizacao">6 membros</h2>
 										</div>
 									</div>
@@ -286,7 +286,7 @@ const HomePage = () => {
 										<h2 className="texto_recente_atualizacao">2 horas atrás</h2>
 									</div>
 								</div>
-								<FaChevronRight color="grey" />
+								<FaChevronRight color="#71717A" />
 							</div>
 							<div className="div_atividades_recentes">
 								<div className="container_projetos">
@@ -296,7 +296,7 @@ const HomePage = () => {
 										<h2 className="texto_recente_atualizacao">2 horas atrás</h2>
 									</div>
 								</div>
-								<FaChevronRight color="grey" />
+								<FaChevronRight color="#71717A" />
 							</div>
 							<div className="div_atividades_recentes">
 								<div className="container_projetos">
@@ -306,7 +306,7 @@ const HomePage = () => {
 										<h2 className="texto_recente_atualizacao">2 horas atrás</h2>
 									</div>
 								</div>
-								<FaChevronRight color="grey" />
+								<FaChevronRight color="#71717A" />
 							</div>
 						</div>
 					</div>
