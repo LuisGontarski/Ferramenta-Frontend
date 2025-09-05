@@ -167,32 +167,7 @@ const Metricas = () => {
                             </p>
                         </div>
 
-                        {/* Orçado x Real - Barras lado a lado */}
-                        <div className="card_atualizacoes bg-yellow-50 relative rounded-xl p-4 shadow-sm border border-yellow-100">
-                            <h2 className="font-semibold text-gray-800">Orçado x Real</h2>
-
-                            <ResponsiveContainer width="100%" height={200}>
-                                <BarChart data={orcadoRealData} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                                    <XAxis dataKey="sprint" tick={{ fill: "#6b7280", fontSize: 12 }} />
-                                    <YAxis tick={{ fill: "#6b7280", fontSize: 12 }} />
-                                    <Tooltip />
-                                    <Legend />
-
-                                    <Bar dataKey="orcado" fill="#53CDA3" name="Orçado" radius={[6, 6, 0, 0]} />
-                                    <Bar dataKey="real" fill="#059669" name="Real" radius={[6, 6, 0, 0]} />
-                                </BarChart>
-                            </ResponsiveContainer>
-
-                            <p className="text-2xl font-bold text-yellow-600 mt-2">
-                                {/* Aqui podemos calcular a % de realização */}
-                                {Math.round((orcadoRealData.reduce((sum, item) => sum + item.real, 0) /
-                                    orcadoRealData.reduce((sum, item) => sum + item.orcado, 0)) * 100)}%
-                            </p>
-                            <p className="text-sm text-gray-600">
-                                Cálculo: Soma de todos os gastos até o momento
-                            </p>
-                        </div>
+                        
 
                         {/* Velocidade da Equipe */}
                         <div className="card_atualizacoes bg-blue-50 relative rounded-xl p-4 shadow-sm border border-blue-100">

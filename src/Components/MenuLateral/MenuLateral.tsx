@@ -24,25 +24,6 @@ const MenuLateral = () => {
 				<NavLink to="/projetos" className={({ isActive }) => isActive ? "menu_lateral_item selecionado" : "menu_lateral_item"}>
 					<AiOutlineFolderOpen size={'16px'} /> <span>Projetos</span>
 				</NavLink>
-
-				<NavLink to="/kanban" className={({ isActive }) => isActive ? "menu_lateral_item selecionado" : "menu_lateral_item"}>
-					<LuChartColumn size={'16px'} /> <span>Kanban</span>
-				</NavLink>
-
-				<NavLink to="/cronograma" className={({ isActive }) => isActive ? "menu_lateral_item selecionado" : "menu_lateral_item"}>
-					<LuCalendar size={'16px'} /> <span>Cronograma</span>
-				</NavLink>
-
-				<NavLink to="/documentos" className={({ isActive }) => isActive ? "menu_lateral_item selecionado" : "menu_lateral_item"}>
-					<IoDocumentTextOutline size={'16px'} /> <span>Documentos</span>
-				</NavLink>
-
-				<NavLink to="/requisitos" className={({ isActive }) => isActive ? "menu_lateral_item selecionado" : "menu_lateral_item"}>
-					<IoMdCheckboxOutline size={'16px'} /> <span>Requisitos</span>
-				</NavLink>
-				<NavLink to="/metricas" className={({ isActive }) => isActive ? "menu_lateral_item selecionado" : "menu_lateral_item"}>
-					<TfiRulerAlt2 size={'16px'}/> <span>Métricas</span>
-				</NavLink>
 			</div>
 
 			<div className="footer_menu_lateral">

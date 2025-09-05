@@ -368,8 +368,8 @@ body {
 }
 
 .card_equipe_criada {
-	border: 1px solid #ddd;
-	background-color: #F8FAFC;
+	border: 1px solid #8080804a;
+    background-color: #F8FAFC;
 	padding: 0.75rem;
 	border-radius: 8px;
 	margin-top: 0.6rem;
@@ -614,6 +614,14 @@ body {
 	font-weight: 400;
 	margin: 0;
 	color: #71717A;
+}
+
+.descricao_graficos_projetos {
+	font-size: 14px;
+	font-weight: 400;
+	margin: 0;
+	color: #71717A;
+	margin-bottom: 1rem;
 }
 
 .div_titulo_pagina_projetos {
