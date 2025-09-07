@@ -72,6 +72,25 @@ const orcadoRealData = [
 const cargo = localStorage.getItem("cargo");
 
 const ProjetosDetalhes = () => {
+    const [showModal, setShowModal] = useState(false);
+  const [nome, setNome] = useState("Projeto All Gym");
+  const [descricao, setDescricao] = useState(
+    "Sistema de gestão de projetos com interface moderna e funcionalidades avançadas"
+  );
+  const [status, setStatus] = useState("Em Andamento");
+
+  const handleSalvar = () => {
+    alert(`Projeto atualizado!\nNome: ${nome}\nDescrição: ${descricao}\nStatus: ${status}`);
+    setShowModal(false);
+  };
+
+  const handleExcluir = () => {
+    if (window.confirm("Tem certeza que deseja excluir este projeto?")) {
+      alert("Projeto excluído!");
+      setShowModal(false);
+    }
+  };
+    
     const value = 6.5;
     const max = 10;
 
@@ -97,12 +116,61 @@ const ProjetosDetalhes = () => {
                                           Sistema de gestão de projetos com interface moderna e funcionalidades avançadas
                                         </p>
                                       </div>
-                                      {cargo === "Product Owner" && (
-                                        <button className="btn_novo_projeto" >
-                                          <GrEdit size={'14px'}/>
-                                          Editar projeto
-                                        </button>
-                                      )}
+                                       {cargo === "Product Owner" && (
+                <button
+                  className="btn_novo_projeto"
+                  onClick={() => setShowModal(true)}
+                >
+                  <GrEdit size={"14px"} />
+                  Editar projeto
+                </button>
+              )}
+
+               {showModal && (
+  <div className="modal-overlay">
+    <div className="modal-content">
+      <h2>Editar Projeto</h2>
+
+      <label>Nome do Projeto</label>
+      <input
+        type="text"
+        value={nome}
+        onChange={(e) => setNome(e.target.value)}
+      />
+
+      <label>Descrição</label>
+      <textarea
+        rows={3}
+        value={descricao}
+        onChange={(e) => setDescricao(e.target.value)}
+      />
+
+      <label>Status</label>
+      <select
+        value={status}
+        onChange={(e) => setStatus(e.target.value)}
+      >
+        <option>Em Andamento</option>
+        <option>Concluído</option>
+        <option>Em Pausa</option>
+        <option>Cancelado</option>
+      </select>
+
+      <div className="modal-actions">
+        <button className="btn_cancelar" onClick={() => setShowModal(false)}>
+          Cancelar
+        </button>
+        <button className="btn_excluir" onClick={handleExcluir}>
+          Excluir
+        </button>
+        <button className="btn_salvar" onClick={handleSalvar}>
+          Salvar
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
                                     </div>
                         <div className="container_informacoes_projeto_detalhes">
                             <div className="div_informacoes_projeto_detalhes">
