@@ -7,6 +7,10 @@ import { FaChevronRight } from "react-icons/fa6";
 import desenvolvedor1 from "../../Assets/desenvolvedor1.jpeg";
 import desenvolvedor2 from "../../Assets/desenvolvedor2.jpeg";
 import desenvolvedor3 from "../../Assets/desenvolvedor3.jpeg";
+import { MdModeEdit } from "react-icons/md";
+import { TbEdit } from "react-icons/tb";
+import { GrEdit } from "react-icons/gr";
+import { FaEdit } from "react-icons/fa";
 import {
     ResponsiveContainer, CartesianGrid, LineChart, Tooltip, XAxis, YAxis, Legend, Line,
     AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell
@@ -65,6 +69,8 @@ const orcadoRealData = [
     { sprint: "Sprint 4", orcado: 2200, real: 2100 },
 ];
 
+const cargo = localStorage.getItem("cargo");
+
 const ProjetosDetalhes = () => {
     const value = 6.5;
     const max = 10;
@@ -84,12 +90,20 @@ const ProjetosDetalhes = () => {
                 <MenuLateral />
                 <div className="container_vertical_conteudos">
                     <div className="container_dashboard">
-                        <div className="div_kanban_projeto_detalhes">
-                            <div>
-                                <h1 className="titulo_projetos">Projeto All Gym</h1>
-                                <span className="descricao_titulo_projetos">Sistema de gestão de projetos com interface moderna e funcionalidades avançadas</span>
-                            </div>
-                        </div>
+                        <div className="div_titulo_pagina_projetos">
+                                      <div>
+                                        <h1 className="titulo_projetos">Projeto All Gym</h1>
+                                        <p className="descricao_titulo_projetos">
+                                          Sistema de gestão de projetos com interface moderna e funcionalidades avançadas
+                                        </p>
+                                      </div>
+                                      {cargo === "Product Owner" && (
+                                        <button className="btn_novo_projeto" >
+                                          <GrEdit size={'14px'}/>
+                                          Editar projeto
+                                        </button>
+                                      )}
+                                    </div>
                         <div className="container_informacoes_projeto_detalhes">
                             <div className="div_informacoes_projeto_detalhes">
                                 <h2 className="titulo_metricas_detalhes_projetos">Progresso Geral</h2>
