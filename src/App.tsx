@@ -11,6 +11,9 @@ import Documentos from './Pages/Documentos/Documentos';
 import Requisitos from './Pages/Requisitos/Requisitos';
 import Cronograma from './Pages/Cronograma/Cronograma';
 import Metricas from './Pages/Metricas/Metricas';
+import ChatWrapper from './Pages/Chat/ChatWrapper';
+
+
 
 function App() {
   return (
@@ -28,6 +31,7 @@ function App() {
         <Route path="/requisitos" element={<Requisitos />} />
         <Route path="/cronograma" element={<Cronograma />} />
         <Route path="/metricas" element={<Metricas />} />
+        <Route path="/chat/:projeto_id" element={<ChatWrapper />} />
       </Routes>
     </Router>
   );
