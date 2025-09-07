@@ -5,19 +5,30 @@ import MenuLateral from "../../Components/MenuLateral/MenuLateral";
 
 const Kanban = () => {
     const [showModal, setShowModal] = useState(false);
+
+    // lista fixa de usuários disponíveis
+    const users = ["João", "Maria", "Ana", "Carlos", "Gustavo"];
+
     const [cards, setCards] = useState([
         {
             title: "Implementar autenticação",
             priority: "high",
             user: "João",
-            date: "01/10/2023"
+            date: "2023-10-01",
+            type: "tarefa",
+            points: "5",
+            description: "Adicionar login com JWT"
         }
     ]);
+
     const [formData, setFormData] = useState({
         title: "",
         priority: "medium",
-        user: "",
-        date: ""
+        user: users[0],
+        date: "",
+        type: "tarefa",
+        points: "",
+        description: ""
     });
 
     useEffect(() => {
@@ -76,7 +87,15 @@ const Kanban = () => {
 
     const addCard = () => {
         setCards(prev => [...prev, formData]);
-        setFormData({ title: "", priority: "medium", user: "", date: "" });
+        setFormData({
+            title: "",
+            priority: "medium",
+            user: users[0],
+            date: "",
+            type: "tarefa",
+            points: "",
+            description: ""
+        });
         setShowModal(false);
     };
 
@@ -99,6 +118,12 @@ const Kanban = () => {
                         <div className="kanban_container">
 
                         <div className="kanban">
+                            {/* Coluna Backlog */}
+                            <div className="kanban_column" data-id="0">
+                                <div className="kanban_title"><h2>Backlog</h2></div>
+                                <div className="kanban_cards"></div>
+                            </div>
+
                             <div className="kanban_column" data-id="1">
                                 <div className="kanban_title">
                                     <h2>Para Fazer</h2>
@@ -110,9 +135,12 @@ const Kanban = () => {
                                                 <span>{card.priority === "high" ? "Alta" : card.priority === "medium" ? "Média" : "Baixa"}</span>
                                             </div>
                                             <p className="card_title">{card.title}</p>
+                                            <p className="card_description">{card.description}</p>
                                             <div className="card_infos">
-                                                <span className="card_user">Usuário: {card.user}</span>
-                                                <span className="card_date">Data: {card.date}</span>
+                                                <span className="card_user"> {card.user}</span>
+                                                <span className="card_date"> {card.date}</span>
+                                                <span className="card_type"> {card.type}</span>
+                                                <span className="card_points"> {card.points || "-"}</span>
                                             </div>
                                         </div>
                                     ))}
@@ -153,11 +181,18 @@ const Kanban = () => {
                                 value={formData.title}
                                 onChange={e => setFormData({ ...formData, title: e.target.value })}
                             />
-                            <input
-                                type="text"
-                                placeholder="Usuário"
+                            <select
                                 value={formData.user}
                                 onChange={e => setFormData({ ...formData, user: e.target.value })}
+                            >
+                                {users.map((u, i) => (
+                                    <option key={i} value={u}>{u}</option>
+                                ))}
+                            </select>
+                            <textarea
+                                placeholder="Descrição"
+                                value={formData.description}
+                                onChange={e => setFormData({ ...formData, description: e.target.value })}
                             />
                             <input
                                 type="date"
@@ -172,6 +207,21 @@ const Kanban = () => {
                                 <option value="medium">Média</option>
                                 <option value="low">Baixa</option>
                             </select>
+                            <select
+                                value={formData.type}
+                                onChange={e => setFormData({ ...formData, type: e.target.value })}
+                            >
+                                <option value="tarefa">Tarefa</option>
+                                <option value="bug">Bug</option>
+                                <option value="melhoria">Melhoria</option>
+                                <option value="pesquisa">Pesquisa</option>
+                            </select>
+                            <input
+                                type="number"
+                                placeholder="Story Points / Horas"
+                                value={formData.points}
+                                onChange={e => setFormData({ ...formData, points: e.target.value })}
+                            />
                             <div className="modal_actions">
                                 <button onClick={addCard}>Criar</button>
                                 <button onClick={() => setShowModal(false)}>Cancelar</button>
