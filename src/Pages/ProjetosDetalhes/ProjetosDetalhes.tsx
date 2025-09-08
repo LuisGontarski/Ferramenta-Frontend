@@ -7,13 +7,10 @@ import { FaChevronRight } from "react-icons/fa6";
 import desenvolvedor1 from "../../Assets/desenvolvedor1.jpeg";
 import desenvolvedor2 from "../../Assets/desenvolvedor2.jpeg";
 import desenvolvedor3 from "../../Assets/desenvolvedor3.jpeg";
-import { MdModeEdit } from "react-icons/md";
-import { TbEdit } from "react-icons/tb";
 import { GrEdit } from "react-icons/gr";
-import { FaEdit } from "react-icons/fa";
 import {
     ResponsiveContainer, CartesianGrid, LineChart, Tooltip, XAxis, YAxis, Legend, Line,
-    AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell
+    AreaChart, Area, BarChart, Bar
 } from "recharts";
 
 const throughputData = [
@@ -34,13 +31,6 @@ const data = [
     { dia: "Dia 15", planejado: 0, real: 10 }
 ];
 
-const dataLead = [
-    { semana: "S1", leadtime: 4.2 },
-    { semana: "S2", leadtime: 3.9 },
-    { semana: "S3", leadtime: 3.6 },
-    { semana: "S4", leadtime: 3.2 },
-];
-
 const leadTimeData = [
     { semana: "S1", leadtime: 4.2 },
     { semana: "S2", leadtime: 3.9 },
@@ -55,47 +45,58 @@ const velocidadeData = [
     { sprint: "Sprint 4", pontos: 27 },
 ];
 
-const capacidadeData = [
-    { sprint: "Sprint 1", trabalhadas: 120, disponiveis: 150 },
-    { sprint: "Sprint 2", trabalhadas: 140, disponiveis: 150 },
-    { sprint: "Sprint 3", trabalhadas: 135, disponiveis: 150 },
-    { sprint: "Sprint 4", trabalhadas: 145, disponiveis: 150 },
-];
-
-const orcadoRealData = [
-    { sprint: "Sprint 1", orcado: 2000, real: 2200 },
-    { sprint: "Sprint 2", orcado: 2500, real: 2400 },
-    { sprint: "Sprint 3", orcado: 1800, real: 1900 },
-    { sprint: "Sprint 4", orcado: 2200, real: 2100 },
-];
-
 const cargo = localStorage.getItem("cargo");
 
 const ProjetosDetalhes = () => {
     const [showModal, setShowModal] = useState(false);
-  const [nome, setNome] = useState("Projeto All Gym");
-  const [descricao, setDescricao] = useState(
-    "Sistema de gestão de projetos com interface moderna e funcionalidades avançadas"
-  );
-  const [status, setStatus] = useState("Em Andamento");
+    const [nome, setNome] = useState("Projeto All Gym");
+    const [descricao, setDescricao] = useState(
+        "Sistema de gestão de projetos com interface moderna e funcionalidades avançadas"
+    );
+    const [status, setStatus] = useState("Em Andamento");
 
-  const handleSalvar = () => {
-    alert(`Projeto atualizado!\nNome: ${nome}\nDescrição: ${descricao}\nStatus: ${status}`);
-    setShowModal(false);
-  };
+    const handleSalvar = () => {
+        alert(`Projeto atualizado!\nNome: ${nome}\nDescrição: ${descricao}\nStatus: ${status}`);
+        setShowModal(false);
+    };
 
-  const handleExcluir = () => {
-    if (window.confirm("Tem certeza que deseja excluir este projeto?")) {
-      alert("Projeto excluído!");
-      setShowModal(false);
+    const handleExcluir = () => {
+        if (window.confirm("Tem certeza que deseja excluir este projeto?")) {
+            alert("Projeto excluído!");
+            setShowModal(false);
+        }
+    };
+
+    const mostrarModal = () => {
+        let modal = document.getElementById('modal_editar');
+        const conteudo_modal = document.getElementById("modal_editar_projeto");
+         
+         if (modal) {
+            modal.style.opacity = "1";
+            modal.style.pointerEvents = "auto";
+            if (conteudo_modal) {
+                conteudo_modal.style.opacity = "1";
+                conteudo_modal.style.transform = "translateY(0)";
+            }
+        }
     }
-  };
-    
+
+    function fecharModal() {
+        const modal = document.getElementById("modal_editar");
+        const conteudo_modal = document.getElementById("modal_editar_projeto");
+
+        if (modal) {
+        modal.style.opacity = "0";
+        modal.style.pointerEvents = "none";
+        if (conteudo_modal) {
+            conteudo_modal.style.transform = "translateY(10px)";
+        }
+        }
+    }
+
     const value = 6.5;
     const max = 10;
-
     const fillPercent = (value / max) * 100;
-
     const gradientStyle = {
         background: `linear-gradient(to right, #155dfc 0%, #155dfc ${fillPercent}%, #e0e0e0 ${fillPercent}%)`
     };
@@ -110,68 +111,84 @@ const ProjetosDetalhes = () => {
                 <div className="container_vertical_conteudos">
                     <div className="container_dashboard">
                         <div className="div_titulo_pagina_projetos">
-                                      <div>
-                                        <h1 className="titulo_projetos">Projeto All Gym</h1>
-                                        <p className="descricao_titulo_projetos">
-                                          Sistema de gestão de projetos com interface moderna e funcionalidades avançadas
-                                        </p>
-                                      </div>
-                                       {cargo === "Product Owner" && (
-                <button
-                  className="btn_novo_projeto"
-                  onClick={() => setShowModal(true)}
-                >
-                  <GrEdit size={"14px"} />
-                  Editar projeto
-                </button>
-              )}
+                            <div>
+                                <h1 className="titulo_projetos">Projeto All Gym</h1>
+                                <p className="descricao_titulo_projetos">
+                                    Sistema de gestão de projetos com interface moderna e funcionalidades avançadas
+                                </p>
+                            </div>
+                            {cargo === "Product Owner" && (
+                                <button
+                                    className="btn_novo_projeto"
+                                    onClick={() => mostrarModal()}
+                                >
+                                    <GrEdit size={"14px"} />
+                                    Editar projeto
+                                </button>
+                            )}
 
-               {showModal && (
-  <div className="modal-overlay">
-    <div className="modal-content">
-      <h2>Editar Projeto</h2>
+                        
+                                <div className="modal-overlay sumir" id="modal_editar" >
+                                    <div className="modal-content" id="modal_editar_projeto">
+                                        <div>
+                                            <h2 className="titulo_modal">Editar Projeto</h2>
+                                            <h2 className="descricao_modal">Modifique as informações abaixo para atualizar os dados do seu projeto</h2>
+                                        </div>
+                                        <div className="div_inputs_modal">
+                                            <label className="titulo_input">Nome do Projeto</label>
+                                            <input
+                                                className="input_modal"
+                                                type="text"
+                                                value={nome}
+                                                onChange={(e) => setNome(e.target.value)}
+                                            />
+                                        </div>
 
-      <label>Nome do Projeto</label>
-      <input
-        type="text"
-        value={nome}
-        onChange={(e) => setNome(e.target.value)}
-      />
+                                        <div className="div_inputs_modal">
+                                            <label className="titulo_input">Descrição</label>
+                                            <textarea
+                                            className="input_modal_descricao"
+                                                rows={3}
+                                                value={descricao}
+                                                onChange={(e) => setDescricao(e.target.value)}
+                                            />
+                                        </div>
 
-      <label>Descrição</label>
-      <textarea
-        rows={3}
-        value={descricao}
-        onChange={(e) => setDescricao(e.target.value)}
-      />
+                                        <div className="div_inputs_modal">
+                                            <label className="titulo_input">Descrição</label>
+                                            <select
+                                                    className="input_modal"
+                                                    value={status}
+                                                    onChange={(e) => setStatus(e.target.value)}
+                                                >
+                                                <option>Em Andamento</option>
+                                                <option>Concluído</option>
+                                                <option>Em Pausa</option>
+                                                <option>Cancelado</option>
+                                            </select>
+                                        </div>
 
-      <label>Status</label>
-      <select
-        value={status}
-        onChange={(e) => setStatus(e.target.value)}
-      >
-        <option>Em Andamento</option>
-        <option>Concluído</option>
-        <option>Em Pausa</option>
-        <option>Cancelado</option>
-      </select>
 
-      <div className="modal-actions">
-        <button className="btn_cancelar" onClick={() => setShowModal(false)}>
-          Cancelar
-        </button>
-        <button className="btn_excluir" onClick={handleExcluir}>
-          Excluir
-        </button>
-        <button className="btn_salvar" onClick={handleSalvar}>
-          Salvar
-        </button>
-      </div>
-    </div>
-  </div>
-)}
 
+
+                                        <div className="modal-actions">
+                                            <div className="div_btn_excluir_cancelar">
+                                                <button className="btn_cancelar" onClick={() => fecharModal()}>
+                                                    Cancelar
+                                                </button>
+                                                <button className="btn_excluir" onClick={handleExcluir}>
+                                                    Excluir
+                                                </button>
+                                            </div>
+                                            <button className="btn_salvar" onClick={handleSalvar}>
+                                                Salvar
+                                            </button>
+                                        </div>
                                     </div>
+                                </div>
+                       
+
+                        </div>
                         <div className="container_informacoes_projeto_detalhes">
                             <div className="div_informacoes_projeto_detalhes">
                                 <h2 className="titulo_metricas_detalhes_projetos">Progresso Geral</h2>
