@@ -70,8 +70,8 @@ const ProjetosDetalhes = () => {
     const mostrarModal = () => {
         let modal = document.getElementById('modal_editar');
         const conteudo_modal = document.getElementById("modal_editar_projeto");
-         
-         if (modal) {
+
+        if (modal) {
             modal.style.opacity = "1";
             modal.style.pointerEvents = "auto";
             if (conteudo_modal) {
@@ -86,11 +86,11 @@ const ProjetosDetalhes = () => {
         const conteudo_modal = document.getElementById("modal_editar_projeto");
 
         if (modal) {
-        modal.style.opacity = "0";
-        modal.style.pointerEvents = "none";
-        if (conteudo_modal) {
-            conteudo_modal.style.transform = "translateY(10px)";
-        }
+            modal.style.opacity = "0";
+            modal.style.pointerEvents = "none";
+            if (conteudo_modal) {
+                conteudo_modal.style.transform = "translateY(10px)";
+            }
         }
     }
 
@@ -127,66 +127,66 @@ const ProjetosDetalhes = () => {
                                 </button>
                             )}
 
-                        
-                                <div className="modal-overlay sumir" id="modal_editar" >
-                                    <div className="modal-content" id="modal_editar_projeto">
-                                        <div>
-                                            <h2 className="titulo_modal">Editar Projeto</h2>
-                                            <h2 className="descricao_modal">Modifique as informações abaixo para atualizar os dados do seu projeto</h2>
-                                        </div>
-                                        <div className="div_inputs_modal">
-                                            <label className="titulo_input">Nome do Projeto</label>
-                                            <input
-                                                className="input_modal"
-                                                type="text"
-                                                value={nome}
-                                                onChange={(e) => setNome(e.target.value)}
-                                            />
-                                        </div>
 
-                                        <div className="div_inputs_modal">
-                                            <label className="titulo_input">Descrição</label>
-                                            <textarea
+                            <div className="modal-overlay sumir" id="modal_editar" >
+                                <div className="modal-content" id="modal_editar_projeto">
+                                    <div>
+                                        <h2 className="titulo_modal">Editar Projeto</h2>
+                                        <h2 className="descricao_modal">Modifique as informações abaixo para atualizar os dados do seu projeto</h2>
+                                    </div>
+                                    <div className="div_inputs_modal">
+                                        <label className="titulo_input">Nome do Projeto</label>
+                                        <input
+                                            className="input_modal"
+                                            type="text"
+                                            value={nome}
+                                            onChange={(e) => setNome(e.target.value)}
+                                        />
+                                    </div>
+
+                                    <div className="div_inputs_modal">
+                                        <label className="titulo_input">Descrição</label>
+                                        <textarea
                                             className="input_modal_descricao"
-                                                rows={3}
-                                                value={descricao}
-                                                onChange={(e) => setDescricao(e.target.value)}
-                                            />
-                                        </div>
+                                            rows={3}
+                                            value={descricao}
+                                            onChange={(e) => setDescricao(e.target.value)}
+                                        />
+                                    </div>
 
-                                        <div className="div_inputs_modal">
-                                            <label className="titulo_input">Descrição</label>
-                                            <select
-                                                    className="input_modal"
-                                                    value={status}
-                                                    onChange={(e) => setStatus(e.target.value)}
-                                                >
-                                                <option>Em Andamento</option>
-                                                <option>Concluído</option>
-                                                <option>Em Pausa</option>
-                                                <option>Cancelado</option>
-                                            </select>
-                                        </div>
-
-
+                                    <div className="div_inputs_modal">
+                                        <label className="titulo_input">Descrição</label>
+                                        <select
+                                            className="input_modal"
+                                            value={status}
+                                            onChange={(e) => setStatus(e.target.value)}
+                                        >
+                                            <option>Em Andamento</option>
+                                            <option>Concluído</option>
+                                            <option>Em Pausa</option>
+                                            <option>Cancelado</option>
+                                        </select>
+                                    </div>
 
 
-                                        <div className="modal-actions">
-                                            <div className="div_btn_excluir_cancelar">
-                                                <button className="btn_cancelar" onClick={() => fecharModal()}>
-                                                    Cancelar
-                                                </button>
-                                                <button className="btn_excluir" onClick={handleExcluir}>
-                                                    Excluir
-                                                </button>
-                                            </div>
-                                            <button className="btn_salvar" onClick={handleSalvar}>
-                                                Salvar
+
+
+                                    <div className="modal-actions">
+                                        <div className="div_btn_excluir_cancelar">
+                                            <button className="btn_cancelar" onClick={() => fecharModal()}>
+                                                Cancelar
+                                            </button>
+                                            <button className="btn_excluir" onClick={handleExcluir}>
+                                                Excluir
                                             </button>
                                         </div>
+                                        <button className="btn_salvar" onClick={handleSalvar}>
+                                            Salvar
+                                        </button>
                                     </div>
                                 </div>
-                       
+                            </div>
+
 
                         </div>
                         <div className="container_informacoes_projeto_detalhes">
@@ -347,28 +347,30 @@ const ProjetosDetalhes = () => {
 
                                 <p className="valor_final">Média de 13.7 tarefas</p>
                             </div>
-                            <div className="div_informacoes_projeto_detalhes">
-                                <h2 className="titulo_metricas_detalhes_projetos">Custo por Feature</h2>
-                                <h2 className="valor_metricas_detalhes_projetos">R$ 1.250</h2>
-                                <h2 className="adicional_metricas_detalhes_projetos">média por funcionalidade</h2>
-                            </div>
+                            <div className="container_kpi">
+                                <div className="div_informacoes_projeto_detalhes">
+                                    <h2 className="titulo_metricas_detalhes_projetos">Custo por Feature</h2>
+                                    <h2 className="valor_metricas_detalhes_projetos">R$ 1.250</h2>
+                                    <h2 className="adicional_metricas_detalhes_projetos">média por funcionalidade</h2>
+                                </div>
 
-                            <div className="div_informacoes_projeto_detalhes">
-                                <h2 className="titulo_metricas_detalhes_projetos">Taxa de Retrabalho</h2>
-                                <h2 className="valor_metricas_detalhes_projetos">12%</h2>
-                                <h2 className="adicional_metricas_detalhes_projetos">tarefas retornadas</h2>
-                            </div>
+                                <div className="div_informacoes_projeto_detalhes">
+                                    <h2 className="titulo_metricas_detalhes_projetos">Taxa de Retrabalho</h2>
+                                    <h2 className="valor_metricas_detalhes_projetos">12%</h2>
+                                    <h2 className="adicional_metricas_detalhes_projetos">tarefas retornadas</h2>
+                                </div>
 
-                            <div className="div_informacoes_projeto_detalhes">
-                                <h2 className="titulo_metricas_detalhes_projetos">Cycle Time</h2>
-                                <h2 className="valor_metricas_detalhes_projetos">2.8 dias</h2>
-                                <h2 className="adicional_metricas_detalhes_projetos">tempo médio por tarefa</h2>
-                            </div>
+                                <div className="div_informacoes_projeto_detalhes">
+                                    <h2 className="titulo_metricas_detalhes_projetos">Cycle Time</h2>
+                                    <h2 className="valor_metricas_detalhes_projetos">2.8 dias</h2>
+                                    <h2 className="adicional_metricas_detalhes_projetos">tempo médio por tarefa</h2>
+                                </div>
 
-                            <div className="div_informacoes_projeto_detalhes">
-                                <h2 className="titulo_metricas_detalhes_projetos">Taxa de bugs</h2>
-                                <h2 className="valor_metricas_detalhes_projetos">1.5 bugs/função</h2>
-                                <h2 className="adicional_metricas_detalhes_projetos">Taxa de Bugs por Funcionalidade</h2>
+                                <div className="div_informacoes_projeto_detalhes">
+                                    <h2 className="titulo_metricas_detalhes_projetos">Taxa de bugs</h2>
+                                    <h2 className="valor_metricas_detalhes_projetos">1.5 bugs/função</h2>
+                                    <h2 className="adicional_metricas_detalhes_projetos">Taxa de Bugs por Funcionalidade</h2>
+                                </div>
                             </div>
                         </div>
 

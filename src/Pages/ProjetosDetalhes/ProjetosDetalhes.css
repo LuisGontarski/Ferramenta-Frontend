@@ -186,6 +186,30 @@
     grid-column: span 2;
 }
 
+.card_kpi{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #bacaba4a;
+    padding: 0.5rem;
+    border-radius: 10px;
+}
+
+.cards_resumo{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+}
+
+.container_kpi{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-column: span 2;
+    gap: 1rem;
+}
+
 
 
 .titulo_card_projeto_detalhes{
