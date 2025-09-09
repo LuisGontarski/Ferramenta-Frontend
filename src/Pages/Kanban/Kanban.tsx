@@ -5,7 +5,7 @@ import MenuLateral from "../../Components/MenuLateral/MenuLateral";
 
 // Colunas fixas iniciais
 const initialColumns = [
-  { id: 0, title: "Backlog", locked: true },   // não pode excluir
+  { id: 0, title: "Backlog", locked: true }, // não pode excluir
   { id: 1, title: "Para Fazer" },
   { id: 2, title: "Planejar" },
   { id: 3, title: "Executar" },
@@ -15,32 +15,31 @@ const initialColumns = [
 
 const users = ["João", "Maria", "Ana", "Carlos", "Gustavo"];
 
+type Sprint = {
+  id: number;
+  title: string;
+};
+
 type Card = {
   id: number;
   title: string;
   priority: "high" | "medium" | "low";
   user: string;
-  date: string;       // yyyy-mm-dd
+  date: string; // yyyy-mm-dd
   type: "tarefa" | "bug" | "melhoria" | "pesquisa";
   points?: string;
   description?: string;
   notes?: string;
   columnId: number;
-  sprintId: number;   // <- sprint associada
+  sprintId: number; // <- sprint associada
 };
 
 const Kanban = () => {
   const [columns, setColumns] = useState(initialColumns);
 
-  // sprints existentes
-  const [sprints] = useState([
-    { id: 0, title: "Backlog" },
-    { id: 1, title: "Sprint 1" },
-    { id: 2, title: "Sprint 2" },
-    { id: 3, title: "Sprint 3" },
-  ]);
-
-  const [selectedSprint, setSelectedSprint] = useState(0);
+  // sprints existentes (começa só com Sprint 1)
+  const [sprints, setSprints] = useState<Sprint[]>([{ id: 1, title: "Sprint 1" }]);
+  const [selectedSprint, setSelectedSprint] = useState<number>(1);
 
   const [cards, setCards] = useState<Card[]>([
     {
@@ -53,7 +52,7 @@ const Kanban = () => {
       points: "5",
       description: "Adicionar login com JWT",
       columnId: 1,
-      sprintId: 1, // Sprint 1
+      sprintId: 1,
     },
   ]);
 
@@ -69,8 +68,12 @@ const Kanban = () => {
     description: "",
     notes: "",
     columnId: 1,
-    sprintId: 0,
+    sprintId: 1,
   });
+
+  // modal de criação de sprint
+  const [showNewSprintModal, setShowNewSprintModal] = useState(false);
+  const [newSprintName, setNewSprintName] = useState("");
 
   // criação/edição/exclusão de coluna
   const [newColumnTitle, setNewColumnTitle] = useState("");
@@ -83,13 +86,14 @@ const Kanban = () => {
   // modal de detalhes do card
   const [showCardModal, setShowCardModal] = useState(false);
   const [selectedCardId, setSelectedCardId] = useState<number | null>(null);
-  const selectedCard = cards.find(c => c.id === selectedCardId) || null;
+  const selectedCard = cards.find((c) => c.id === selectedCardId) || null;
   const [tempNotes, setTempNotes] = useState("");
 
+  // Criar card
   const addCard = () => {
     if (!formData.title.trim()) return;
-    const newCard: Card = { id: Date.now(), ...formData };
-    setCards(prev => [...prev, newCard]);
+    const newCard: Card = { id: Date.now(), ...formData, sprintId: selectedSprint };
+    setCards((prev) => [...prev, newCard]);
     setFormData({
       title: "",
       priority: "medium",
@@ -105,14 +109,16 @@ const Kanban = () => {
     setShowNewCardModal(false);
   };
 
+  // Criar coluna
   const addColumn = () => {
     const t = newColumnTitle.trim();
     if (!t) return;
     const newCol = { id: Date.now(), title: t };
-    setColumns(prev => [...prev, newCol]);
+    setColumns((prev) => [...prev, newCol]);
     setNewColumnTitle("");
   };
 
+  // Editar coluna
   const startEditColumn = (colId: number, currentTitle: string) => {
     setEditingColId(colId);
     setEditingColTitle(currentTitle);
@@ -122,7 +128,7 @@ const Kanban = () => {
     if (editingColId === null) return;
     const t = editingColTitle.trim();
     if (!t) return;
-    setColumns(prev => prev.map(c => (c.id === editingColId ? { ...c, title: t } : c)));
+    setColumns((prev) => prev.map((c) => (c.id === editingColId ? { ...c, title: t } : c)));
     setEditingColId(null);
     setEditingColTitle("");
   };
@@ -132,16 +138,41 @@ const Kanban = () => {
     setEditingColTitle("");
   };
 
+  // Excluir coluna
   const deleteColumn = (colId: number) => {
-    const col = columns.find(c => c.id === colId);
+    const col = columns.find((c) => c.id === colId);
     if (!col) return;
     if ((col as any).locked) {
       alert("A coluna Backlog não pode ser excluída.");
       return;
     }
-    const backlogId = columns.find(c => c.locked)?.id ?? 0;
-    setCards(prev => prev.map(cd => (cd.columnId === colId ? { ...cd, columnId: backlogId } : cd)));
-    setColumns(prev => prev.filter(c => c.id !== colId));
+    const backlogId = columns.find((c) => c.locked)?.id ?? 0;
+    setCards((prev) =>
+      prev.map((cd) => (cd.columnId === colId ? { ...cd, columnId: backlogId } : cd))
+    );
+    setColumns((prev) => prev.filter((c) => c.id !== colId));
+  };
+
+  // Criar sprint
+  const addSprint = () => {
+    const t = newSprintName.trim();
+    if (!t) return;
+    const newSprint = { id: Date.now(), title: t };
+    setSprints((prev) => [...prev, newSprint]);
+    setSelectedSprint(newSprint.id);
+    setNewSprintName("");
+    setShowNewSprintModal(false);
+  };
+
+  // Excluir sprint
+  const deleteSprint = (id: number) => {
+    setSprints((prev) => prev.filter((s) => s.id !== id));
+    setCards((prev) => prev.filter((c) => c.sprintId !== id));
+
+    if (selectedSprint === id) {
+      const remaining = sprints.filter((s) => s.id !== id);
+      setSelectedSprint(remaining.length > 0 ? remaining[0].id : 0);
+    }
   };
 
   // DnD handlers
@@ -149,22 +180,20 @@ const Kanban = () => {
   const handleDragEnd = () => setDraggedCardId(null);
   const handleDropOnColumn = (colId: number) => {
     if (draggedCardId === null) return;
-    setCards(prev =>
-      prev.map(c => (c.id === draggedCardId ? { ...c, columnId: colId } : c))
-    );
+    setCards((prev) => prev.map((c) => (c.id === draggedCardId ? { ...c, columnId: colId } : c)));
     setDraggedCardId(null);
   };
 
   // abrir modal de card
   const openCardModal = (cardId: number) => {
     setSelectedCardId(cardId);
-    const found = cards.find(c => c.id === cardId);
+    const found = cards.find((c) => c.id === cardId);
     setTempNotes(found?.notes || "");
     setShowCardModal(true);
   };
   const saveCardNotes = () => {
     if (!selectedCard) return;
-    setCards(prev => prev.map(c => (c.id === selectedCard.id ? { ...c, notes: tempNotes } : c)));
+    setCards((prev) => prev.map((c) => (c.id === selectedCard.id ? { ...c, notes: tempNotes } : c)));
     setShowCardModal(false);
   };
 
@@ -188,12 +217,21 @@ const Kanban = () => {
                   value={selectedSprint}
                   onChange={(e) => setSelectedSprint(Number(e.target.value))}
                 >
-                  {sprints.map(sp => (
-                    <option key={sp.id} value={sp.id}>{sp.title}</option>
+                  {sprints.map((sp) => (
+                    <option key={sp.id} value={sp.id}>
+                      {sp.title}
+                    </option>
                   ))}
                 </select>
+                <button onClick={() => setShowNewSprintModal(true)}>+ Nova Sprint</button>
+                {sprints.length > 0 && (
+                  <button onClick={() => deleteSprint(selectedSprint)}>🗑️ Excluir Sprint</button>
+                )}
               </div>
-              <button onClick={() => setShowNewCardModal(true)} className="button_adicionar_arquivo">
+              <button
+                onClick={() => setShowNewCardModal(true)}
+                className="button_adicionar_arquivo"
+              >
                 + Novo Card
               </button>
             </div>
@@ -227,18 +265,32 @@ const Kanban = () => {
                             value={editingColTitle}
                             onChange={(e) => setEditingColTitle(e.target.value)}
                           />
-                          <button className="button_small" onClick={confirmEditColumn}>Salvar</button>
-                          <button className="button_small" onClick={cancelEditColumn}>Cancelar</button>
+                          <button className="button_small" onClick={confirmEditColumn}>
+                            Salvar
+                          </button>
+                          <button className="button_small" onClick={cancelEditColumn}>
+                            Cancelar
+                          </button>
                         </>
                       ) : (
                         <>
                           <h2>{col.title}</h2>
                           <div className="column_actions">
-                            <button className="button_icon" title="Renomear"
-                              onClick={() => startEditColumn(col.id, col.title)}>✏️</button>
+                            <button
+                              className="button_icon"
+                              title="Renomear"
+                              onClick={() => startEditColumn(col.id, col.title)}
+                            >
+                              ✏️
+                            </button>
                             {!col.locked && (
-                              <button className="button_icon" title="Excluir"
-                                onClick={() => deleteColumn(col.id)}>🗑️</button>
+                              <button
+                                className="button_icon"
+                                title="Excluir"
+                                onClick={() => deleteColumn(col.id)}
+                              >
+                                🗑️
+                              </button>
                             )}
                           </div>
                         </>
@@ -286,6 +338,25 @@ const Kanban = () => {
           </div>
         </div>
 
+        {/* Modal Nova Sprint */}
+        {showNewSprintModal && (
+          <div className="modal_overlay">
+            <div className="modal">
+              <h2>Criar Sprint</h2>
+              <input
+                type="text"
+                placeholder="Nome da Sprint"
+                value={newSprintName}
+                onChange={(e) => setNewSprintName(e.target.value)}
+              />
+              <div className="modal_actions">
+                <button onClick={addSprint}>Criar</button>
+                <button onClick={() => setShowNewSprintModal(false)}>Cancelar</button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Modal Novo Card */}
         {showNewCardModal && (
           <div className="modal_overlay">
@@ -296,33 +367,37 @@ const Kanban = () => {
                 type="text"
                 placeholder="Título"
                 value={formData.title}
-                onChange={e => setFormData({ ...formData, title: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
               />
 
               <select
                 value={formData.user}
-                onChange={e => setFormData({ ...formData, user: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, user: e.target.value })}
               >
                 {users.map((u, i) => (
-                  <option key={i} value={u}>{u}</option>
+                  <option key={i} value={u}>
+                    {u}
+                  </option>
                 ))}
               </select>
 
               <textarea
                 placeholder="Descrição"
                 value={formData.description}
-                onChange={e => setFormData({ ...formData, description: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               />
 
               <input
                 type="date"
                 value={formData.date}
-                onChange={e => setFormData({ ...formData, date: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, date: e.target.value })}
               />
 
               <select
                 value={formData.priority}
-                onChange={e => setFormData({ ...formData, priority: e.target.value as Card["priority"] })}
+                onChange={(e) =>
+                  setFormData({ ...formData, priority: e.target.value as Card["priority"] })
+                }
               >
                 <option value="high">Alta</option>
                 <option value="medium">Média</option>
@@ -331,7 +406,9 @@ const Kanban = () => {
 
               <select
                 value={formData.type}
-                onChange={e => setFormData({ ...formData, type: e.target.value as Card["type"] })}
+                onChange={(e) =>
+                  setFormData({ ...formData, type: e.target.value as Card["type"] })
+                }
               >
                 <option value="tarefa">Tarefa</option>
                 <option value="bug">Bug</option>
@@ -343,26 +420,30 @@ const Kanban = () => {
                 type="number"
                 placeholder="Story Points / Horas"
                 value={formData.points}
-                onChange={e => setFormData({ ...formData, points: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, points: e.target.value })}
               />
 
               {/* Selecionar coluna */}
               <select
                 value={formData.columnId}
-                onChange={e => setFormData({ ...formData, columnId: Number(e.target.value) })}
+                onChange={(e) => setFormData({ ...formData, columnId: Number(e.target.value) })}
               >
-                {columns.map(c => (
-                  <option key={c.id} value={c.id}>{c.title}</option>
+                {columns.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.title}
+                  </option>
                 ))}
               </select>
 
               {/* Selecionar sprint */}
               <select
                 value={formData.sprintId}
-                onChange={e => setFormData({ ...formData, sprintId: Number(e.target.value) })}
+                onChange={(e) => setFormData({ ...formData, sprintId: Number(e.target.value) })}
               >
-                {sprints.map(s => (
-                  <option key={s.id} value={s.id}>{s.title}</option>
+                {sprints.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.title}
+                  </option>
                 ))}
               </select>
 
@@ -379,14 +460,23 @@ const Kanban = () => {
           <div className="modal_overlay">
             <div className="modal">
               <h2>{selectedCard.title}</h2>
-              <p><b>Tipo:</b> {selectedCard.type} • <b>Prioridade:</b> {selectedCard.priority}</p>
-              <p><b>Atribuído a:</b> {selectedCard.user} • <b>Data:</b> {selectedCard.date || "-"}</p>
-              <p><b>Story Points/Horas:</b> {selectedCard.points || "-"}</p>
+              <p>
+                <b>Tipo:</b> {selectedCard.type} • <b>Prioridade:</b> {selectedCard.priority}
+              </p>
+              <p>
+                <b>Atribuído a:</b> {selectedCard.user} • <b>Data:</b>{" "}
+                {selectedCard.date || "-"}
+              </p>
+              <p>
+                <b>Story Points/Horas:</b> {selectedCard.points || "-"}
+              </p>
               <p style={{ whiteSpace: "pre-wrap" }}>
                 <b>Descrição:</b> {selectedCard.description || "-"}
               </p>
 
-              <label style={{ marginTop: 12, display: "block" }}><b>Observações</b></label>
+              <label style={{ marginTop: 12, display: "block" }}>
+                <b>Observações</b>
+              </label>
               <textarea
                 placeholder="Escreva observações aqui…"
                 value={tempNotes}
