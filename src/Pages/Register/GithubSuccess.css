@@ -1,46 +1,113 @@
 .github-success-container {
   display: flex;
   flex-direction: column;
-  justify-content: center;  /* Centraliza vertical */
-  align-items: center;      /* Centraliza horizontal */
-  height: 100vh;            /* Tela inteira */
-  background: #f9fafb;      /* Fundo leve */
-  font-family: "Segoe UI", Roboto, sans-serif;
-  color: #111827;
-}
-
-.github-success-title {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #16a34a; /* verde sucesso */
-  margin-bottom: 0.5rem;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #f5f7fa;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   text-align: center;
+  padding: 2rem;
 }
 
-.github-success-subtitle {
-  font-size: 1rem;
-  color: #374151;
-  margin-bottom: 2rem;
-  text-align: center;
+.success-box,
+.error-box {
+  background: #ffffff;
+  padding: 2.5rem;
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+  max-width: 400px;
+  width: 100%;
 }
 
-.github-success-animation {
-  width: 180px;
-  height: 180px;
-  margin-bottom: 2rem;
+.success-animation,
+.error-animation {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  font-weight: bold;
 }
 
-.github-success-button {
-  background-color: #2563eb; /* azul */
-  color: white;
-  padding: 0.75rem 2rem;
+.success-animation {
+  color: #28a745;
+  animation: success-bounce 0.8s ease;
+}
+
+.error-animation {
+  color: #dc3545;
+  animation: error-shake 0.6s ease;
+}
+
+h2 {
+  margin-bottom: 1.5rem;
+  font-size: 1.4rem;
+  color: #333;
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-around;
+  gap: 1rem;
+}
+
+button {
+  padding: 0.75rem 1.5rem;
   border: none;
-  border-radius: 0.5rem;
-  font-size: 1rem;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background 0.3s ease;
+  font-size: 1rem;
+  transition: transform 0.2s ease, background 0.3s ease;
 }
 
-.github-success-button:hover {
-  background-color: #1d4ed8;
+.proceed-button {
+  background: #007bff;
+  color: #fff;
+}
+
+.proceed-button:hover {
+  background: #0056b3;
+  transform: scale(1.05);
+}
+
+.retry-button {
+  background: #ffc107;
+  color: #212529;
+}
+
+.retry-button:hover {
+  background: #e0a800;
+  transform: scale(1.05);
+}
+
+/* ✅ Animação de sucesso (bounce) */
+@keyframes success-bounce {
+  0% {
+    transform: scale(0.5);
+    opacity: 0.2;
+  }
+  60% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* ❌ Animação de erro (shake) */
+@keyframes error-shake {
+  0% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-6px);
+  }
+  50% {
+    transform: translateX(6px);
+  }
+  75% {
+    transform: translateX(-6px);
+  }
+  100% {
+    transform: translateX(0);
+  }
 }

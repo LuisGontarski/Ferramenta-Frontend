@@ -53,16 +53,12 @@ const dataAtividadeSemanal = [
 
 const abrirModalEditar = () => {
   const modal = document.getElementById("editar_modal");
-  if (modal) {
-    modal.classList.remove("sumir");
-  }
+  if (modal) modal.classList.remove("sumir");
 };
 
 const fecharModalEditar = () => {
   const modal = document.getElementById("editar_modal");
-  if (modal) {
-    modal.classList.add("sumir");
-  }
+  if (modal) modal.classList.add("sumir");
 };
 
 const Perfil = () => {
@@ -78,53 +74,85 @@ const Perfil = () => {
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [categoriaSelecionada, setCategoriaSelecionada] = useState("Commits");
+  const [githubIntegrated, setGithubIntegrated] = useState(false);
 
   const carregarPerfil = async () => {
-  setLoading(true);
-  setFetchError(null);
+    setLoading(true);
+    setFetchError(null);
 
-  const usuarioId = localStorage.getItem("usuario_id");
-  console.log("ID do usuário:", usuarioId);
+    const usuarioId = localStorage.getItem("usuario_id");
+    const githubToken = localStorage.getItem("github_token");
 
-  try {
-    let response;
+    try {
+      let response;
+      if (usuarioId) {
+        response = await getUserById(usuarioId);
+      } else {
+        response = {
+          nome_usuario: "Usuário Padrão",
+          cargo: "Cargo não definido",
+          email: "email@exemplo.com",
+          github: "",
+          foto_perfil: "",
+          criado_em: new Date().toISOString(),
+        };
+      }
 
-    if (usuarioId) {
-      // Tenta buscar os dados reais
-      response = await getUserById(usuarioId);
-    } else {
-      console.warn("ID do usuário não encontrado. Carregando perfil padrão.");
-      // Perfil padrão caso não haja ID
-      response = {
-        nome_usuario: "Usuário Padrão",
-        cargo: "Cargo não definido",
-        email: "email@exemplo.com",
-        github: "github.com/usuario",
-        foto_perfil: "",
-        criado_em: new Date().toISOString(),
-      };
+      setUsuario({
+        nome: response.nome_usuario || "Nome não informado",
+        cargo: response.cargo || "Cargo não informado",
+        email: response.email || "E-mail não informado",
+        github: response.github || "",
+        foto_perfil: response.foto_perfil || "",
+        criado_em: response.criado_em || "",
+      });
+
+      setGithubIntegrated(!!response.github);
+    } catch (error: any) {
+      console.error(
+        "Erro ao buscar dados do usuário:",
+        error.response?.status,
+        error.message
+      );
+      setFetchError(
+        "Falha ao carregar os dados do perfil. Tente novamente mais tarde."
+      );
+    } finally {
+      setLoading(false);
     }
-
-    setUsuario({
-      nome: response.nome_usuario || "Nome não informado",
-      cargo: response.cargo || "Cargo não informado",
-      email: response.email || "E-mail não informado",
-      github: response.github || "GitHub não informado",
-      foto_perfil: response.foto_perfil || "",
-      criado_em: response.criado_em || "",
-    });
-  } catch (error: any) {
-    console.error("Erro ao buscar dados do usuário:", error.message || error);
-    setFetchError("Falha ao carregar os dados do perfil. Tente novamente mais tarde.");
-  } finally {
-    setLoading(false);
-  }
-};
-
+  };
 
   useEffect(() => {
     carregarPerfil();
   }, []);
+
+  const handleCategoriaClick = (categoria: string) => {
+    setCategoriaSelecionada(categoria);
+  };
+
+  const handleRetryGithub = () => {
+    window.location.href = `${import.meta.env.VITE_API_URL}/auth/github/login`;
+  };
+
+  const handleProceedWithoutGithub = async () => {
+    try {
+      const payload = {
+        nome_usuario: usuario.nome,
+        email: usuario.email,
+        cargo: usuario.cargo,
+        foto_perfil: usuario.foto_perfil,
+      };
+      await fetch(`${import.meta.env.VITE_API_URL}/users/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      window.location.href = "/";
+    } catch (err) {
+      console.error("Erro ao prosseguir sem GitHub:", err);
+      alert("Não foi possível prosseguir. Tente novamente.");
+    }
+  };
 
   if (loading) {
     return (
@@ -147,10 +175,6 @@ const Perfil = () => {
       </>
     );
   }
-
-  const handleCategoriaClick = (categoria: string) => {
-    setCategoriaSelecionada(categoria);
-  };
 
   return (
     <>
@@ -176,7 +200,11 @@ const Perfil = () => {
                 </div>
                 <div className="div_icones_perfil">
                   <i className="fa-brands fa-github icones_perfil"></i>
-                  <h2 className="texto_dados">{usuario.github}</h2>
+                  <h2 className="texto_dados">
+                    {githubIntegrated
+                      ? usuario.github
+                      : "Não foi possível se integrar com GitHub!"}
+                  </h2>
                 </div>
                 <div className="div_icones_perfil">
                   <i className="fa-regular fa-calendar icones_perfil"></i>
@@ -206,9 +234,21 @@ const Perfil = () => {
               <button className="btn_excluir" id="btn_excluir">
                 Excluir Perfil
               </button>
+
+              {!githubIntegrated && (
+                <div style={{ marginTop: "15px", textAlign: "center" }}>
+                  <button
+                    className="proceed-button"
+                    onClick={handleRetryGithub}
+                  >
+                    Tentar integrar com GitHub
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
+          {/* Resto do código de cards e gráficos */}
           <div className="container_cards">
             <div className="container_sessoes_perfil">
               <div className="card_perfil">
@@ -242,7 +282,6 @@ const Perfil = () => {
                       cor="#2563eb"
                       backgroundCor="#dbeafe"
                     />
-                    {/* demais atividades commits */}
                   </div>
                 )}
 
@@ -257,7 +296,6 @@ const Perfil = () => {
                       cor="#16a34a"
                       backgroundCor="#dcfce7"
                     />
-                    {/* demais tarefas */}
                   </div>
                 )}
 
@@ -272,7 +310,6 @@ const Perfil = () => {
                       cor="#9333ea"
                       backgroundCor="#f3e8ff"
                     />
-                    {/* demais pull requests */}
                   </div>
                 )}
 
@@ -287,7 +324,6 @@ const Perfil = () => {
                       cor="#d97706"
                       backgroundCor="#fef3c7"
                     />
-                    {/* demais atividades de tempo */}
                   </div>
                 )}
               </div>
@@ -343,48 +379,65 @@ const Perfil = () => {
               <h3>Atividade Semanal</h3>
               <ResponsiveContainer width="100%" height={300}>
                 <AreaChart data={dataAtividadeSemanal}>
-  <defs>
-    <linearGradient id="colorCommits" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8} />
-      <stop offset="95%" stopColor="#8884d8" stopOpacity={0} />
-    </linearGradient>
-    <linearGradient id="colorReviews" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.8} />
-      <stop offset="95%" stopColor="#82ca9d" stopOpacity={0} />
-    </linearGradient>
-    <linearGradient id="colorReunioes" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="5%" stopColor="#ffc658" stopOpacity={0.8} />
-      <stop offset="95%" stopColor="#ffc658" stopOpacity={0} />
-    </linearGradient>
-  </defs>
-  <XAxis dataKey="dia" />
-  <YAxis />
-  <CartesianGrid strokeDasharray="3 3" />
-  <Tooltip />
-  <Legend />
-  <Area
-    type="monotone"
-    dataKey="commits"
-    stroke="#8884d8"
-    fillOpacity={1}
-    fill="url(#colorCommits)"
-  />
-  <Area
-    type="monotone"
-    dataKey="reviews"
-    stroke="#82ca9d"
-    fillOpacity={1}
-    fill="url(#colorReviews)"
-  />
-  <Area
-    type="monotone"
-    dataKey="reunioes"
-    stroke="#ffc658"
-    fillOpacity={1}
-    fill="url(#colorReunioes)"
-  />
-</AreaChart>
-
+                  <defs>
+                    <linearGradient
+                      id="colorCommits"
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="1"
+                    >
+                      <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8} />
+                      <stop offset="95%" stopColor="#8884d8" stopOpacity={0} />
+                    </linearGradient>
+                    <linearGradient
+                      id="colorReviews"
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="1"
+                    >
+                      <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.8} />
+                      <stop offset="95%" stopColor="#82ca9d" stopOpacity={0} />
+                    </linearGradient>
+                    <linearGradient
+                      id="colorReunioes"
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="1"
+                    >
+                      <stop offset="5%" stopColor="#ffc658" stopOpacity={0.8} />
+                      <stop offset="95%" stopColor="#ffc658" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <XAxis dataKey="dia" />
+                  <YAxis />
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <Tooltip />
+                  <Legend />
+                  <Area
+                    type="monotone"
+                    dataKey="commits"
+                    stroke="#8884d8"
+                    fillOpacity={1}
+                    fill="url(#colorCommits)"
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="reviews"
+                    stroke="#82ca9d"
+                    fillOpacity={1}
+                    fill="url(#colorReviews)"
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="reunioes"
+                    stroke="#ffc658"
+                    fillOpacity={1}
+                    fill="url(#colorReunioes)"
+                  />
+                </AreaChart>
               </ResponsiveContainer>
             </div>
           </div>
