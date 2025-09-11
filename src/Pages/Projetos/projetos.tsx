@@ -180,11 +180,11 @@ const Projetos = () => {
       prev.map((equipe) =>
         equipe.id === idEquipe
           ? {
-              ...equipe,
-              membros: equipe.membros.includes(membro)
-                ? equipe.membros.filter((m) => m !== membro)
-                : [...equipe.membros, membro],
-            }
+            ...equipe,
+            membros: equipe.membros.includes(membro)
+              ? equipe.membros.filter((m) => m !== membro)
+              : [...equipe.membros, membro],
+          }
           : equipe
       )
     );
@@ -350,9 +350,8 @@ const Projetos = () => {
                         id={`membro-${equipe.id}-${membro}`}
                       />
                       <span
-                        className={`checkbox_custom ${
-                          equipe.membros.includes(membro) ? "checked" : ""
-                        }`}
+                        className={`checkbox_custom ${equipe.membros.includes(membro) ? "checked" : ""
+                          }`}
                       ></span>
                       <div className="img_perfil"></div>
                       <div>
@@ -386,9 +385,8 @@ const Projetos = () => {
               type="button"
               role="radio"
               aria-checked={!criandoRepositorio}
-              className={`radio-toggle ${
-                !criandoRepositorio ? "selected" : ""
-              }`}
+              className={`radio-toggle ${!criandoRepositorio ? "selected" : ""
+                }`}
               onClick={() => setCriandoRepositorio(false)}
             >
               <span className="dot-outer">
@@ -441,9 +439,8 @@ const Projetos = () => {
                 />
               </div>
               <div
-                className={`repositorio_privado ${
-                  repositorioPrivado ? "ativo" : ""
-                }`}
+                className={`repositorio_privado ${repositorioPrivado ? "ativo" : ""
+                  }`}
               >
                 <input
                   type="checkbox"
@@ -457,9 +454,8 @@ const Projetos = () => {
                   className="checkbox_privado_label"
                 >
                   <span
-                    className={`checkbox_custom ${
-                      repositorioPrivado ? "checked" : ""
-                    }`}
+                    className={`checkbox_custom ${repositorioPrivado ? "checked" : ""
+                      }`}
                   ></span>
                   <div className="textos_privado">
                     <span className="titulo_privado">Repositório privado</span>
@@ -511,11 +507,10 @@ const Projetos = () => {
                 {categorias.map((categoria) => (
                   <h2
                     key={categoria}
-                    className={`texto_projetos_categoria ${
-                      categoriaSelecionada === categoria
+                    className={`texto_projetos_categoria ${categoriaSelecionada === categoria
                         ? "categoria_projetos_selecionada"
                         : ""
-                    }`}
+                      }`}
                     onClick={() => setCategoriaSelecionada(categoria)}
                   >
                     {categoria}
@@ -581,7 +576,7 @@ const Projetos = () => {
                         </div>
                       </div>
                       <NavLink
-                        to={"/ProjetosDetalhes"}
+                        to={`/ProjetosDetalhes?id=${111}`}
                         className="btn_entrar_projeto"
                       >
                         Entrar no Projeto
