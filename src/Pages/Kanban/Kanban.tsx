@@ -2,10 +2,11 @@ import "./Kanban.css";
 import NavbarHome from "../../Components/Navbar/NavbarHome";
 import { useState } from "react";
 import MenuLateral from "../../Components/MenuLateral/MenuLateral";
+import { FiEdit2 } from "react-icons/fi";
+import { FaRegTrashCan } from "react-icons/fa6";
 
-// Colunas fixas iniciais
 const initialColumns = [
-    { id: 0, title: "Backlog", locked: true }, // não pode excluir
+    { id: 0, title: "Backlog", locked: true }, 
     { id: 1, title: "Para Fazer" },
     { id: 2, title: "Planejar" },
     { id: 3, title: "Executar" },
@@ -25,19 +26,17 @@ type Card = {
     title: string;
     priority: "high" | "medium" | "low";
     user: string;
-    date: string; // yyyy-mm-dd
+    date: string;
     type: "tarefa" | "bug" | "melhoria" | "pesquisa";
     points?: string;
     description?: string;
     notes?: string;
     columnId: number;
-    sprintId: number; // <- sprint associada
+    sprintId: number;
 };
 
 const Kanban = () => {
     const [columns, setColumns] = useState(initialColumns);
-
-    // sprints existentes (começa só com Sprint 1)
     const [sprints, setSprints] = useState<Sprint[]>([{ id: 1, title: "Sprint 1" }]);
     const [selectedSprint, setSelectedSprint] = useState<number>(1);
 
@@ -56,7 +55,6 @@ const Kanban = () => {
         },
     ]);
 
-    // modal de criação de card
     const [showNewCardModal, setShowNewCardModal] = useState(false);
     const [formData, setFormData] = useState<Omit<Card, "id">>({
         title: "",
@@ -71,11 +69,9 @@ const Kanban = () => {
         sprintId: 1,
     });
 
-    // modal de criação de sprint
     const [showNewSprintModal, setShowNewSprintModal] = useState(false);
     const [newSprintName, setNewSprintName] = useState("");
 
-    // criação/edição/exclusão de coluna
     const [newColumnTitle, setNewColumnTitle] = useState("");
     const [editingColId, setEditingColId] = useState<number | null>(null);
     const [editingColTitle, setEditingColTitle] = useState("");
@@ -211,9 +207,18 @@ const Kanban = () => {
                                     Visualização e acompanhamento das tarefas em andamento.
                                 </h2>
                             </div>
+                            <button
+                                onClick={() => setShowNewCardModal(true)}
+                                className="button_adicionar_arquivo"
+                            >
+                                + Novo Card
+                            </button>
+                        </div>
+
+                        <div className="div_acoes_kanban">
                             <div className="sprint_selector">
-                                <label>Sprint:</label>
                                 <select
+                                className="select_sprint"
                                     value={selectedSprint}
                                     onChange={(e) => setSelectedSprint(Number(e.target.value))}
                                 >
@@ -223,29 +228,24 @@ const Kanban = () => {
                                         </option>
                                     ))}
                                 </select>
-                                <button onClick={() => setShowNewSprintModal(true)}>+ Nova Sprint</button>
+                                <button className="input_button" onClick={() => setShowNewSprintModal(true)}>+ Nova Sprint</button>
                                 {sprints.length > 0 && (
-                                    <button onClick={() => deleteSprint(selectedSprint)}>🗑️ Excluir Sprint</button>
+                                    <button className="input_button" onClick={() => deleteSprint(selectedSprint)}>🗑️ Excluir Sprint</button>
                                 )}
                             </div>
-                            <button
-                                onClick={() => setShowNewCardModal(true)}
-                                className="button_adicionar_arquivo"
-                            >
-                                + Novo Card
-                            </button>
-                        </div>
 
-                        {/* Criar coluna */}
-                        <div className="add_column">
-                            <input
-                                type="text"
-                                placeholder="Nova coluna (ex.: QA, Deploy...)"
-                                value={newColumnTitle}
-                                onChange={(e) => setNewColumnTitle(e.target.value)}
-                            />
-                            <button onClick={addColumn}>+ Adicionar Coluna</button>
+                            <div className="add_column">
+                                <input
+                                className="input_button"
+                                    type="text"
+                                    placeholder="Adicionar nova coluna"
+                                    value={newColumnTitle}
+                                    onChange={(e) => setNewColumnTitle(e.target.value)}
+                                />
+                                <button className="input_button" onClick={addColumn}>+ Adicionar Coluna</button>
+                            </div>
                         </div>
+                        
 
                         <div className="kanban_container">
                             <div className="kanban">
@@ -276,21 +276,21 @@ const Kanban = () => {
                                                 <>
                                                     <h2>{col.title}</h2>
                                                     <div className="column_actions">
-                                                        <button
+                                                        <span
                                                             className="button_icon"
                                                             title="Renomear"
                                                             onClick={() => startEditColumn(col.id, col.title)}
                                                         >
-                                                            ✏️
-                                                        </button>
+                                                            <FiEdit2 />
+                                                        </span>
                                                         {!col.locked && (
-                                                            <button
+                                                            <span
                                                                 className="button_icon"
                                                                 title="Excluir"
                                                                 onClick={() => deleteColumn(col.id)}
                                                             >
-                                                                🗑️
-                                                            </button>
+                                                                <FaRegTrashCan />
+                                                            </span>
                                                         )}
                                                     </div>
                                                 </>
@@ -318,15 +318,15 @@ const Kanban = () => {
                                                                         : "Baixa"}
                                                             </span>
                                                         </div>
+                                                         <span className="card_type"> {card.type}</span>
+                                                            <span className="card_points"> {card.points || "-"}</span>
                                                         <p className="card_title">{card.title}</p>
-                                                        {card.description && (
-                                                            <p className="card_description">{card.description}</p>
-                                                        )}
+                                                       
                                                         <div className="card_infos">
-                                                            <span className="card_user">👤 {card.user}</span>
-                                                            <span className="card_date">📅 {card.date || "-"}</span>
-                                                            <span className="card_type">📌 {card.type}</span>
-                                                            <span className="card_points">⭐ {card.points || "-"}</span>
+                                                            <div className="div_responsavel_card_kanban">
+                                                                <span className="card_user"> {card.user}</span>
+                                                                <span className="card_date"> {card.date || "-"}</span>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 ))}
@@ -338,7 +338,6 @@ const Kanban = () => {
                     </div>
                 </div>
 
-                {/* Modal Nova Sprint */}
                 {showNewSprintModal && (
                     <div className="modal_overlay">
                         <div className="modal">

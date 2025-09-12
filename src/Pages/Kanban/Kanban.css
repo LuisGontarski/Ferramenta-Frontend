@@ -66,6 +66,38 @@ body{
     justify-content: space-between;
 }
 
+.div_responsavel_card_kanban{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.div_acoes_kanban{
+    display: flex;
+    border-radius: 8px;
+    padding: 0.4rem;
+    justify-content: space-between;
+}
+
+.select_sprint{
+    padding: 0.35rem 0.75rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    background-color: #F0F0F0;
+}
+
+.input_button{
+    padding: 0.35rem 0.75rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    background-color: #F0F0F0;
+}
+
+
 .kanban_title h2{
     font-size: 18px;
     color: black;
