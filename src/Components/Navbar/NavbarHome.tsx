@@ -9,7 +9,8 @@ const NavbarHome = () => {
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id"); // pega o valor do ?id=111
 
-  const isInProject = Boolean(id);
+  // const isInProject = Boolean(id);
+  const isInProject = true;
 
   return (
     <header className="headerNavBarHome">

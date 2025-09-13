@@ -11,9 +11,8 @@ import Documentos from './Pages/Documentos/Documentos';
 import Requisitos from './Pages/Requisitos/Requisitos';
 import Cronograma from './Pages/Cronograma/Cronograma';
 import ChatWrapper from './Pages/Chat/ChatWrapper';
-import GithubSuccess from './Pages/Register/GithubSucess';
+import GithubErrorIntegration from './Pages/Register/GithubErrorIntegration';
 import GithubSuccessIntegration from './Pages/Register/GithubSuccessIntegration';
-import NavbarHome from './Components/Navbar/NavbarHome';
 
 
 
@@ -33,7 +32,7 @@ function App() {
         <Route path="/requisitos" element={<Requisitos />} />
         <Route path="/cronograma" element={<Cronograma />} />
         <Route path="/chat/:projeto_id" element={<ChatWrapper />} />
-        <Route path="/github-success" element={<GithubSuccess />} />
+        <Route path="/github-error-integration" element={<GithubErrorIntegration />} />
         <Route path="/github-success-integration" element={<GithubSuccessIntegration />} />
 
       </Routes>

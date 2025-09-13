@@ -1,9 +1,9 @@
 import { useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import "./GithubSuccess.css";
+import "./Github.css";
 import axios from "axios";
 
-export default function GithubSuccess() {
+export default function GithubErrorIntegration() {
   const [searchParams] = useSearchParams();
   const [status, setStatus] = useState<"success" | "error" | "loading">(
     "loading"
