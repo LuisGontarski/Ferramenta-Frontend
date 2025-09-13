@@ -37,8 +37,6 @@ type Card = {
   sprintId: number;
 };
 
-
-
 const Kanban = () => {
   const [columns, setColumns] = useState(initialColumns);
   const [sprints, setSprints] = useState<Sprint[]>([
@@ -178,7 +176,7 @@ const Kanban = () => {
     if (!dateStr) return "-";
     const [year, month, day] = dateStr.split("-");
     return `${day}/${month}/${year}`;
-    };
+  };
 
   // Excluir sprint
   const deleteSprint = (id: number) => {
@@ -259,7 +257,7 @@ const Kanban = () => {
                     className="input_excluir_sprint"
                     onClick={() => deleteSprint(selectedSprint)}
                   >
-                    <FaRegTrashAlt size={'14px'}/> Excluir Sprint
+                    <FaRegTrashAlt size={"14px"} /> Excluir Sprint
                   </button>
                 )}
               </div>
@@ -344,26 +342,26 @@ const Kanban = () => {
                             onClick={() => openCardModal(card.id)}
                           >
                             <div className="card_tags">
-                                 <div className={`badge ${card.priority}`}>
-                                    {card.priority === "high"
-                                        ? "Alta"
-                                        : card.priority === "medium"
-                                        ? "Média"
-                                        : "Baixa"}
-                                </div>
-                                <span className="card_type">{card.type}</span>
-                                <span className="card_points">
+                              <div className={`badge ${card.priority}`}>
+                                {card.priority === "high"
+                                  ? "Alta"
+                                  : card.priority === "medium"
+                                  ? "Média"
+                                  : "Baixa"}
+                              </div>
+                              <span className="card_type">{card.type}</span>
+                              <span className="card_points">
                                 {card.points || "-"}
-                                </span>
+                              </span>
                             </div>
-                           
+
                             <p className="card_title">{card.title}</p>
 
                             <div className="card_infos">
                               <div className="div_responsavel_card_kanban">
                                 <span className="card_user">{card.user}</span>
                                 <span className="card_date">
-                                    {formatDate(card.date)}
+                                  {formatDate(card.date)}
                                 </span>
                               </div>
                             </div>
@@ -405,19 +403,31 @@ const Kanban = () => {
         {showNewSprintModal && (
           <div className="modal_overlay">
             <div className="modal">
-                <div>
-                    <h2 className="titulo_modal">Criar Sprint</h2>
-                    <h2 className="descricao_modal">Crie uma nova sprint para poder separar as tarefas</h2>
-                </div>
+              <div>
+                <h2 className="titulo_modal">Criar Sprint</h2>
+                <h2 className="descricao_modal">
+                  Crie uma nova sprint para poder separar as tarefas
+                </h2>
+              </div>
               <div className="div_inputs_modal">
                 <label className="titulo_input">Nome da tarefa</label>
-                <input className="input_modal" placeholder="Título" type="text" value="" />
-            </div>
+                <input
+                  className="input_modal"
+                  placeholder="Título"
+                  type="text"
+                  value=""
+                />
+              </div>
               <div className="modal_actions">
-                <button className="btn_cancelar" onClick={() => setShowNewSprintModal(false)}>
+                <button
+                  className="btn_cancelar"
+                  onClick={() => setShowNewSprintModal(false)}
+                >
                   Cancelar
                 </button>
-                <button onClick={addSprint} className="btn_salvar">Criar</button>
+                <button onClick={addSprint} className="btn_salvar">
+                  Criar
+                </button>
               </div>
             </div>
           </div>
@@ -445,6 +455,19 @@ const Kanban = () => {
                   }
                 />
               </div>
+
+              <div className="div_inputs_modal">
+                <label className="titulo_input">Descrição da tarefa</label>
+                <textarea
+                  className="input_modal_descricao"
+                  placeholder="Descrição"
+                  value={formData.description}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
+                />
+              </div>
+
               <div className="div_inputs_modal">
                 <label className="titulo_input">Responsável pela tarefa</label>
                 <select
@@ -463,13 +486,13 @@ const Kanban = () => {
               </div>
 
               <div className="div_inputs_modal">
-                <label className="titulo_input">Descrição da tarefa</label>
-                <textarea
-                  className="input_modal_descricao"
-                  placeholder="Descrição"
-                  value={formData.description}
+                <label className="titulo_input">Data de Inicío</label>
+                <input
+                  className="input_modal"
+                  type="date"
+                  value={formData.date}
                   onChange={(e) =>
-                    setFormData({ ...formData, description: e.target.value })
+                    setFormData({ ...formData, date: e.target.value })
                   }
                 />
               </div>
@@ -602,7 +625,7 @@ const Kanban = () => {
               <p>
                 <b>Atribuído a:</b> {selectedCard.user} • <b>Data:</b>{" "}
                 {formatDate(selectedCard.date)}
-                </p>
+              </p>
 
               <p>
                 <b>Story Points/Horas:</b> {selectedCard.points || "-"}
