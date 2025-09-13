@@ -1,20 +1,31 @@
-import React from "react";
+import React, { useState } from "react";
 import "./ProjetoModal.css";
 import { IoCloseOutline } from "react-icons/io5";
-import { useState } from "react";
 import SelecionarUsuarios from "../../Components/Projeto/SelecionarUsuarios";
 
 interface ProjetoModalProps {
-  fecharModal?: () => void; // Opcional, caso queira usar função externa
+  fecharModal?: () => void;
 }
 
 interface Usuario {
-  usuario_id: string; // mudou para string por ser UUID
+  usuario_id: string;
   nome_usuario: string;
   github: string;
 }
 
+interface Equipe {
+  nome: string;
+  usuarios: Usuario[];
+}
+
 const ProjetoModal: React.FC<ProjetoModalProps> = ({ fecharModal }) => {
+  const [novoNomeEquipe, setNovoNomeEquipe] = useState("");
+  const [mostrarMembros, setMostrarMembros] = useState(false);
+  const [usuariosSelecionados, setUsuariosSelecionados] = useState<Usuario[]>(
+    []
+  );
+  const [equipes, setEquipes] = useState<Equipe[]>([]);
+
   function fechar() {
     const modal = document.getElementById("card_modal");
     const conteudo_modal = document.getElementById("modal_adicionar_projeto");
@@ -31,20 +42,89 @@ const ProjetoModal: React.FC<ProjetoModalProps> = ({ fecharModal }) => {
     setNovoNomeEquipe("");
     setMostrarMembros(false);
     setUsuariosSelecionados([]);
-    // Caso tenha função externa
+    setEquipes([]);
     if (fecharModal) fecharModal();
   }
 
-  const [novoNomeEquipe, setNovoNomeEquipe] = useState("");
-  const [mostrarMembros, setMostrarMembros] = useState(false);
+  function iniciarSelecaoMembros() {
+    if (!novoNomeEquipe.trim()) return;
+    setMostrarMembros(true);
+  }
 
-  const [usuariosSelecionados, setUsuariosSelecionados] = useState<Usuario[]>(
-    []
-  );
+  function confirmarEquipe() {
+    if (!novoNomeEquipe.trim() || usuariosSelecionados.length === 0) return;
 
-  function adicionarMembros() {
-    if (!novoNomeEquipe.trim()) return; // não faz nada se input vazio
-    setMostrarMembros(true); // mostra o componente de membros
+    setEquipes([
+      ...equipes,
+      { nome: novoNomeEquipe.trim(), usuarios: usuariosSelecionados },
+    ]);
+    setNovoNomeEquipe("");
+    setUsuariosSelecionados([]);
+    setMostrarMembros(false);
+  }
+
+  async function salvarProjeto() {
+    // Validação básica
+    if (!equipes.length) {
+      alert("Adicione pelo menos uma equipe.");
+      return;
+    }
+
+    // Coletar dados do formulário
+    const tituloInput = document.querySelector<HTMLInputElement>(
+      'input[placeholder="Digite o título"]'
+    )!.value;
+    const descricaoInput = document.querySelector<HTMLTextAreaElement>(
+      'textarea[placeholder="Digite a descrição"]'
+    )!.value;
+    const dataInicioInput =
+      document.querySelector<HTMLInputElement>('input[type="date"]')!?.value;
+    const dataFimInput =
+      document.querySelectorAll<HTMLInputElement>('input[type="date"]')[1]
+        ?.value;
+
+    if (!tituloInput || !descricaoInput || !dataInicioInput || !dataFimInput) {
+      alert("Preencha todos os campos.");
+      return;
+    }
+
+    // Preparar payload
+    const payload = {
+      criador_id: localStorage.getItem("usuario_id"),
+      nome: tituloInput,
+      descricao: descricaoInput,
+      data_inicio: dataInicioInput,
+      data_fim: dataFimInput,
+      equipes: equipes.map((e) => ({
+        nome: e.nome,
+        usuarios: e.usuarios.map((u) => u.usuario_id),
+      })),
+      status:
+        document.querySelector<HTMLSelectElement>("select")!?.value || "Ativo",
+    };
+
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/projects`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const erro = await response.json();
+        alert(erro.message || "Erro ao criar projeto.");
+        return;
+      }
+
+      alert("Projeto criado com sucesso!");
+      fechar(); // Fecha modal
+
+      // <-- Adiciona este redirecionamento
+      window.location.href = "/projetos";
+    } catch (error) {
+      console.error(error);
+      alert("Erro ao criar projeto.");
+    }
   }
 
   return (
@@ -96,15 +176,41 @@ const ProjetoModal: React.FC<ProjetoModalProps> = ({ fecharModal }) => {
             />
             <button
               className="btn_adicionar_equipe"
-              onClick={adicionarMembros}
-              disabled={!novoNomeEquipe.trim()} // desabilita se input vazio
+              onClick={iniciarSelecaoMembros}
+              disabled={!novoNomeEquipe.trim()}
             >
               Adicionar
             </button>
           </div>
 
           {mostrarMembros && (
-            <SelecionarUsuarios onSelecionar={setUsuariosSelecionados} />
+            <div>
+              <SelecionarUsuarios onSelecionar={setUsuariosSelecionados} />
+              <button
+                className="btn_adicionar_equipe"
+                style={{ marginTop: "0.5rem" }}
+                onClick={confirmarEquipe}
+              >
+                Confirmar Seleção
+              </button>
+            </div>
+          )}
+
+          {equipes.length > 0 && (
+            <div className="container_equipes">
+              {equipes.map((equipe, idx) => (
+                <div key={idx} className="card_equipe">
+                  <strong>{equipe.nome}</strong>
+                  <div className="grid_membros">
+                    {equipe.usuarios.map((u) => (
+                      <div key={u.usuario_id} className="membro_item">
+                        {u.nome_usuario}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
 
           <label>Status</label>
@@ -114,7 +220,7 @@ const ProjetoModal: React.FC<ProjetoModalProps> = ({ fecharModal }) => {
             <option>Arquivado</option>
           </select>
 
-          <button className="btn_salvar_modal" onClick={fechar}>
+          <button className="btn_salvar_modal" onClick={salvarProjeto}>
             Salvar Projeto
           </button>
         </div>

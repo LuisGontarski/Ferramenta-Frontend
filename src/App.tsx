@@ -13,6 +13,7 @@ import Cronograma from './Pages/Cronograma/Cronograma';
 import ChatWrapper from './Pages/Chat/ChatWrapper';
 import GithubSuccess from './Pages/Register/GithubSucess';
 import GithubSuccessIntegration from './Pages/Register/GithubSuccessIntegration';
+import NavbarHome from './Components/Navbar/NavbarHome';
 
 
 
@@ -25,7 +26,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/projetos" element={<Projetos />} />
         <Route path="/perfil" element={<Perfil />} />
-        <Route path="/projetosDetalhes" element={<ProjetosDetalhes />} />
+        <Route path="/projetosDetalhes/:id" element={<ProjetosDetalhes />} />
         <Route path="/kanban" element={<Kanban />} />
         <Route path="/esqueceuSenha" element={<EsqueceuSenha />} />
         <Route path="/documentos" element={<Documentos />} />

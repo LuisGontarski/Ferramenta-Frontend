@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./projetos.css";
 import NavbarHome from "../../Components/Navbar/NavbarHome";
 import MenuLateral from "../../Components/MenuLateral/MenuLateral";
@@ -11,15 +11,18 @@ import { IoIosGitBranch } from "react-icons/io";
 import ProjetoModal from "./ProjetoModal";
 
 export interface Projeto {
+  projeto_id: string;
   titulo: string;
   descricao: string;
   data_inicio: string;
   data_fim: string;
   atualizadoEm: string;
-  membros: number;
+  total_membros: number;
   branches: number;
   status: string;
 }
+
+export const BASE_URL = import.meta.env.VITE_API_URL;
 
 const value = 5.5;
 const max = 10;
@@ -31,66 +34,58 @@ const gradientStyle = {
 const Projetos = () => {
   const categorias = ["Todos", "Ativo", "Concluído", "Arquivado"];
   const cargo = localStorage.getItem("cargo");
+  const usuario_id = localStorage.getItem("usuario_id");
   const [categoriaSelecionada, setCategoriaSelecionada] = useState("Todos");
   const [busca, setBusca] = useState("");
 
-  const [projetos, setProjetos] = useState<Projeto[]>([
-    {
-      titulo: "Projeto 1",
-      descricao:
-        "Esse projeto consiste no desenvolvimento de um aplicativo de academia",
-      data_inicio: "2023-01-01",
-      data_fim: "2023-02-01",
-      atualizadoEm: "Atualizado há 2 dias",
-      membros: 5,
-      branches: 3,
-      status: "Ativo",
-    },
-    {
-      titulo: "Projeto 2",
-      descricao:
-        "Esse projeto consiste no desenvolvimento de um aplicativo de academia",
-      data_inicio: "2023-01-01",
-      data_fim: "2023-02-01",
-      atualizadoEm: "Atualizado há 2 dias",
-      membros: 5,
-      branches: 3,
-      status: "Concluído",
-    },
-    {
-      titulo: "Projeto 3",
-      descricao:
-        "Esse projeto consiste no desenvolvimento de um aplicativo de academia",
-      data_inicio: "2023-01-01",
-      data_fim: "2023-02-01",
-      atualizadoEm: "Atualizado há 2 dias",
-      membros: 5,
-      branches: 3,
-      status: "Ativo",
-    },
-    {
-      titulo: "Projeto 4",
-      descricao:
-        "Esse projeto consiste no desenvolvimento de um aplicativo de academia",
-      data_inicio: "2023-01-01",
-      data_fim: "2023-02-01",
-      atualizadoEm: "Atualizado há 2 dias",
-      membros: 5,
-      branches: 3,
-      status: "Arquivado",
-    },
-    {
-      titulo: "Projeto 5",
-      descricao:
-        "Esse projeto consiste no desenvolvimento de um aplicativo de academia",
-      data_inicio: "2023-01-01",
-      data_fim: "2023-02-01",
-      atualizadoEm: "Atualizado há 2 dias",
-      membros: 5,
-      branches: 3,
-      status: "Concluído",
-    },
-  ]);
+  const [projetos, setProjetos] = useState<Projeto[]>([]);
+
+  // Fetch projetos do backend
+  useEffect(() => {
+    async function fetchProjetos() {
+      if (!usuario_id) return;
+
+      try {
+        const res = await fetch(`${BASE_URL}/projects/user/${usuario_id}`);
+
+        if (!res.ok) {
+          throw new Error(
+            `Erro na requisição: ${res.status} ${res.statusText}`
+          );
+        }
+
+        const data = await res.json();
+
+        // Verifica se veio um array
+        if (!Array.isArray(data)) {
+          console.error("Formato de dados inesperado:", data);
+          setProjetos([]);
+          return;
+        }
+
+        const projetosFormatados = data.map((p: any) => ({
+          projeto_id: p.projeto_id,
+          titulo: p.nome,
+          descricao: p.descricao,
+          data_inicio: p.data_inicio,
+          data_fim: p.data_fim_prevista,
+          atualizadoEm: new Date(
+            p.atualizado_em || p.criado_em
+          ).toLocaleDateString(),
+          total_membros: p.total_membros || 0, // Placeholder
+          branches: 0, // Placeholder
+          status: p.status || "Ativo",
+        }));
+
+        setProjetos(projetosFormatados);
+      } catch (error) {
+        console.error("Erro ao buscar projetos:", error);
+        setProjetos([]); // evita undefined
+      }
+    }
+
+    fetchProjetos();
+  }, [usuario_id]);
 
   const projetosFiltrados = projetos.filter((projeto) => {
     const nomeCorresponde = projeto.titulo
@@ -133,10 +128,7 @@ const Projetos = () => {
               </div>
 
               {cargo === "Product Owner" && (
-                <button
-                  className="btn_novo_projeto"
-                  onClick={abrirModal}
-                >
+                <button className="btn_novo_projeto" onClick={abrirModal}>
                   <HiPlus size={"14px"} />
                   Novo projeto
                 </button>
@@ -175,7 +167,10 @@ const Projetos = () => {
             <div className="container_card_projetos">
               {projetosFiltrados.length > 0 ? (
                 projetosFiltrados.map((projeto) => (
-                  <div key={projeto.titulo} className="card_projetos_recentes">
+                  <div
+                    key={projeto.projeto_id}
+                    className="card_projetos_recentes"
+                  >
                     <div>
                       <h2 className="texto_projetos">{projeto.titulo}</h2>
                       <h2 className="texto_atualizacao">{projeto.descricao}</h2>
@@ -200,25 +195,34 @@ const Projetos = () => {
                     <div className="div_icones_projetos">
                       <div className="div_items_icones">
                         <MdAccessTime size={"16px"} color="#71717A" />
-                        <h2 className="texto_atualizacao">{projeto.atualizadoEm}</h2>
+                        <h2 className="texto_atualizacao">
+                          {projeto.atualizadoEm}
+                        </h2>
                       </div>
                       <div className="div_items_icones">
                         <GoPeople size={"16px"} color="#71717A" />
-                        <h2 className="texto_atualizacao">{projeto.membros} membros</h2>
+                        <h2 className="texto_atualizacao">
+                          {projeto.total_membros} membros
+                        </h2>
                       </div>
                     </div>
 
                     <div className="div_icones_projetos">
                       <div className="div_items_icones">
                         <IoIosGitBranch size={"16px"} color="#71717A" />
-                        <h2 className="texto_atualizacao">{projeto.branches} branches</h2>
+                        <h2 className="texto_atualizacao">
+                          {projeto.branches} branches
+                        </h2>
                       </div>
                       <div className="div_items_icones">
                         <h2 className="texto_atualizacao">{projeto.status}</h2>
                       </div>
                     </div>
 
-                    <NavLink to={"/ProjetosDetalhes"} className="btn_entrar_projeto">
+                    <NavLink
+                      to={`/ProjetosDetalhes/${projeto.projeto_id}`}
+                      className="btn_entrar_projeto"
+                    >
                       Entrar no Projeto
                     </NavLink>
                   </div>
