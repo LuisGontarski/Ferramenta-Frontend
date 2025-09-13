@@ -26,6 +26,12 @@ const max = 10;
 const params = new URLSearchParams(window.location.search);
 const accessToken = params.get("access_token");
 
+const userAvatars: Record<string, string> = {
+  João: desenvolvedor1,
+  Maria: desenvolvedor2,
+  Ana: desenvolvedor3,
+};
+
 if (accessToken) {
   localStorage.setItem("access_token", accessToken);
 }
