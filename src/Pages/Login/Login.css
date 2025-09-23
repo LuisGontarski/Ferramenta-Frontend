@@ -48,6 +48,9 @@ body {
   text-align: center;
   padding: 3rem;
   color: white;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
 }
 
 .header_login{
@@ -55,11 +58,14 @@ body {
   align-items: center;
   justify-content: center;
   flex-direction: column;
+  gap: 0.2rem;
+  margin-bottom: 1.5rem;
 }
 
 .left_card_titulo{
   font-size: 40px;
   font-weight: 700;
+
 }
 
 .left_card_slogan{
@@ -91,7 +97,7 @@ body {
 .input_login {
   padding: 12px;
   border: 1px solid #cbd5e0;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 14px;
   width: 100%;
   outline: none; /* Remove o outline padrão */
@@ -121,6 +127,7 @@ body {
 .forgot {
   color: #3182ce;
   text-decoration: none;
+  font-size: 14px;
 }
 
 .forgot:hover {
@@ -131,9 +138,9 @@ body {
   background-color: orange;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   padding: 12px;
-  font-size: 15px;
+  font-size: 16px;
   cursor: pointer;
   transition: background 0.3s;
   background: linear-gradient(to right, #60a5fa, #2563eb);
@@ -144,15 +151,50 @@ body {
 }
 
 .redirect_login {
-  font-size: 13px;
+  font-size: 14px;
   text-align: center;
+  display: flex;
+  gap: 0.2rem;
+  align-items: center;
+  justify-content: center;
 }
 
 .redirect_login a {
   color: #3182ce;
   text-decoration: none;
+  font-size: 14px;
 }
 
 .redirect_login a:hover {
   text-decoration: underline;
+}
+
+.footer_login{
+  display: flex;
+  justify-content: space-between;
+}
+
+.footer_login a{
+  color: #3182ce;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #555;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }

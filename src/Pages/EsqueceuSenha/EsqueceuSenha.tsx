@@ -58,7 +58,7 @@ const EsqueceuSenha = () => {
           {erro && <p style={{ color: "red" }}>{erro}</p>}
 
           <p className="redirect_login">
-            Lembrou da senha? <Link to="/login">Login</Link>
+            <Link to="/login">Voltar</Link>
           </p>
         </section>
       </div>

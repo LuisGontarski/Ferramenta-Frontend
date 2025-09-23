@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { register } from "../../services/registerService";
 import type { UserDTO, ResponseUserDTO } from "../../dtos/userDTO";
 import * as ft_validator from "../../utils/validatorUtils";
+import { FiEye } from "react-icons/fi";
+import { FiEyeOff } from "react-icons/fi";
 import "./Register.css";
 
 const Register: React.FC = () => {
@@ -14,6 +16,9 @@ const Register: React.FC = () => {
   const [senha, setSenha] = useState("");
   const [confirmaSenha, setConfirmaSenha] = useState("");
 
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const [cargo, setCargo] = useState("Não informar");
   const [github, setGithub] = useState("");
   const [showGithubInput, setShowGithubInput] = useState(false);
@@ -23,7 +28,6 @@ const Register: React.FC = () => {
 
   const navigate = useNavigate();
 
-  // Avança para o próximo step com validação
   const handleNextStep = () => {
     if (step === 1) {
       const currentValidationErrors: Record<string, string> = {};
@@ -129,6 +133,7 @@ const Register: React.FC = () => {
 
     // Redireciona para o login do GitHub
     window.location.href = `${import.meta.env.VITE_API_URL}/auth/github/login`;
+
   };
 
   return (
@@ -153,13 +158,18 @@ const Register: React.FC = () => {
       </div>
       <div className="card_container_login">
         <section className="card_login">
-          <Link to="/" className="logo-register">
-            Crie sua conta
-          </Link>
+          <div className="header_login">
+            <h2 className="logo-register">Crie sua conta</h2>
+            <span className="subtitle">
+              {step === 1 && "Preencha seus dados para criar sua conta"}
+              {step === 2 && "Selecione a função que você desempenha na equipe"}
+              {step === 3 && "Conecte seu GitHub para ter acesso aos seus repositórios"}
+            </span>
+          </div>
+
 
           {error && <p className="error-message">{error}</p>}
 
-          {/* Step 1 */}
           {step === 1 && (
             <>
               <div>
@@ -198,16 +208,25 @@ const Register: React.FC = () => {
 
               <div>
                 <h2 className="titulos_inputs_login">Senha</h2>
-                <input
-                  type="password"
-                  placeholder="Crie uma senha"
-                  className="input_login"
-                  value={senha}
-                  onChange={(e) => {
-                    setSenha(e.target.value);
-                    setFieldErrors((prev) => ({ ...prev, senha: "" }));
-                  }}
-                />
+                <div className="password-wrapper">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Crie uma senha"
+                    className="input_login"
+                    value={senha}
+                    onChange={(e) => {
+                      setSenha(e.target.value);
+                      setFieldErrors((prev) => ({ ...prev, senha: "" }));
+                    }}
+                  />
+                  <button
+                    type="button"
+                    className="toggle-password"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                  >
+                    {showPassword ? <FiEyeOff /> : <FiEye />}
+                  </button>
+                </div>
                 {fieldErrors.senha && (
                   <p className="field-error-message">{fieldErrors.senha}</p>
                 )}
@@ -215,16 +234,27 @@ const Register: React.FC = () => {
 
               <div>
                 <h2 className="titulos_inputs_login">Confirmar senha</h2>
-                <input
-                  type="password"
-                  placeholder="Confirme sua senha"
-                  className="input_login"
-                  value={confirmaSenha}
-                  onChange={(e) => {
-                    setConfirmaSenha(e.target.value);
-                    setFieldErrors((prev) => ({ ...prev, confirmaSenha: "" }));
-                  }}
-                />
+                <div className="password-wrapper">
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    placeholder="Confirme sua senha"
+                    className="input_login"
+                    value={confirmaSenha}
+                    onChange={(e) => {
+                      setConfirmaSenha(e.target.value);
+                      setFieldErrors((prev) => ({ ...prev, confirmaSenha: "" }));
+                    }}
+                  />
+                  <button
+                    type="button"
+                    className="toggle-password"
+                    onClick={() =>
+                      setShowConfirmPassword((prev) => !prev)
+                    }
+                  >
+                    {showConfirmPassword ? <FiEyeOff /> : <FiEye />}
+                  </button>
+                </div>
                 {fieldErrors.confirmaSenha && (
                   <p className="field-error-message">
                     {fieldErrors.confirmaSenha}
@@ -237,30 +267,19 @@ const Register: React.FC = () => {
           {/* Step 2 */}
           {step === 2 && (
             <div className="div_cargo">
-              <label className="titulos_inputs_login">Cargo:</label>
               <div className="cargo-options">
-                {[
-                  "Desenvolvedor",
-                  "Scrum Master",
-                  "Product Owner",
-                  "Outro",
-                ].map((c) => (
+                {["Desenvolvedor", "Scrum Master", "Product Owner"].map((c) => (
                   <div
                     key={c}
                     className={`cargo-option ${cargo === c ? "selected" : ""}`}
-                    onClick={() => {
-                      setCargo(c);
-                      if (c !== "Outro") setCargoOutro("");
-                    }}
+                    onClick={() => setCargo(c)}
                   >
                     <div className="icon">
                       {c === "Desenvolvedor"
                         ? "</>"
                         : c === "Scrum Master"
-                        ? "👥"
-                        : c === "Product Owner"
-                        ? "🎯"
-                        : "⚙️"}
+                          ? "👥"
+                          : "🎯"}
                     </div>
                     <div>
                       <strong>{c}</strong>
@@ -268,34 +287,16 @@ const Register: React.FC = () => {
                         {c === "Desenvolvedor"
                           ? "Escrevo código e desenvolvo funcionalidades"
                           : c === "Scrum Master"
-                          ? "Facilito processos ágeis e removo impedimentos"
-                          : c === "Product Owner"
-                          ? "Defino requisitos e priorizo o backlog"
-                          : "Minha função não está listada acima"}
+                            ? "Facilito processos ágeis e removo impedimentos"
+                            : "Defino requisitos e priorizo o backlog"}
                       </p>
                     </div>
                   </div>
                 ))}
               </div>
-
-              {cargo === "Outro" && (
-                <div className="cargo-outro-input">
-                  <label htmlFor="cargoOutro" className="label-register">
-                    Descreva sua função:
-                  </label>
-                  <input
-                    type="text"
-                    id="cargoOutro"
-                    name="cargoOutro"
-                    placeholder="Digite sua função"
-                    className="input_login"
-                    value={cargoOutro}
-                    onChange={(e) => setCargoOutro(e.target.value)}
-                  />
-                </div>
-              )}
             </div>
           )}
+
 
           {/* Step 3 */}
           {step === 3 && (
@@ -325,9 +326,23 @@ const Register: React.FC = () => {
             {step < 3 ? "Continuar" : "Cadastrar"}
           </button>
 
-          <p className="redirect">
-            Já tem uma conta? <Link to="/login">Entrar</Link>
-          </p>
+           <div className="redirect">
+            {step === 1 && (
+              <p className="texto_redirect_cadastro">
+                Já tem uma conta? <Link to="/login">Entrar</Link>
+              </p>
+            )}
+
+            {step > 1 && (
+              <button
+                type="button"
+                className="btn-voltar"
+                onClick={() => setStep(step - 1)}
+              >
+                Voltar
+              </button>
+            )}
+          </div>
         </section>
       </div>
     </main>

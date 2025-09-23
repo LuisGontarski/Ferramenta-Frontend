@@ -1,21 +1,19 @@
 import React, { useState } from "react";
 import "./Login.css";
 import { Link, useNavigate } from "react-router-dom";
-import {
-  login,
-  type LoginPayload,
-  type LoginResponse,
-} from "../../services/authService";
+import { login, type LoginPayload, type LoginResponse, } from "../../services/authService";
+import { FiEyeOff } from "react-icons/fi";
+import { FiEye } from "react-icons/fi";
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const handleLogin = async () => {
-
     setLoginError(null);
     if (!email.trim() || !senha.trim()) {
       setLoginError("E-mail e senha são obrigatórios.");
@@ -30,7 +28,10 @@ const Login: React.FC = () => {
       localStorage.setItem("token", response.token);
       localStorage.setItem("usuario_id", response.usuario_id);
       localStorage.setItem("cargo", response.cargo || "Não informar");
-      localStorage.setItem("github_token", response.github_token || "Não informar");
+      localStorage.setItem(
+        "github_token",
+        response.github_token || "Não informar"
+      );
 
       navigate("/perfil");
     } catch (error: any) {
@@ -54,15 +55,21 @@ const Login: React.FC = () => {
       <div className="left_card_login">
         <div className="left_card_login_content">
           <h2 className="left_card_titulo">ReProject</h2>
-          <h2><span>Organize</span> seus projetos <span>Conecte</span> seus repositórios <span>Simplifique</span> seu fluxo.</h2>
+          <h2>
+            <span>Organize</span> seus projetos, <span>Conecte</span> seus
+            repositórios, <span>Simplifique</span> seu fluxo.
+          </h2>
         </div>
       </div>
       <div className="card_container_login">
         <section className="card_login">
           <div className="header_login">
-            <Link to="/" className="logo-login">Acesse sua conta</Link>
-            <p className="subtitle">Entre para continuar</p>
+            <span className="logo-login">
+              Acesse e otimize sua gestão
+            </span>
+            <p className="subtitle">Entre com suas credenciais</p>
           </div>
+          
           <div>
             <h2 className="titulos_inputs_login">Email</h2>
             <input
@@ -76,35 +83,30 @@ const Login: React.FC = () => {
           </div>
           <div>
             <h2 className="titulos_inputs_login">Senha</h2>
-            <input
-              type="password"
-              placeholder="Insira sua senha"
-              className="input_login"
-              value={senha}
-              onChange={(e) => setSenha(e.target.value)}
-              disabled={loading}
-            />
-          </div>
-
+            <div className="password-wrapper">
+                <input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Insira sua senha"
+                    className="input_login"
+                    value={senha}
+                    onChange={(e) => setSenha(e.target.value)}
+                    disabled={loading}
+                />
+                <button
+                    type="button"
+                    className="toggle-password"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                >
+                    {showPassword ? <FiEyeOff /> : <FiEye />}
+                </button>
+                </div>
+            </div>
 
           {loginError && (
             <p style={{ color: "red", textAlign: "center", marginTop: "10px" }}>
               {loginError}
             </p>
           )}
-
-          <div className="options">
-            <label className="checkbox_login">
-              <input type="checkbox" disabled={loading} />
-              Continuar conectado
-            </label>
-            <Link to={"/esqueceuSenha"}>
-            <a href="#" className="forgot">
-              Esqueceu sua senha?
-            </a>
-            </Link>
-            
-          </div>
 
           <button
             className="btn-login"
@@ -113,10 +115,14 @@ const Login: React.FC = () => {
           >
             {loading ? "Entrando..." : "Entrar"}
           </button>
-
-          <p className="redirect_login">
-            Não tem uma conta? <Link to="/register">Cadastre-se</Link>
-          </p>
+          <div className="footer_login">
+            <Link to={"/esqueceuSenha"}>
+                Esqueceu sua senha?
+            </Link>
+            <p className="redirect_login">
+              Não tem uma conta? <Link to="/register">Cadastre-se</Link>
+            </p>
+          </div>
         </section>
       </div>
     </main>

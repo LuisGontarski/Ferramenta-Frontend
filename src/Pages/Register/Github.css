@@ -37,11 +37,6 @@
   animation: error-shake 0.6s ease;
 }
 
-h2 {
-  font-size: 1.4rem;
-  color: #333;
-}
-
 .button-group {
   display: flex;
   justify-content: space-around;

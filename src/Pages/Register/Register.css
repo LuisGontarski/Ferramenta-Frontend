@@ -30,11 +30,28 @@
   text-decoration: none;
 }
 
+.text_redirect_register{
+  display: flex;
+  gap: 0.2rem;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  margin-top: 10px;
+}
+
 .subtitle {
   font-size: 16px;
   color: #555;
   text-align: center;
   margin-bottom: 8px;
+}
+
+.btn-voltar{
+  color: #3182ce;
+    text-decoration: none;
+    font-size: 14px;
+    background-color: transparent;
+    border: none;
 }
 
 .input {
@@ -61,9 +78,25 @@
 }
 
 .redirect {
-  font-size: 13px;
+  font-size: 14px;
   text-align: center;
   margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+}
+
+.field-error-message {
+    color: #d93025;
+    font-size: 13px;
+    margin-top: 6px;
+    padding-left: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+    animation: fadeIn 0.3s ease-in-out;
 }
 
 .redirect a {
@@ -74,8 +107,6 @@
 .redirect a:hover {
   text-decoration: underline;
 }
-
-
 
 .cargo-options {
   display: flex;
@@ -106,9 +137,9 @@
 .icon {
   font-size: 24px;
   margin-right: 15px;
+  color: #2563eb;
   padding: 10px;
   border-radius: 50%;
-  color: white;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -216,6 +247,12 @@
 .etapas-indicador {
   margin-top: 40px;
   text-align: left;
+}
+
+.texto_redirect_cadastro{
+  display: flex;
+  gap: 0.2rem;
+  align-items: center;
 }
 
 .etapas-texto {
