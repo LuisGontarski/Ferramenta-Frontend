@@ -4,7 +4,6 @@
 .gantt-container {
     margin-top: 30px;
     border: 1px solid #ddd;
-    border-radius: 5px;
     overflow-x: auto;
 }
 
@@ -138,7 +137,7 @@
 
 /* Barra de rolagem */
 ::-webkit-scrollbar {
-    height: 8px;
+    height: 1px;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -194,4 +193,44 @@
   border-radius: 6px;
   cursor: pointer;
   margin-bottom: 24px;
+}
+
+
+.table_cronograma {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.table_cronograma th,
+.table_cronograma td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+}
+
+.table_cronograma th {
+    background-color: #f5f5f5;
+    font-weight: bold;
+}
+
+.table_cronograma tr:last-child td {
+    border-bottom: none;
+}
+
+.table_cronograma button {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 6px 12px;
+    cursor: pointer;
+}
+
+.table_cronograma button:hover {
+    background-color: #b02a37;
 }

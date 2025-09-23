@@ -91,6 +91,12 @@ export default function GithubErrorIntegration() {
         localStorage.setItem("github_token", response.data.github_token);
       }
 
+      if (finalPayload.cargo) {
+      localStorage.setItem("cargo", finalPayload.cargo);
+    } else {
+      localStorage.setItem("cargo", "Não informar");
+    }
+
       sessionStorage.removeItem("pendingRegistration");
       window.location.href = "/";
     } catch (err: any) {

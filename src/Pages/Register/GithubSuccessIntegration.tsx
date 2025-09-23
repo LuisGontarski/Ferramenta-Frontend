@@ -28,10 +28,18 @@ export default function GithubSuccessIntegration() {
       );
 
       localStorage.setItem("usuario_id", response.data.usuario_id);
+
       if (response.data.github_token) {
         localStorage.setItem("github_token", response.data.github_token);
       }
-      sessionStorage.removeItem("pendingRegistration");
+      
+       if (finalPayload.cargo) {
+      localStorage.setItem("cargo", finalPayload.cargo);
+    } else {
+      localStorage.setItem("cargo", "Não informar");
+    }
+
+    sessionStorage.removeItem("pendingRegistration");
 
       setStatus("success");
       setMessage("Integração com GitHub realizada com sucesso!");
