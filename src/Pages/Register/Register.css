@@ -205,7 +205,8 @@
 .github-description {
   font-size: 0.95rem;
   color: #8b949e;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
+  margin-top: 0.5rem;
 }
 
 .github-connect-button {
