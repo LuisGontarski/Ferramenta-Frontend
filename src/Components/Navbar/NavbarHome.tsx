@@ -7,8 +7,11 @@ import { TfiRulerAlt2 } from "react-icons/tfi";
 
 const NavbarHome = () => {
   const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-  const projectId = searchParams.get("id");
+
+  // Verifica se a URL tem algo depois de /ProjetosDetalhes/
+  const match = location.pathname.match(/^\/ProjetosDetalhes\/(.+)/);
+  const hasProject = !!match; // true se existir algo no final da URL
+  const projectId = match ? match[1] : null;
 
   return (
     <header className="headerNavBarHome">
@@ -18,10 +21,10 @@ const NavbarHome = () => {
 
       <nav className="navbarHome">
         <div className="div-menu">
-          {projectId && (
+          {hasProject && (
             <>
               <NavLink
-                to={`/projetosDetalhes?id=${projectId}`}
+                to={`/ProjetosDetalhes/${projectId}`}
                 className={({ isActive }) =>
                   isActive
                     ? "menu_lateral_item selecionado"
@@ -32,7 +35,7 @@ const NavbarHome = () => {
               </NavLink>
 
               <NavLink
-                to={`/kanban?id=${projectId}`}
+                to={`/kanban/${projectId}`}
                 className={({ isActive }) =>
                   isActive
                     ? "menu_lateral_item selecionado"
@@ -43,7 +46,7 @@ const NavbarHome = () => {
               </NavLink>
 
               <NavLink
-                to={`/cronograma?id=${projectId}`}
+                to={`/cronograma/${projectId}`}
                 className={({ isActive }) =>
                   isActive
                     ? "menu_lateral_item selecionado"
@@ -54,7 +57,7 @@ const NavbarHome = () => {
               </NavLink>
 
               <NavLink
-                to={`/documentos?id=${projectId}`}
+                to={`/documentos/${projectId}`}
                 className={({ isActive }) =>
                   isActive
                     ? "menu_lateral_item selecionado"
@@ -65,7 +68,7 @@ const NavbarHome = () => {
               </NavLink>
 
               <NavLink
-                to={`/requisitos?id=${projectId}`}
+                to={`/requisitos/${projectId}`}
                 className={({ isActive }) =>
                   isActive
                     ? "menu_lateral_item selecionado"
