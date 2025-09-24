@@ -1,16 +1,14 @@
 import "./NavbarHome.css";
-import { NavLink, useSearchParams } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { IoDocumentTextOutline } from "react-icons/io5";
 import { LuChartColumn, LuCalendar } from "react-icons/lu";
 import { IoMdCheckboxOutline } from "react-icons/io";
 import { TfiRulerAlt2 } from "react-icons/tfi";
 
 const NavbarHome = () => {
-  const [searchParams] = useSearchParams();
-  const id = searchParams.get("id"); // pega o valor do ?id=111
-
-  // const isInProject = Boolean(id);
-  const isInProject = true;
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const projectId = searchParams.get("id");
 
   return (
     <header className="headerNavBarHome">
@@ -20,51 +18,61 @@ const NavbarHome = () => {
 
       <nav className="navbarHome">
         <div className="div-menu">
-          {isInProject && (
+          {projectId && (
             <>
               <NavLink
-                to={`/projetosDetalhes?id=${id}`}
+                to={`/projetosDetalhes?id=${projectId}`}
                 className={({ isActive }) =>
-                  isActive ? "menu_lateral_item selecionado" : "menu_lateral_item"
+                  isActive
+                    ? "menu_lateral_item selecionado"
+                    : "menu_lateral_item"
                 }
               >
-                <TfiRulerAlt2 size="16px" /> <span>Inicio</span>
+                <TfiRulerAlt2 size={"16px"} /> <span>Inicio</span>
               </NavLink>
 
               <NavLink
-                to={`/kanban?id=${id}`}
+                to={`/kanban?id=${projectId}`}
                 className={({ isActive }) =>
-                  isActive ? "menu_lateral_item selecionado" : "menu_lateral_item"
+                  isActive
+                    ? "menu_lateral_item selecionado"
+                    : "menu_lateral_item"
                 }
               >
-                <LuChartColumn size="16px" /> <span>Kanban</span>
+                <LuChartColumn size={"16px"} /> <span>Kanban</span>
               </NavLink>
 
               <NavLink
-                to={`/cronograma?id=${id}`}
+                to={`/cronograma?id=${projectId}`}
                 className={({ isActive }) =>
-                  isActive ? "menu_lateral_item selecionado" : "menu_lateral_item"
+                  isActive
+                    ? "menu_lateral_item selecionado"
+                    : "menu_lateral_item"
                 }
               >
-                <LuCalendar size="16px" /> <span>Cronograma</span>
+                <LuCalendar size={"16px"} /> <span>Cronograma</span>
               </NavLink>
 
               <NavLink
-                to={`/documentos?id=${id}`}
+                to={`/documentos?id=${projectId}`}
                 className={({ isActive }) =>
-                  isActive ? "menu_lateral_item selecionado" : "menu_lateral_item"
+                  isActive
+                    ? "menu_lateral_item selecionado"
+                    : "menu_lateral_item"
                 }
               >
-                <IoDocumentTextOutline size="16px" /> <span>Documentos</span>
+                <IoDocumentTextOutline size={"16px"} /> <span>Documentos</span>
               </NavLink>
 
               <NavLink
-                to={`/requisitos?id=${id}`}
+                to={`/requisitos?id=${projectId}`}
                 className={({ isActive }) =>
-                  isActive ? "menu_lateral_item selecionado" : "menu_lateral_item"
+                  isActive
+                    ? "menu_lateral_item selecionado"
+                    : "menu_lateral_item"
                 }
               >
-                <IoMdCheckboxOutline size="16px" /> <span>Requisitos</span>
+                <IoMdCheckboxOutline size={"16px"} /> <span>Requisitos</span>
               </NavLink>
             </>
           )}
