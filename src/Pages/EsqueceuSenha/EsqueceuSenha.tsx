@@ -29,7 +29,7 @@ const EsqueceuSenha = () => {
       <div className="left_card_login">
         <div className="left_card_login_content">
           <h2 className="left_card_titulo">Recuperar Senha</h2>
-          <h2>Não se preocupe, isso acontece com todos nós. Digite seu email e enviaremos um link para redefinir sua senha.</h2>
+          <h2 className="texto_slogan_login">Não se preocupe, isso acontece com todos nós. Digite seu email e enviaremos um link para redefinir sua senha.</h2>
         </div>
       </div>
       <div className="card_container_login">

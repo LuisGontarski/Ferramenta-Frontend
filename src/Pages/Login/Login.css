@@ -169,6 +169,10 @@ body {
   text-decoration: underline;
 }
 
+.texto_slogan_login{
+  font-size: 22px;
+}
+
 .footer_login{
   display: flex;
   justify-content: space-between;

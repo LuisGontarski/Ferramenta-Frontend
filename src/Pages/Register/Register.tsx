@@ -141,7 +141,7 @@ const Register: React.FC = () => {
       <div className="left_card_login">
         <div className="left_card_login_content">
           <h2 className="left_card_titulo">ReProject</h2>
-          <h2>
+          <h2 className="texto_slogan_login">
             <span>Organize</span> seus projetos <span>Conecte</span> seus
             repositórios <span>Simplifique</span> seu fluxo.
           </h2>
