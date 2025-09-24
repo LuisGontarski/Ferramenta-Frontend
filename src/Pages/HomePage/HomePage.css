@@ -339,6 +339,19 @@ h1 {
 	margin-bottom: 0.3rem;
 }
 
+.btn_relatorio{
+	background-color: #155DFC;
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 0.6rem 1rem;
+    border-radius: 10px;
+	font-weight: 500;
+    border: 1px solid #8080804a;
+    box-shadow: 0 2px 4px 0 rgb(0 0 0 / 0.05);
+	cursor: pointer;
+}
+
 .btn_entrar_projeto {
 	width: 100%;
 	border: none;

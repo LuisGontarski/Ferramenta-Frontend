@@ -92,15 +92,12 @@ const HomePage = () => {
                   -5% esta semana
                 </h2>
               </div>
-              <div className="card_atualizacoes">
-                <h2 className="titulo_metricas_dashboard">Relatório</h2>
-                <button
+               <button
                   className="btn_relatorio"
                   onClick={handleGerarRelatorio}
                 >
                   Gerar Relatório
                 </button>
-              </div>
             </div>
 
             <div className="card_atualizacoes">
