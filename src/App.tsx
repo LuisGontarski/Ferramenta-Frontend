@@ -26,11 +26,11 @@ function App() {
         <Route path="/projetos" element={<Projetos />} />
         <Route path="/perfil" element={<Perfil />} />
         <Route path="/projetosDetalhes/:id" element={<ProjetosDetalhes />} />
-        <Route path="/kanban" element={<Kanban />} />
+        <Route path="/kanban/:id" element={<Kanban />} />
         <Route path="/esqueceuSenha" element={<EsqueceuSenha />} />
-        <Route path="/documentos" element={<Documentos />} />
-        <Route path="/requisitos" element={<Requisitos />} />
-        <Route path="/cronograma" element={<Cronograma />} />
+        <Route path="/documentos/:id" element={<Documentos />} />
+        <Route path="/requisitos/:id" element={<Requisitos />} />
+        <Route path="/cronograma/:id" element={<Cronograma />} />
         <Route path="/chat/:projeto_id" element={<ChatWrapper />} />
         <Route path="/github-error-integration" element={<GithubErrorIntegration />} />
         <Route path="/github-success-integration" element={<GithubSuccessIntegration />} />

@@ -1,17 +1,14 @@
 import "./NavbarHome.css";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useParams } from "react-router-dom";
 import { IoDocumentTextOutline } from "react-icons/io5";
 import { LuChartColumn, LuCalendar } from "react-icons/lu";
 import { IoMdCheckboxOutline } from "react-icons/io";
 import { TfiRulerAlt2 } from "react-icons/tfi";
 
 const NavbarHome = () => {
-  const location = useLocation();
-
-  // Verifica se a URL tem algo depois de /ProjetosDetalhes/
-  const match = location.pathname.match(/^\/ProjetosDetalhes\/(.+)/);
-  const hasProject = !!match; // true se existir algo no final da URL
-  const projectId = match ? match[1] : null;
+  // Pega qualquer parâmetro da rota (id ou projeto_id)
+  const { id, projeto_id } = useParams();
+  const projectId = id || projeto_id; // garante que pega de qualquer rota
 
   return (
     <header className="headerNavBarHome">
@@ -21,10 +18,10 @@ const NavbarHome = () => {
 
       <nav className="navbarHome">
         <div className="div-menu">
-          {hasProject && (
+          {projectId && (
             <>
               <NavLink
-                to={`/ProjetosDetalhes/${projectId}`}
+                to={`/projetosDetalhes/${projectId}`}
                 className={({ isActive }) =>
                   isActive
                     ? "menu_lateral_item selecionado"
