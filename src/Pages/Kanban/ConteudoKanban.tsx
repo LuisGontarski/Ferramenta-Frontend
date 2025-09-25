@@ -392,7 +392,6 @@ const ConteudoKanban = () => {
                 <FaRegTrashAlt size={"14px"} /> Excluir Sprint
               </button>
             )}
-          </div>
           <button
             onClick={() => setShowNewCardModal(true)}
             className="button_adicionar_card_kanban"
@@ -401,6 +400,7 @@ const ConteudoKanban = () => {
           >
             <HiPlus size={"14px"} /> Novo Card
           </button>
+          </div>
 
           {/* Modal fora do botão */}
           {showNewCardModal && (
@@ -446,6 +446,7 @@ const ConteudoKanban = () => {
           )}
         </div>
 
+      </div>
         <div className="kanban_container">
           <div className="kanban">
             {columns.map((col, idx) => (
@@ -558,7 +559,6 @@ const ConteudoKanban = () => {
               </div>
             ))}
 
-            {/* coluna especial "adicionar" */}
             <div className="kanban_column add_column_btn">
               {newColumnTitle ? (
                 <div className="add_column_form">
@@ -584,7 +584,6 @@ const ConteudoKanban = () => {
             </div>
           </div>
         </div>
-      </div>
     </div>
   );
 };

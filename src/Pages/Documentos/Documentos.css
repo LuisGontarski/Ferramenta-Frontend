@@ -22,13 +22,19 @@
 }
 
 .button_adicionar_arquivo{
+    background-color: #155DFC;
     color: white;
     font-weight: 500;
-    background-color: #0d9488;
+    font-size: 14px;
     border: none;
-    padding: 0.6rem 0.8rem;
-    border-radius: 10px;
+    padding: 0.6rem !important;
+    border-radius: 8px;
     cursor: pointer;
+    display: flex;
+    justify-content: center;
+    gap: 0.8rem;
+    align-items: center;
+    box-shadow: 0 2px 4px 0 rgb(0 0 0 / 0.05);
 }
 
 .lista_documentos {

@@ -419,8 +419,8 @@ const Cronograma = () => {
                         </div>
 
                         {mostrarModal && (
-                            <div className="modal_overlay">
-                                <div className="modal_conteudo">
+                            <div className={`modal_overlay_cronograma ${mostrarModal ? "ativo" : ""}`}>
+                                <div className="modal_conteudo_cronograma">
                                     <h3>Nova Tarefa para {currentSprint.name}</h3>
                                     <input
                                         type="text"
@@ -449,8 +449,8 @@ const Cronograma = () => {
                         )}
 
                         {mostrarModalFeriado && (
-                            <div className="modal_overlay">
-                                <div className="modal_conteudo">
+                            <div className={`modal_overlay_cronograma ${mostrarModalFeriado ? "ativo" : ""}`}>
+                                <div className="modal_conteudo_cronograma">
                                     <h3>Novo Feriado para {currentSprint.name}</h3>
                                     <input
                                         type="text"
@@ -473,7 +473,7 @@ const Cronograma = () => {
                         )}
 
                         {mostrarModalSprint && (
-                            <div className="modal_overlay">
+                            <div className={`modal_overlay_cronograma ${mostrarModalSprint ? "ativo" : ""}`}>
                                 <div className="modal_conteudo">
                                     <h3>Nova Sprint</h3>
                                     <input
@@ -489,6 +489,25 @@ const Cronograma = () => {
                                 </div>
                             </div>
                         )}
+
+                        {mostrarModalSprint && (
+                            <div className={`modal_overlay_cronograma ${mostrarModalSprint ? "ativo" : ""}`}>
+                                <div className="modal_conteudo_cronograma">
+                                    <h3>Nova Sprint</h3>
+                                    <input
+                                        type="text"
+                                        placeholder="Nome da sprint"
+                                        value={newSprint.name}
+                                        onChange={(e) => setNewSprint({ name: e.target.value })}
+                                    />
+                                    <div className="botoes_form">
+                                        <button onClick={handleAddSprint}>Adicionar</button>
+                                        <button onClick={fecharModalSprint}>Cancelar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
 
                         {/* Diagrama de Gantt */}
                         <div className="gantt-container">
@@ -517,7 +536,7 @@ const Cronograma = () => {
 
                         {/* Tabela de Dias de Trabalho por Fase */}
                         <div style={{ marginTop: '30px' }}>
-                            <h3 style={{fontSize: '16px', fontWeight: '500'}}>Dias de Trabalho por Fase</h3>
+                            <h3 style={{ fontSize: '16px', fontWeight: '500' }}>Dias de Trabalho por Fase</h3>
                             <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '10px' }}>
                                 <thead>
                                     <tr style={{ backgroundColor: '#f5f5f5' }}>
@@ -584,7 +603,7 @@ const Cronograma = () => {
 
                         {/* Tabela de Feriados */}
                         <div style={{ marginTop: '30px' }}>
-                            <h3 style={{fontSize: '16px', fontWeight: '500'}}>Feriados Cadastrados</h3>
+                            <h3 style={{ fontSize: '16px', fontWeight: '500' }}>Feriados Cadastrados</h3>
                             <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '10px' }}>
                                 <thead>
                                     <tr style={{ backgroundColor: '#f5f5f5' }}>
