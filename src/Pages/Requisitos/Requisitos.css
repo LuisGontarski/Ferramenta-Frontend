@@ -115,6 +115,10 @@
   color: #1f2937;
 }
 
+.modal_mostrar{
+  opacity: 1;
+}
+
 .tabela_requisitos {
   width: 100%;
   table-layout: fixed;

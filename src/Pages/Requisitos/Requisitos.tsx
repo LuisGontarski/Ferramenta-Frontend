@@ -107,7 +107,7 @@ const Requisitos = () => {
 
             {mostrarModal && (
               <div className="modal_overlay">
-                <div className="modal_conteudo">
+                <div className={`modal_conteudo ${mostrarModal == true ? 'modal_mostrar' : ''}`}>
                   <h3>Novo Requisito</h3>
                   <select value={tipo} onChange={(e) => setTipo(e.target.value as any)}>
                     <option value="Funcional">Funcional</option>
