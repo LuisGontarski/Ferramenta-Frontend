@@ -13,7 +13,10 @@ import GraficoHoras from "../Perfil/GraficoHora";
 import GraficoTarefas from "../Perfil/GraficoTarefas";
 import GraficoAtividadeSemanal from "../Perfil/GraficoAtividadeSemanal";
 
-// Dados mockados (poderiam vir da API futuramente)
+// Importando modal de edição
+import PerfilEditar from "./PerfilEditar";
+
+// Dados mockados
 const dataCommits = [
   { projeto: "Projeto A", commits: 30, linhas: 500 },
   { projeto: "Projeto B", commits: 50, linhas: 800 },
@@ -44,16 +47,6 @@ const dataAtividadeSemanal = [
   { dia: "Dom", commits: 0, reviews: 0, reunioes: 0 },
 ];
 
-const abrirModalEditar = () => {
-  const modal = document.getElementById("editar_modal");
-  if (modal) modal.classList.remove("sumir");
-};
-
-const fecharModalEditar = () => {
-  const modal = document.getElementById("editar_modal");
-  if (modal) modal.classList.add("sumir");
-};
-
 const Perfil = () => {
   const [usuario, setUsuario] = useState({
     nome: "",
@@ -68,6 +61,9 @@ const Perfil = () => {
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [categoriaSelecionada, setCategoriaSelecionada] = useState("Commits");
   const [githubIntegrated, setGithubIntegrated] = useState(false);
+
+  // controle do modal
+  const [isEditOpen, setIsEditOpen] = useState(false);
 
   const carregarPerfil = async () => {
     setLoading(true);
@@ -101,11 +97,7 @@ const Perfil = () => {
 
       setGithubIntegrated(!!response.github);
     } catch (error: any) {
-      console.error(
-        "Erro ao buscar dados do usuário:",
-        error.response?.status,
-        error.message
-      );
+      console.error("Erro ao buscar dados do usuário:", error);
       setFetchError(
         "Falha ao carregar os dados do perfil. Tente novamente mais tarde."
       );
@@ -126,23 +118,20 @@ const Perfil = () => {
     window.location.href = `${import.meta.env.VITE_API_URL}/auth/github/login`;
   };
 
-  const handleProceedWithoutGithub = async () => {
+  const handleSavePerfil = async (usuarioEditado: typeof usuario) => {
     try {
-      const payload = {
-        nome_usuario: usuario.nome,
-        email: usuario.email,
-        cargo: usuario.cargo,
-        foto_perfil: usuario.foto_perfil,
-      };
-      await fetch(`${import.meta.env.VITE_API_URL}/users/register`, {
-        method: "POST",
+      // aqui você pode chamar sua API de update
+      await fetch(`${import.meta.env.VITE_API_URL}/users/update`, {
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(usuarioEditado),
       });
-      window.location.href = "/";
+
+      setUsuario(usuarioEditado);
+      alert("Perfil atualizado com sucesso!");
     } catch (err) {
-      console.error("Erro ao prosseguir sem GitHub:", err);
-      alert("Não foi possível prosseguir. Tente novamente.");
+      console.error("Erro ao atualizar perfil:", err);
+      alert("Não foi possível atualizar o perfil.");
     }
   };
 
@@ -177,11 +166,21 @@ const Perfil = () => {
           <div className="container_perfil">
             <div className="card_perfil">
               <div className="div_foto_perfil">
-                <img
-                  src={usuario.foto_perfil || imgPerfil}
-                  alt={`Foto de perfil de ${usuario.nome}`}
-                  className="foto_perfil"
-                />
+                {usuario.foto_perfil ? (
+                  <img
+                    src={usuario.foto_perfil}
+                    alt={`Foto de perfil de ${usuario.nome}`}
+                    className="foto_perfil"
+                  />
+                ) : (
+                  <div className="avatar_iniciais_perfil">
+                    {usuario.nome
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")
+                      .toUpperCase()}
+                  </div>
+                )}
                 <h2 className="texto_foto_perfil">{usuario.nome}</h2>
                 <h2 className="texto_cargo">{usuario.cargo}</h2>
               </div>
@@ -208,14 +207,12 @@ const Perfil = () => {
 
               <button
                 className="btn_editar"
-                id="btn_editar"
-                onClick={abrirModalEditar}
+                onClick={() => setIsEditOpen(true)}
               >
                 Editar Perfil
               </button>
               <button
                 className="btn_excluir"
-                id="btn_excluir"
                 onClick={() => {
                   localStorage.clear();
                   window.location.href = "/login";
@@ -223,9 +220,7 @@ const Perfil = () => {
               >
                 Logout
               </button>
-              <button className="btn_excluir" id="btn_excluir">
-                Excluir Perfil
-              </button>
+              <button className="btn_excluir">Excluir Perfil</button>
 
               {!githubIntegrated && (
                 <div style={{ marginTop: "15px", textAlign: "center" }}>
@@ -262,7 +257,7 @@ const Perfil = () => {
                     )
                   )}
                 </div>
-
+                {/* Exemplo de atividades */}
                 {categoriaSelecionada === "Commits" && (
                   <div className="container_atividades">
                     <AtividadesPerfil
@@ -273,48 +268,6 @@ const Perfil = () => {
                       icone="fa-solid fa-code-commit"
                       cor="#2563eb"
                       backgroundCor="#dbeafe"
-                    />
-                  </div>
-                )}
-
-                {categoriaSelecionada === "Tarefas" && (
-                  <div className="container_atividades">
-                    <AtividadesPerfil
-                      id="1"
-                      titulo="Finalizar relatório semanal"
-                      projeto="Equipe de Marketing"
-                      realizadoEm="há 30 minutos"
-                      icone="fa-solid fa-check"
-                      cor="#16a34a"
-                      backgroundCor="#dcfce7"
-                    />
-                  </div>
-                )}
-
-                {categoriaSelecionada === "Pull Requests" && (
-                  <div className="container_atividades">
-                    <AtividadesPerfil
-                      id="1"
-                      titulo="Merge da feature de autenticação"
-                      projeto="App Mobile"
-                      realizadoEm="há 20 minutos"
-                      icone="fa-solid fa-code-pull-request"
-                      cor="#9333ea"
-                      backgroundCor="#f3e8ff"
-                    />
-                  </div>
-                )}
-
-                {categoriaSelecionada === "Tempo" && (
-                  <div className="container_atividades">
-                    <AtividadesPerfil
-                      id="1"
-                      titulo="2 horas de planejamento"
-                      projeto="Sprint Atual"
-                      realizadoEm="há 1 hora"
-                      icone="fa-solid fa-clock"
-                      cor="#d97706"
-                      backgroundCor="#fef3c7"
                     />
                   </div>
                 )}
@@ -331,6 +284,15 @@ const Perfil = () => {
           </div>
         </div>
       </main>
+
+      {/* Modal de edição */}
+      {isEditOpen && (
+        <PerfilEditar
+          usuario={usuario}
+          onClose={() => setIsEditOpen(false)}
+          onSave={handleSavePerfil}
+        />
+      )}
     </>
   );
 };
