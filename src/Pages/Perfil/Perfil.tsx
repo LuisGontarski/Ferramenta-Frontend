@@ -2,25 +2,18 @@ import React, { useEffect, useState } from "react";
 import "./Perfil.css";
 import imgPerfil from "../../assets/desenvolvedor1.jpeg";
 import NavbarHome from "../../Components/Navbar/NavbarHome";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  LineChart,
-  Line,
-  ResponsiveContainer,
-  AreaChart,
-  Area,
-} from "recharts";
 import { getUserById } from "../../services/userDataService";
 import { formatarDataParaDDMMYYYY } from "../../utils/dateUtils";
 import AtividadesPerfil from "../../Components/AtividadesPerfil/AtividadesPerfil";
 import MenuLateral from "../../Components/MenuLateral/MenuLateral";
 
+// Importando os gráficos já componentizados
+import GraficoCommits from "../Perfil/GraficoCommit";
+import GraficoHoras from "../Perfil/GraficoHora";
+import GraficoTarefas from "../Perfil/GraficoTarefas";
+import GraficoAtividadeSemanal from "../Perfil/GraficoAtividadeSemanal";
+
+// Dados mockados (poderiam vir da API futuramente)
 const dataCommits = [
   { projeto: "Projeto A", commits: 30, linhas: 500 },
   { projeto: "Projeto B", commits: 50, linhas: 800 },
@@ -81,7 +74,6 @@ const Perfil = () => {
     setFetchError(null);
 
     const usuarioId = localStorage.getItem("usuario_id");
-    const githubToken = localStorage.getItem("github_token");
 
     try {
       let response;
@@ -248,7 +240,7 @@ const Perfil = () => {
             </div>
           </div>
 
-          {/* Resto do código de cards e gráficos */}
+          {/* Cards de atividades */}
           <div className="container_cards">
             <div className="container_sessoes_perfil">
               <div className="card_perfil">
@@ -330,116 +322,12 @@ const Perfil = () => {
             </div>
           </div>
 
+          {/* Gráficos separados */}
           <div className="container_graficos">
-            <div className="grafico">
-              <h3>Commits por Projeto</h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={dataCommits}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="projeto" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="commits" fill="#8884d8" />
-                  <Bar dataKey="linhas" fill="#82ca9d" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-
-            <div className="grafico">
-              <h3>Horas Trabalhadas por Dia</h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={dataHoras}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="dia" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Line type="monotone" dataKey="total" stroke="#8884d8" />
-                  <Line type="monotone" dataKey="produtivas" stroke="#82ca9d" />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-
-            <div className="grafico">
-              <h3>Tarefas por Status</h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={dataTarefas}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="status" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="value" fill="#8884d8" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-
-            <div className="grafico">
-              <h3>Atividade Semanal</h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <AreaChart data={dataAtividadeSemanal}>
-                  <defs>
-                    <linearGradient
-                      id="colorCommits"
-                      x1="0"
-                      y1="0"
-                      x2="0"
-                      y2="1"
-                    >
-                      <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8} />
-                      <stop offset="95%" stopColor="#8884d8" stopOpacity={0} />
-                    </linearGradient>
-                    <linearGradient
-                      id="colorReviews"
-                      x1="0"
-                      y1="0"
-                      x2="0"
-                      y2="1"
-                    >
-                      <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.8} />
-                      <stop offset="95%" stopColor="#82ca9d" stopOpacity={0} />
-                    </linearGradient>
-                    <linearGradient
-                      id="colorReunioes"
-                      x1="0"
-                      y1="0"
-                      x2="0"
-                      y2="1"
-                    >
-                      <stop offset="5%" stopColor="#ffc658" stopOpacity={0.8} />
-                      <stop offset="95%" stopColor="#ffc658" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <XAxis dataKey="dia" />
-                  <YAxis />
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <Tooltip />
-                  <Legend />
-                  <Area
-                    type="monotone"
-                    dataKey="commits"
-                    stroke="#8884d8"
-                    fillOpacity={1}
-                    fill="url(#colorCommits)"
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="reviews"
-                    stroke="#82ca9d"
-                    fillOpacity={1}
-                    fill="url(#colorReviews)"
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="reunioes"
-                    stroke="#ffc658"
-                    fillOpacity={1}
-                    fill="url(#colorReunioes)"
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
+            <GraficoCommits data={dataCommits} />
+            <GraficoHoras data={dataHoras} />
+            <GraficoTarefas data={dataTarefas} />
+            <GraficoAtividadeSemanal data={dataAtividadeSemanal} />
           </div>
         </div>
       </main>
