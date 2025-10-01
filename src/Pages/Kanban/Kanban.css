@@ -67,7 +67,7 @@ body {
     justify-content: space-between;
 }
 
-.dados_informacoes_card{
+.dados_informacoes_card {
     display: flex;
     gap: 0.8rem;
 }
@@ -230,25 +230,28 @@ body {
 
 /* Badges de prioridade */
 .badge.alta {
-  background-color: #f44336; /* vermelho */
-  color: white;
+    background-color: #f44336;
+    /* vermelho */
+    color: white;
 }
 
 .badge.media {
-  background-color: #ff9800; /* laranja */
-  color: white;
+    background-color: #ff9800;
+    /* laranja */
+    color: white;
 }
 
 .badge.baixa {
-  background-color: #4caf50; /* verde */
-  color: white;
+    background-color: #4caf50;
+    /* verde */
+    color: white;
 }
 
-.edit_input{
+.edit_input {
     min-width: 0;
 }
 
-.kanban_title{
+.kanban_title {
     display: flex;
     gap: 0.4rem;
 }
@@ -344,7 +347,7 @@ body {
     justify-content: space-between;
 }
 
-.column_actions{
+.column_actions {
     display: flex;
     gap: 0.4rem;
 }
@@ -361,7 +364,7 @@ body {
     transition: 0.2s;
 }
 
-.add_column_btn::after{
+.add_column_btn::after {
     background-color: transparent;
 }
 
@@ -369,7 +372,7 @@ body {
     background: #eaeaea;
 }
 
-.btn_salvar_coluna{
+.btn_salvar_coluna {
     background: #3b82f6;
     color: white;
     border: none;
@@ -392,7 +395,7 @@ body {
     box-shadow: 0 2px 4px 0 rgb(0 0 0 / 0.05);
 }
 
-.btn_cancelar_coluna{
+.btn_cancelar_coluna {
     background: #000000;
     color: white;
     border: none;
@@ -419,3 +422,66 @@ body {
     gap: 6px;
 }
 
+.edit_input {
+    font-size: 14px;
+    outline: none;
+    transition: all 0.2s;
+    box-shadow: 0 2px 4px 0 rgb(0 0 0 / 0.05);
+    padding: 0.3rem 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 0.3rem;
+}
+
+.edit_text_cancel {
+    background-color: #fc1515;
+    color: white;
+    font-weight: 500;
+    font-size: 14px;
+    border: none;
+    padding: 0.2rem;
+}
+
+.edit_save_button {
+    background-color: #155DFC;
+    color: white;
+    font-weight: 500;
+    font-size: 14px;
+    border: none;
+    padding: 0.2rem;
+}
+
+.new_column_input {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 0.3rem;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.2s;
+    box-shadow: 0 2px 4px 0 rgb(0 0 0 / 0.05);
+}
+
+.div_input_columns_kanban{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn_salvar_column_kanban{
+    background-color: #155DFC;
+    color: white;
+    font-weight: 500;
+    font-size: 14px;
+    border: none;
+    padding: 0.4rem;
+    flex: 1;
+}
+
+.btn_cancelar_column_kanban{
+    background-color: #fc1515;
+    color: white;
+    font-weight: 500;
+    font-size: 14px;
+    border: none;
+    padding: 0.4rem;
+    flex: 1;
+}
