@@ -2,25 +2,21 @@ import React, { useEffect, useState } from "react";
 import "./Perfil.css";
 import imgPerfil from "../../assets/desenvolvedor1.jpeg";
 import NavbarHome from "../../Components/Navbar/NavbarHome";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  LineChart,
-  Line,
-  ResponsiveContainer,
-  AreaChart,
-  Area,
-} from "recharts";
 import { getUserById } from "../../services/userDataService";
 import { formatarDataParaDDMMYYYY } from "../../utils/dateUtils";
 import AtividadesPerfil from "../../Components/AtividadesPerfil/AtividadesPerfil";
 import MenuLateral from "../../Components/MenuLateral/MenuLateral";
 
+// Importando os gráficos já componentizados
+import GraficoCommits from "../Perfil/GraficoCommit";
+import GraficoHoras from "../Perfil/GraficoHora";
+import GraficoTarefas from "../Perfil/GraficoTarefas";
+import GraficoAtividadeSemanal from "../Perfil/GraficoAtividadeSemanal";
+
+// Importando modal de edição
+import PerfilEditar from "./PerfilEditar";
+
+// Dados mockados
 const dataCommits = [
   { projeto: "Projeto A", commits: 30, linhas: 500 },
   { projeto: "Projeto B", commits: 50, linhas: 800 },
@@ -51,16 +47,6 @@ const dataAtividadeSemanal = [
   { dia: "Dom", commits: 0, reviews: 0, reunioes: 0 },
 ];
 
-const abrirModalEditar = () => {
-  const modal = document.getElementById("editar_modal");
-  if (modal) modal.classList.remove("sumir");
-};
-
-const fecharModalEditar = () => {
-  const modal = document.getElementById("editar_modal");
-  if (modal) modal.classList.add("sumir");
-};
-
 const Perfil = () => {
   const [usuario, setUsuario] = useState({
     nome: "",
@@ -76,12 +62,14 @@ const Perfil = () => {
   const [categoriaSelecionada, setCategoriaSelecionada] = useState("Commits");
   const [githubIntegrated, setGithubIntegrated] = useState(false);
 
+  // controle do modal
+  const [isEditOpen, setIsEditOpen] = useState(false);
+
   const carregarPerfil = async () => {
     setLoading(true);
     setFetchError(null);
 
     const usuarioId = localStorage.getItem("usuario_id");
-    const githubToken = localStorage.getItem("github_token");
 
     try {
       let response;
@@ -109,11 +97,7 @@ const Perfil = () => {
 
       setGithubIntegrated(!!response.github);
     } catch (error: any) {
-      console.error(
-        "Erro ao buscar dados do usuário:",
-        error.response?.status,
-        error.message
-      );
+      console.error("Erro ao buscar dados do usuário:", error);
       setFetchError(
         "Falha ao carregar os dados do perfil. Tente novamente mais tarde."
       );
@@ -134,23 +118,20 @@ const Perfil = () => {
     window.location.href = `${import.meta.env.VITE_API_URL}/auth/github/login`;
   };
 
-  const handleProceedWithoutGithub = async () => {
+  const handleSavePerfil = async (usuarioEditado: typeof usuario) => {
     try {
-      const payload = {
-        nome_usuario: usuario.nome,
-        email: usuario.email,
-        cargo: usuario.cargo,
-        foto_perfil: usuario.foto_perfil,
-      };
-      await fetch(`${import.meta.env.VITE_API_URL}/users/register`, {
-        method: "POST",
+      // aqui você pode chamar sua API de update
+      await fetch(`${import.meta.env.VITE_API_URL}/users/update`, {
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(usuarioEditado),
       });
-      window.location.href = "/";
+
+      setUsuario(usuarioEditado);
+      alert("Perfil atualizado com sucesso!");
     } catch (err) {
-      console.error("Erro ao prosseguir sem GitHub:", err);
-      alert("Não foi possível prosseguir. Tente novamente.");
+      console.error("Erro ao atualizar perfil:", err);
+      alert("Não foi possível atualizar o perfil.");
     }
   };
 
@@ -185,11 +166,21 @@ const Perfil = () => {
           <div className="container_perfil">
             <div className="card_perfil">
               <div className="div_foto_perfil">
-                <img
-                  src={usuario.foto_perfil || imgPerfil}
-                  alt={`Foto de perfil de ${usuario.nome}`}
-                  className="foto_perfil"
-                />
+                {usuario.foto_perfil ? (
+                  <img
+                    src={usuario.foto_perfil}
+                    alt={`Foto de perfil de ${usuario.nome}`}
+                    className="foto_perfil"
+                  />
+                ) : (
+                  <div className="avatar_iniciais_perfil">
+                    {usuario.nome
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")
+                      .toUpperCase()}
+                  </div>
+                )}
                 <h2 className="texto_foto_perfil">{usuario.nome}</h2>
                 <h2 className="texto_cargo">{usuario.cargo}</h2>
               </div>
@@ -216,14 +207,12 @@ const Perfil = () => {
 
               <button
                 className="btn_editar"
-                id="btn_editar"
-                onClick={abrirModalEditar}
+                onClick={() => setIsEditOpen(true)}
               >
                 Editar Perfil
               </button>
               <button
                 className="btn_excluir"
-                id="btn_excluir"
                 onClick={() => {
                   localStorage.clear();
                   window.location.href = "/login";
@@ -231,9 +220,7 @@ const Perfil = () => {
               >
                 Logout
               </button>
-              <button className="btn_excluir" id="btn_excluir">
-                Excluir Perfil
-              </button>
+              <button className="btn_excluir">Excluir Perfil</button>
 
               {!githubIntegrated && (
                 <div style={{ marginTop: "15px", textAlign: "center" }}>
@@ -248,7 +235,7 @@ const Perfil = () => {
             </div>
           </div>
 
-          {/* Resto do código de cards e gráficos */}
+          {/* Cards de atividades */}
           <div className="container_cards">
             <div className="container_sessoes_perfil">
               <div className="card_perfil">
@@ -270,7 +257,7 @@ const Perfil = () => {
                     )
                   )}
                 </div>
-
+                {/* Exemplo de atividades */}
                 {categoriaSelecionada === "Commits" && (
                   <div className="container_atividades">
                     <AtividadesPerfil
@@ -284,165 +271,28 @@ const Perfil = () => {
                     />
                   </div>
                 )}
-
-                {categoriaSelecionada === "Tarefas" && (
-                  <div className="container_atividades">
-                    <AtividadesPerfil
-                      id="1"
-                      titulo="Finalizar relatório semanal"
-                      projeto="Equipe de Marketing"
-                      realizadoEm="há 30 minutos"
-                      icone="fa-solid fa-check"
-                      cor="#16a34a"
-                      backgroundCor="#dcfce7"
-                    />
-                  </div>
-                )}
-
-                {categoriaSelecionada === "Pull Requests" && (
-                  <div className="container_atividades">
-                    <AtividadesPerfil
-                      id="1"
-                      titulo="Merge da feature de autenticação"
-                      projeto="App Mobile"
-                      realizadoEm="há 20 minutos"
-                      icone="fa-solid fa-code-pull-request"
-                      cor="#9333ea"
-                      backgroundCor="#f3e8ff"
-                    />
-                  </div>
-                )}
-
-                {categoriaSelecionada === "Tempo" && (
-                  <div className="container_atividades">
-                    <AtividadesPerfil
-                      id="1"
-                      titulo="2 horas de planejamento"
-                      projeto="Sprint Atual"
-                      realizadoEm="há 1 hora"
-                      icone="fa-solid fa-clock"
-                      cor="#d97706"
-                      backgroundCor="#fef3c7"
-                    />
-                  </div>
-                )}
               </div>
             </div>
           </div>
 
+          {/* Gráficos separados */}
           <div className="container_graficos">
-            <div className="grafico">
-              <h3>Commits por Projeto</h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={dataCommits}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="projeto" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="commits" fill="#8884d8" />
-                  <Bar dataKey="linhas" fill="#82ca9d" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-
-            <div className="grafico">
-              <h3>Horas Trabalhadas por Dia</h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={dataHoras}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="dia" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Line type="monotone" dataKey="total" stroke="#8884d8" />
-                  <Line type="monotone" dataKey="produtivas" stroke="#82ca9d" />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-
-            <div className="grafico">
-              <h3>Tarefas por Status</h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={dataTarefas}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="status" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="value" fill="#8884d8" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-
-            <div className="grafico">
-              <h3>Atividade Semanal</h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <AreaChart data={dataAtividadeSemanal}>
-                  <defs>
-                    <linearGradient
-                      id="colorCommits"
-                      x1="0"
-                      y1="0"
-                      x2="0"
-                      y2="1"
-                    >
-                      <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8} />
-                      <stop offset="95%" stopColor="#8884d8" stopOpacity={0} />
-                    </linearGradient>
-                    <linearGradient
-                      id="colorReviews"
-                      x1="0"
-                      y1="0"
-                      x2="0"
-                      y2="1"
-                    >
-                      <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.8} />
-                      <stop offset="95%" stopColor="#82ca9d" stopOpacity={0} />
-                    </linearGradient>
-                    <linearGradient
-                      id="colorReunioes"
-                      x1="0"
-                      y1="0"
-                      x2="0"
-                      y2="1"
-                    >
-                      <stop offset="5%" stopColor="#ffc658" stopOpacity={0.8} />
-                      <stop offset="95%" stopColor="#ffc658" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <XAxis dataKey="dia" />
-                  <YAxis />
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <Tooltip />
-                  <Legend />
-                  <Area
-                    type="monotone"
-                    dataKey="commits"
-                    stroke="#8884d8"
-                    fillOpacity={1}
-                    fill="url(#colorCommits)"
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="reviews"
-                    stroke="#82ca9d"
-                    fillOpacity={1}
-                    fill="url(#colorReviews)"
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="reunioes"
-                    stroke="#ffc658"
-                    fillOpacity={1}
-                    fill="url(#colorReunioes)"
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
+            <GraficoCommits data={dataCommits} />
+            <GraficoHoras data={dataHoras} />
+            <GraficoTarefas data={dataTarefas} />
+            <GraficoAtividadeSemanal data={dataAtividadeSemanal} />
           </div>
         </div>
       </main>
+
+      {/* Modal de edição */}
+      {isEditOpen && (
+        <PerfilEditar
+          usuario={usuario}
+          onClose={() => setIsEditOpen(false)}
+          onSave={handleSavePerfil}
+        />
+      )}
     </>
   );
 };
