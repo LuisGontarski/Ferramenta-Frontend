@@ -104,6 +104,7 @@ select.input_modal {
   border: none;
   cursor: pointer;
   font-size: 14px;
+  height: 40px;
   padding: 0.6rem 1rem;
   border-radius: 6px;
   text-align: center;
@@ -156,8 +157,9 @@ select.input_modal {
 }
 
 .grid_membros {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
   gap: 0.5rem;
   margin-top: 0.5rem;
 }

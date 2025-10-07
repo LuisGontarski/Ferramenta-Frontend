@@ -9,13 +9,10 @@ const Kanban = () => {
       <NavbarHome />
       <div className="container_conteudos">
         <MenuLateral />
-        {/* ConteudoKanban.tsx */}
         <ConteudoKanban></ConteudoKanban>
       </div>
     </>
   );
 };
-
-// saveCardNotes
 
 export default Kanban;
