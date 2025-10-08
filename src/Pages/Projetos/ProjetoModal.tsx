@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./ProjetoModal.css";
 import { IoCloseOutline } from "react-icons/io5";
 import SelecionarUsuarios from "../../Components/Projeto/SelecionarUsuarios";
+import { useEffect } from "react";
 
 interface ProjetoModalProps {
   fecharModal?: () => void;
@@ -18,6 +19,13 @@ interface Equipe {
   usuarios: Usuario[];
 }
 
+interface Repositorio {
+  name: string;
+  url: string;
+  language?: string;
+  updated_at?: string;
+}
+
 const ProjetoModal: React.FC<ProjetoModalProps> = ({ fecharModal }) => {
   const [novoNomeEquipe, setNovoNomeEquipe] = useState("");
   const [mostrarMembros, setMostrarMembros] = useState(false);
@@ -25,6 +33,48 @@ const ProjetoModal: React.FC<ProjetoModalProps> = ({ fecharModal }) => {
     []
   );
   const [equipes, setEquipes] = useState<Equipe[]>([]);
+  const [repositorios, setRepositorios] = useState<Repositorio[]>([]);
+  const [repoSelecionado, setRepoSelecionado] = useState("");
+
+  useEffect(() => {
+    const usuarioId = localStorage.getItem("usuario_id");
+    if (!usuarioId) return;
+
+    const buscarRepositorios = async () => {
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/users/${usuarioId}/repos`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`Erro ao buscar repositórios: ${errorText}`);
+        }
+
+        const data = await response.json();
+
+        // Se o backend retorna o JSON completo dos repositórios
+        setRepositorios(
+          data.map((repo: any) => ({
+            name: repo.name,
+            url: repo.html_url,
+            language: repo.language,
+            updated_at: repo.updated_at,
+          }))
+        );
+      } catch (error) {
+        console.error("Erro ao carregar repositórios:", error);
+      }
+    };
+
+    buscarRepositorios();
+  }, []);
 
   function fechar() {
     const modal = document.getElementById("card_modal");
@@ -101,6 +151,7 @@ const ProjetoModal: React.FC<ProjetoModalProps> = ({ fecharModal }) => {
       })),
       status:
         document.querySelector<HTMLSelectElement>("select")!?.value || "Ativo",
+      github_repo: repoSelecionado || null, // ✅ adiciona o repositório selecionado
     };
 
     try {
@@ -218,6 +269,20 @@ const ProjetoModal: React.FC<ProjetoModalProps> = ({ fecharModal }) => {
             <option>Ativo</option>
             <option>Concluído</option>
             <option>Arquivado</option>
+          </select>
+
+          <label>Repositório</label>
+          <select
+            className="input_modal"
+            value={repoSelecionado}
+            onChange={(e) => setRepoSelecionado(e.target.value)}
+          >
+            <option value="">Selecione um repositório</option>
+            {repositorios.map((repo: Repositorio) => (
+              <option key={repo.name} value={repo.name}>
+                {repo.name}
+              </option>
+            ))}
           </select>
 
           <button className="btn_salvar_modal" onClick={salvarProjeto}>

@@ -15,7 +15,7 @@ const NavbarHome = () => {
   const projectId = id || projeto_id;
 
   const [usuario, setUsuario] = useState<UserDTO>({
-    id: "",
+    usuario_id: "",
     nome_usuario: "",
     cargo: "",
     email: "",
