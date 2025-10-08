@@ -35,6 +35,10 @@ const ProjetoModal: React.FC<ProjetoModalProps> = ({ fecharModal }) => {
   const [equipes, setEquipes] = useState<Equipe[]>([]);
   const [repositorios, setRepositorios] = useState<Repositorio[]>([]);
   const [repoSelecionado, setRepoSelecionado] = useState("");
+  const [modoRepo, setModoRepo] = useState<"existente" | "novo">("existente");
+  const [novoRepo, setNovoRepo] = useState("");
+  const [descricaoRepo, setDescricaoRepo] = useState("");
+  const [privadoRepo, setPrivadoRepo] = useState(false);
 
   useEffect(() => {
     const usuarioId = localStorage.getItem("usuario_id");
@@ -114,13 +118,11 @@ const ProjetoModal: React.FC<ProjetoModalProps> = ({ fecharModal }) => {
   }
 
   async function salvarProjeto() {
-    // Validação básica
     if (!equipes.length) {
       alert("Adicione pelo menos uma equipe.");
       return;
     }
 
-    // Coletar dados do formulário
     const tituloInput = document.querySelector<HTMLInputElement>(
       'input[placeholder="Digite o título"]'
     )!.value;
@@ -138,7 +140,52 @@ const ProjetoModal: React.FC<ProjetoModalProps> = ({ fecharModal }) => {
       return;
     }
 
-    // Preparar payload
+    let repoName = repoSelecionado; // Caso seja repositório existente
+
+    // Caso seja criar novo repositório
+    if (modoRepo === "novo") {
+      if (!novoRepo.trim()) {
+        alert("Digite o nome do novo repositório.");
+        return;
+      }
+
+      const access_token = localStorage.getItem("github_token");
+      if (!access_token) {
+        alert("Token do GitHub não encontrado.");
+        return;
+      }
+
+      try {
+        const repoResponse = await fetch(
+          `${import.meta.env.VITE_API_URL}/github/create/repo`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              access_token,
+              name: novoRepo,
+              description: descricaoRepo,
+              isPrivate: privadoRepo,
+            }),
+          }
+        );
+
+        if (!repoResponse.ok) {
+          const erro = await repoResponse.json();
+          alert(erro.message || "Erro ao criar repositório no GitHub.");
+          return;
+        }
+
+        const repoData = await repoResponse.json();
+        repoName = repoData.repository.name; // nome do repositório criado
+      } catch (error) {
+        console.error(error);
+        alert("Erro ao criar repositório no GitHub.");
+        return;
+      }
+    }
+
+    // Agora envia o payload para criar o projeto
     const payload = {
       criador_id: localStorage.getItem("usuario_id"),
       nome: tituloInput,
@@ -151,7 +198,7 @@ const ProjetoModal: React.FC<ProjetoModalProps> = ({ fecharModal }) => {
       })),
       status:
         document.querySelector<HTMLSelectElement>("select")!?.value || "Ativo",
-      github_repo: repoSelecionado || null, // ✅ adiciona o repositório selecionado
+      github_repo: repoName || null,
     };
 
     try {
@@ -168,9 +215,7 @@ const ProjetoModal: React.FC<ProjetoModalProps> = ({ fecharModal }) => {
       }
 
       alert("Projeto criado com sucesso!");
-      fechar(); // Fecha modal
-
-      // <-- Adiciona este redirecionamento
+      fechar();
       window.location.href = "/projetos";
     } catch (error) {
       console.error(error);
@@ -271,19 +316,111 @@ const ProjetoModal: React.FC<ProjetoModalProps> = ({ fecharModal }) => {
             <option>Arquivado</option>
           </select>
 
-          <label>Repositório</label>
-          <select
-            className="input_modal"
-            value={repoSelecionado}
-            onChange={(e) => setRepoSelecionado(e.target.value)}
-          >
-            <option value="">Selecione um repositório</option>
-            {repositorios.map((repo: Repositorio) => (
-              <option key={repo.name} value={repo.name}>
-                {repo.name}
-              </option>
-            ))}
-          </select>
+          {/* Opções de escolha */}
+          <div style={{ display: "flex", gap: "1rem", marginBottom: "0.5rem" }}>
+            <label
+              style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}
+            >
+              <input
+                type="radio"
+                name="repoOption"
+                value="existente"
+                checked={modoRepo === "existente"}
+                onChange={() => setModoRepo("existente")}
+              />
+              Usar repositório existente
+            </label>
+
+            <label
+              style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}
+            >
+              <input
+                type="radio"
+                name="repoOption"
+                value="novo"
+                checked={modoRepo === "novo"}
+                onChange={() => setModoRepo("novo")}
+              />
+              Criar novo repositório
+            </label>
+          </div>
+
+          {/* Se escolheu repositório existente */}
+          {modoRepo === "existente" && (
+            <select
+              className="input_modal"
+              value={repoSelecionado}
+              onChange={(e) => setRepoSelecionado(e.target.value)}
+            >
+              <option value="">Selecione um repositório</option>
+              {repositorios.map((repo: Repositorio) => (
+                <option key={repo.name} value={repo.name}>
+                  {repo.name}
+                </option>
+              ))}
+            </select>
+          )}
+
+          {/* Se escolheu criar novo repositório */}
+          {modoRepo === "novo" && (
+            <div className="container_novo_repo">
+              <label>Nome do repositório</label>
+              <input
+                type="text"
+                className="input_modal"
+                placeholder="Digite o nome do novo repositório"
+                value={novoRepo}
+                onChange={(e) => setNovoRepo(e.target.value)}
+              />
+
+              <label>Descrição do repositório</label>
+              <textarea
+                className="input_modal"
+                placeholder="Digite uma descrição (opcional)"
+                value={descricaoRepo}
+                onChange={(e) => setDescricaoRepo(e.target.value)}
+              ></textarea>
+
+              <label>Visibilidade</label>
+              <div
+                style={{ display: "flex", gap: "1rem", marginBottom: "0.5rem" }}
+              >
+                <label
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.3rem",
+                  }}
+                >
+                  <input
+                    type="radio"
+                    name="privacidadeRepo"
+                    value="public"
+                    checked={!privadoRepo}
+                    onChange={() => setPrivadoRepo(false)}
+                  />
+                  Público
+                </label>
+
+                <label
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.3rem",
+                  }}
+                >
+                  <input
+                    type="radio"
+                    name="privacidadeRepo"
+                    value="private"
+                    checked={privadoRepo}
+                    onChange={() => setPrivadoRepo(true)}
+                  />
+                  Privado
+                </label>
+              </div>
+            </div>
+          )}
 
           <button className="btn_salvar_modal" onClick={salvarProjeto}>
             Salvar Projeto
