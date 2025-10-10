@@ -332,7 +332,7 @@ const ConteudoKanban = () => {
 							/>
 						)}
 
-						{sprints.length > 0 && (
+						{sprints.length > 0 && cargo === "Product Owner" && (
 							<button
 								className="input_excluir_sprint"
 								onClick={() => deleteSprint(selectedSprint)}
@@ -341,7 +341,7 @@ const ConteudoKanban = () => {
 							</button>
 						)}
 
-						{sprints.length > 0 && (
+						{sprints.length > 0 && cargo === "Product Owner" && (
 							<button onClick={() => setShowNewCardModal(true)} className="button_adicionar_card_kanban" disabled={!selectedSprint} title={!selectedSprint ? "Selecione uma sprint primeiro" : ""}>
 								<HiPlus size={"14px"} /> Novo Card
 							</button>
