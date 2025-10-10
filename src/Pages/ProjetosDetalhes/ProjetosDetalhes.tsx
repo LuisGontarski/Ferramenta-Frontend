@@ -137,10 +137,10 @@ const ProjetosDetalhes = () => {
 		async function fetchProjeto() {
 			if (!id) return;
 			try {
+				localStorage.setItem("projeto_id", id);
 				const res = await fetch(`${BASE_URL}/projects/${id}`);
 				if (!res.ok) throw new Error(`HTTP ${res.status}`);
 				const projeto = await res.json();
-				console.log("GET /projects/:id ->", projeto);
 
 				setNome(projeto.nome || "");
 				setDescricao(projeto.descricao || "");

@@ -55,7 +55,6 @@ const KanbanModal = ({ onClose, projeto_id, sprints, onTarefaCreated }: KanbanMo
   const [columns] = useState(initialColumns);
   const [users, setUsers] = useState<User[]>([]);
 
-  // Buscar usuários vinculados ao projeto apenas quando projetoId mudar e for válido
   useEffect(() => {
     if (!projeto_id) return;
 

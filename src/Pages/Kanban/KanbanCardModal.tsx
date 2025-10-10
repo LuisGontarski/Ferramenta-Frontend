@@ -1,9 +1,8 @@
-import { useState } from "react";
-import "./Kanban.css";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 type Card = {
-  id: number;
+  id: string;
   title: string;
   priority: "high" | "medium" | "low";
   user: string;
@@ -21,19 +20,82 @@ type KanbanCardModalProps = {
   onClose: () => void;
 };
 
+type Commit = {
+  id: string;
+  message: string;
+  url: string;
+  data_commit: string;
+};
+
 const KanbanCardModal = ({ card, onClose }: KanbanCardModalProps) => {
   const navigate = useNavigate();
   const [tempNotes, setTempNotes] = useState(card.notes || "");
+  const [loading, setLoading] = useState(false);
+  const [commits, setCommits] = useState<Commit[]>([]);
+  const [selectedCommit, setSelectedCommit] = useState<string>("");
 
-  const saveCardNotes = () => {
-    // Aqui você poderia chamar uma função do pai para salvar as notas, se quiser
-    console.log("Notas salvas:", tempNotes);
-    onClose(); // fecha o modal
+  const apiUrl = import.meta.env.VITE_API_URL;
+
+  // 🔹 Carrega observação e commits
+  useEffect(() => {
+    const fetchObservacao = async () => {
+      try {
+        setLoading(true);
+
+        // Pega o projeto_id do localStorage
+        const projetoId = localStorage.getItem("projeto_id");
+
+        const response = await fetch(
+          `${apiUrl}/tarefas/${card.id}/${projetoId}/observacao`
+        );
+
+        if (!response.ok) throw new Error("Erro ao buscar dados da tarefa");
+
+        const data = await response.json();
+
+        // Atualiza estado com observação e commits
+        setTempNotes(data.observacao || "");
+        setCommits(data.commits || []);
+      } catch (err) {
+        console.error("Erro ao carregar observação e commits:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchObservacao();
+  }, [card.id, apiUrl]);
+
+  // 🔹 Salva observação
+  const saveCardNotes = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${apiUrl}/tarefas/${card.id}/comentario`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          comentario: tempNotes,
+          commit_id: selectedCommit, // envia commit selecionado
+        }),
+      });
+
+      if (!response.ok) throw new Error("Erro ao salvar observação");
+
+      alert("Observação salva com sucesso!");
+      onClose();
+    } catch (err) {
+      console.error(err);
+      alert("Erro ao salvar observação!");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleClose = () => {
     onClose();
-    navigate("/kanban"); // opcional, se quiser navegar
+    navigate("/kanban");
   };
 
   const formatDate = (dateStr: string) => {
@@ -59,17 +121,34 @@ const KanbanCardModal = ({ card, onClose }: KanbanCardModalProps) => {
           <b>Descrição:</b> {card.description || "-"}
         </p>
 
-        <label style={{ marginTop: 12, display: "block" }}>
+        <label>
           <b>Observações</b>
         </label>
         <textarea
           placeholder="Escreva observações aqui…"
           value={tempNotes}
           onChange={(e) => setTempNotes(e.target.value)}
+          disabled={loading}
         />
 
+        <label>Associar a commit</label>
+        <select
+          value={selectedCommit}
+          onChange={(e) => setSelectedCommit(e.target.value)}
+          disabled={loading || commits.length === 0}
+        >
+          <option value="">Selecione um commit</option>
+          {commits.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.message} ({new Date(c.data_commit).toLocaleDateString()})
+            </option>
+          ))}
+        </select>
+
         <div className="modal_actions">
-          <button onClick={saveCardNotes}>Salvar</button>
+          <button onClick={saveCardNotes} disabled={loading}>
+            {loading ? "Salvando..." : "Salvar"}
+          </button>
           <button onClick={handleClose}>Fechar</button>
         </div>
       </div>
