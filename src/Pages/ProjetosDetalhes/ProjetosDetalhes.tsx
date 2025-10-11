@@ -1,15 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./ProjetosDetalhes.css";
 import NavbarHome from "../../Components/Navbar/NavbarHome";
 import imgPerfil from "../../assets/desenvolvedor1.jpeg";
 import MenuLateral from "../../Components/MenuLateral/MenuLateral";
 import { FaChevronRight } from "react-icons/fa6";
-import desenvolvedor1 from "../../Assets/desenvolvedor1.jpeg";
-import desenvolvedor2 from "../../Assets/desenvolvedor2.jpeg";
-import desenvolvedor3 from "../../Assets/desenvolvedor3.jpeg";
+import desenvolvedor1 from "../../assets/desenvolvedor1.jpeg";
+import desenvolvedor2 from "../../assets/desenvolvedor2.jpeg";
+import desenvolvedor3 from "../../assets/desenvolvedor3.jpeg";
 import { GrEdit } from "react-icons/gr";
 import { useNavigate, useParams } from "react-router-dom";
-import { useEffect } from "react";
 import {
 	ResponsiveContainer,
 	CartesianGrid,
@@ -27,13 +26,21 @@ import {
 
 const BASE_URL = import.meta.env.VITE_API_URL;
 
+// --- Interface para a tipagem dos membros ---
+interface Membro {
+    usuario_id: string;
+    nome: string;
+    email: string;
+    foto_perfil?: string;
+}
+
+// Dados estáticos para os gráficos e outras seções
 const throughputData = [
 	{ semana: "S1", entregas: 12 },
 	{ semana: "S2", entregas: 15 },
 	{ semana: "S3", entregas: 10 },
 	{ semana: "S4", entregas: 18 },
 ];
-
 const data = [
 	{ dia: "Dia 1", planejado: 100, real: 100 },
 	{ dia: "Dia 3", planejado: 90, real: 92 },
@@ -44,14 +51,12 @@ const data = [
 	{ dia: "Dia 13", planejado: 15, real: 20 },
 	{ dia: "Dia 15", planejado: 0, real: 10 },
 ];
-
 const leadTimeData = [
 	{ semana: "S1", leadtime: 4.2 },
 	{ semana: "S2", leadtime: 3.9 },
 	{ semana: "S3", leadtime: 3.6 },
 	{ semana: "S4", leadtime: 3.2 },
 ];
-
 const velocidadeData = [
 	{ sprint: "Sprint 1", pontos: 25 },
 	{ sprint: "Sprint 2", pontos: 28 },
@@ -62,134 +67,112 @@ const velocidadeData = [
 const cargo = localStorage.getItem("cargo");
 
 const ProjetosDetalhes = () => {
-	const { id } = useParams();
-	console.log("🔎 ID do projeto recebido:", id);
-
-	const [showModal, setShowModal] = useState(false);
-	const [nome, setNome] = useState("Projeto All Gym");
-	const [descricao, setDescricao] = useState(
-		"Sistema de gestão de projetos com interface moderna e funcionalidades avançadas"
-	);
-	const [dataInicio, setDataInicio] = useState("dd/mm/aaaa");
-	const [dataFim, setDataFim] = useState("dd/mm/aaaa");
-	const [status, setStatus] = useState("Em Andamento");
-	const [duracao, setDuracao] = useState(0);
-	const [gerenteProjeto, setGerenteProjeto] = useState("-");
-	const [membros, setMembros] = useState(0);
-
-	const handleSalvar = async () => {
-		try {
-			const res = await fetch(`${BASE_URL}/projects/${id}`, {
-				method: "PUT",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					nome,
-					descricao,
-					status,
-					data_inicio: dataInicio, // formate como YYYY-MM-DD
-					data_fim_prevista: dataFim, // formate como YYYY-MM-DD
-				}),
-			});
-
-			if (!res.ok) {
-				const errData = await res.json();
-				throw new Error(errData.error || `HTTP ${res.status}`);
-			}
-
-			const updatedProject = await res.json();
-			console.log("Projeto atualizado:", updatedProject);
-
-			alert("Projeto atualizado com sucesso!");
-			setShowModal(false);
-		} catch (err) {
-			console.error("Erro ao atualizar projeto:", err);
-			alert("Erro ao atualizar projeto. Veja o console para detalhes.");
-		}
-	};
-
+	const { id } = useParams<{ id: string }>();
 	const navigate = useNavigate();
 
-	const handleExcluir = async () => {
-		if (!window.confirm("Tem certeza que deseja excluir este projeto?")) return;
+	const [showModal, setShowModal] = useState(false);
+	const [nome, setNome] = useState("Carregando...");
+	const [descricao, setDescricao] = useState("Carregando...");
+	const [dataInicio, setDataInicio] = useState("");
+	const [dataFim, setDataFim] = useState("");
+	const [status, setStatus] = useState("Carregando...");
+	const [duracao, setDuracao] = useState(0);
+	const [gerenteProjeto, setGerenteProjeto] = useState("Carregando...");
+	
+	const [membrosDaEquipe, setMembrosDaEquipe] = useState<Membro[]>([]);
 
-		try {
-			const res = await fetch(`${BASE_URL}/projects/${id}`, {
-				method: "DELETE",
-			});
-
-			if (!res.ok) {
-				const errData = await res.json();
-				throw new Error(errData.error || `HTTP ${res.status}`);
-			}
-
-			alert("Projeto excluído com sucesso!");
-			// volta para a página de projetos
-			navigate("/projetos");
-		} catch (err) {
-			console.error("Erro ao excluir projeto:", err);
-			alert("Erro ao excluir projeto. Veja o console para detalhes.");
-		}
-	};
-
+	// --- Efeito para buscar APENAS os membros do projeto ---
 	useEffect(() => {
-		async function fetchProjeto() {
+		async function fetchMembrosDoProjeto() {
 			if (!id) return;
 			try {
 				localStorage.setItem("projeto_id", id);
+
+				const resMembros = await fetch(`${BASE_URL}/projects/${id}/users`);
+				if (!resMembros.ok) throw new Error(`Erro ao buscar membros: ${resMembros.status}`);
+				const membros = await resMembros.json();
+				setMembrosDaEquipe(membros);
+
+			} catch (err) {
+				console.error("Erro ao carregar membros da equipe:", err);
+			}
+		}
+		fetchMembrosDoProjeto();
+		async function fetchDadosDoProjeto() {
+			if (!id) return;
+			try {
+				localStorage.setItem("projeto_id", id);
+
 				const res = await fetch(`${BASE_URL}/projects/${id}`);
 				if (!res.ok) throw new Error(`HTTP ${res.status}`);
 				const projeto = await res.json();
 
-				setNome(projeto.nome || "");
-				setDescricao(projeto.descricao || "");
-				setStatus(projeto.status || "");
-
-				// função para formatar data para dd/mm/aaaa
-				const toDateInput = (v: string | null) => {
-					if (!v) return "";
-					const d = new Date(v);
-					if (isNaN(d.getTime())) return "";
-					return d.toISOString().slice(0, 10); // YYYY-MM-DD
-				};
-
+				setNome(projeto.nome || "Nome não encontrado");
+				setDescricao(projeto.descricao || "Descrição não encontrada");
+				setStatus(projeto.status || "Status não definido");
+				setGerenteProjeto(projeto.gerente_projeto || "-");
+				
+				const toDateInput = (v: string | null) => v ? new Date(v).toISOString().slice(0, 10) : "";
 				setDataInicio(toDateInput(projeto.data_inicio));
 				setDataFim(toDateInput(projeto.data_fim_prevista || projeto.data_fim));
 
-				// calcula duração em dias
 				const calcDuracao = (inicio: any, fim: any) => {
+					if (!inicio || !fim) return 0;
 					const d1 = new Date(inicio);
 					const d2 = new Date(fim);
 					if (isNaN(d1.getTime()) || isNaN(d2.getTime())) return 0;
-					const diffTime = d2.getTime() - d1.getTime();
-					return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+					const diffTime = Math.abs(d2.getTime() - d1.getTime());
+					return Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
 				};
 
-				setDuracao(
-					calcDuracao(
-						projeto.data_inicio,
-						projeto.data_fim_prevista || projeto.data_fim
-					)
-				);
+				setDuracao(calcDuracao(projeto.data_inicio, projeto.data_fim_prevista || projeto.data_fim));
+				
+				const resMembros = await fetch(`${BASE_URL}/projects/${id}/users`);
+				if (!resMembros.ok) throw new Error(`Erro ao buscar membros: ${resMembros.status}`);
+				const membros = await resMembros.json();
+				setMembrosDaEquipe(membros);
 
-				setGerenteProjeto(projeto.gerente_projeto || "-");
-
-				setMembros(
-					Number(
-						projeto.total_membros ??
-						projeto.membros_envolvidos ??
-						projeto.membros ??
-						0
-					)
-				);
 			} catch (err) {
-				console.error("Erro ao buscar projeto:", err);
+				console.error("Erro ao carregar dados da página:", err);
+				setNome("Erro ao carregar projeto");
 			}
 		}
-		fetchProjeto();
+		fetchDadosDoProjeto();
 	}, [id]);
-
+    
+    // --- Lógica do Modal (mantida como estava) ---
+	const handleSalvar = async () => {
+		// Esta função agora usará os dados estáticos do estado se não forem alterados no modal
+		try {
+			const res = await fetch(`${BASE_URL}/projects/${id}`, {
+				method: "PUT",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					nome,
+					descricao,
+					status,
+					data_inicio: dataInicio,
+					data_fim_prevista: dataFim,
+				}),
+			});
+			if (!res.ok) throw new Error("Falha ao salvar");
+			alert("Projeto atualizado!");
+			setShowModal(false);
+		} catch (err) {
+			console.error("Erro ao atualizar projeto:", err);
+		}
+	};
+	const handleExcluir = async () => {
+		if (!window.confirm("Tem certeza?")) return;
+		try {
+			const res = await fetch(`${BASE_URL}/projects/${id}`, { method: "DELETE" });
+			if (!res.ok) throw new Error("Falha ao excluir");
+			alert("Projeto excluído!");
+			navigate("/projetos");
+		} catch (err) {
+			console.error("Erro ao excluir projeto:", err);
+		}
+	};
 	const mostrarModal = () => {
 		let modal = document.getElementById("modal_editar");
 		const conteudo_modal = document.getElementById("modal_editar_projeto");
@@ -203,7 +186,6 @@ const ProjetosDetalhes = () => {
 			}
 		}
 	};
-
 	function fecharModal() {
 		const modal = document.getElementById("modal_editar");
 		const conteudo_modal = document.getElementById("modal_editar_projeto");
@@ -599,42 +581,26 @@ const ProjetosDetalhes = () => {
 						</div>
 
 						<div className="div_informacoes_projeto_detalhes">
-							<h2 className="titulo_card_projeto_detalhes">
-								Informações do Projeto
-							</h2>
+							<h2 className="titulo_card_projeto_detalhes">Informações do Projeto</h2>
 							<div className="div_datas_projeto">
-								<h2 className="sub_titulo_card_projeto_detalhes">
-									Gerente do Projeto:
-								</h2>
-								<h2 className="sub_titulo_card_projeto_detalhes">
-									{gerenteProjeto}
-								</h2>
+								<h2 className="sub_titulo_card_projeto_detalhes">Gerente do Projeto:</h2>
+								<h2 className="sub_titulo_card_projeto_detalhes">{gerenteProjeto}</h2>
 							</div>
 							<div className="div_datas_projeto">
 								<h2 className="sub_titulo_card_projeto_detalhes">Status:</h2>
 								<h2 className="sub_titulo_card_projeto_detalhes">{status}</h2>
 							</div>
 							<div className="div_datas_projeto">
-								<h2 className="sub_titulo_card_projeto_detalhes">
-									Data de Início:
-								</h2>
-								<h2 className="sub_titulo_card_projeto_detalhes">
-									{formatDDMMYYYY(dataInicio)}
-								</h2>
+								<h2 className="sub_titulo_card_projeto_detalhes">Data de Início:</h2>
+								<h2 className="sub_titulo_card_projeto_detalhes">{formatDDMMYYYY(dataInicio)}</h2>
 							</div>
 							<div className="div_datas_projeto">
-								<h2 className="sub_titulo_card_projeto_detalhes">
-									Data de Término:
-								</h2>
-								<h2 className="sub_titulo_card_projeto_detalhes">
-									{formatDDMMYYYY(dataFim)}
-								</h2>
+								<h2 className="sub_titulo_card_projeto_detalhes">Data de Término:</h2>
+								<h2 className="sub_titulo_card_projeto_detalhes">{formatDDMMYYYY(dataFim)}</h2>
 							</div>
 							<div className="div_datas_projeto">
 								<h2 className="sub_titulo_card_projeto_detalhes">Duração:</h2>
-								<h2 className="sub_titulo_card_projeto_detalhes">
-									{duracao} dias
-								</h2>
+								<h2 className="sub_titulo_card_projeto_detalhes">{duracao > 0 ? `${duracao} dias` : "-"}</h2>
 							</div>
 						</div>
 						<div className="card_atualizacoes">
@@ -699,98 +665,40 @@ const ProjetosDetalhes = () => {
 								Equipe do projeto
 							</h2>
 							<div className="container_equipe_projeto">
-								<div className="div_equipe_projeto">
-									<div>
-										<img src={imgPerfil} className="imagemEquipe" />
-									</div>
-									<div className="div_equipe_dados">
-										<div>
-											<h2 className="sub_titulo_card_projeto_detalhes">
-												João Silva
-											</h2>
-											<h2 className="adicional_metricas_detalhes_projetos">
-												Tech Lead
-											</h2>
+								{membrosDaEquipe.length > 0 ? (
+									membrosDaEquipe.map((membro) => (
+										<div className="div_equipe_projeto" key={membro.usuario_id}>
+											<div>
+												{membro.foto_perfil ? (
+													<img src={membro.foto_perfil} className="imagemEquipe" alt={`Foto de ${membro.nome}`} />
+												) : (
+                                                    // Placeholder com a inicial do nome
+													<div className="imagemEquipe avatar-iniciais">{membro.nome.charAt(0).toUpperCase()}</div>
+												)}
+											</div>
+											<div className="div_equipe_dados">
+												<div>
+													<h2 className="sub_titulo_card_projeto_detalhes">
+														{membro.nome}
+													</h2>
+													<h2 className="adicional_metricas_detalhes_projetos">
+														Tech Lead
+													</h2>
+												</div>
+												<div className="div_equipe_tarefas">
+													<h2 className="sub_titulo_card_projeto_detalhes">
+														5 tarefas ativas
+													</h2>
+													<h2 className="sub_titulo_card_projeto_detalhes">
+														12 concluidas
+													</h2>
+												</div>
+											</div>
 										</div>
-										<div className="div_equipe_tarefas">
-											<h2 className="sub_titulo_card_projeto_detalhes">
-												5 tarefas ativas
-											</h2>
-											<h2 className="sub_titulo_card_projeto_detalhes">
-												12 concluidas
-											</h2>
-										</div>
-									</div>
-								</div>
-								<div className="div_equipe_projeto">
-									<div>
-										<img src={imgPerfil} className="imagemEquipe" />
-									</div>
-									<div className="div_equipe_dados">
-										<div>
-											<h2 className="sub_titulo_card_projeto_detalhes">
-												João Silva
-											</h2>
-											<h2 className="adicional_metricas_detalhes_projetos">
-												Tech Lead
-											</h2>
-										</div>
-										<div className="div_equipe_tarefas">
-											<h2 className="sub_titulo_card_projeto_detalhes">
-												5 tarefas ativas
-											</h2>
-											<h2 className="sub_titulo_card_projeto_detalhes">
-												12 concluidas
-											</h2>
-										</div>
-									</div>
-								</div>
-								<div className="div_equipe_projeto">
-									<div>
-										<img src={imgPerfil} className="imagemEquipe" />
-									</div>
-									<div className="div_equipe_dados">
-										<div>
-											<h2 className="sub_titulo_card_projeto_detalhes">
-												João Silva
-											</h2>
-											<h2 className="adicional_metricas_detalhes_projetos">
-												Tech Lead
-											</h2>
-										</div>
-										<div className="div_equipe_tarefas">
-											<h2 className="sub_titulo_card_projeto_detalhes">
-												5 tarefas ativas
-											</h2>
-											<h2 className="sub_titulo_card_projeto_detalhes">
-												12 concluidas
-											</h2>
-										</div>
-									</div>
-								</div>
-								<div className="div_equipe_projeto">
-									<div>
-										<img src={imgPerfil} className="imagemEquipe" />
-									</div>
-									<div className="div_equipe_dados">
-										<div>
-											<h2 className="sub_titulo_card_projeto_detalhes">
-												João Silva
-											</h2>
-											<h2 className="adicional_metricas_detalhes_projetos">
-												Tech Lead
-											</h2>
-										</div>
-										<div className="div_equipe_tarefas">
-											<h2 className="sub_titulo_card_projeto_detalhes">
-												5 tarefas ativas
-											</h2>
-											<h2 className="sub_titulo_card_projeto_detalhes">
-												12 concluidas
-											</h2>
-										</div>
-									</div>
-								</div>
+									))
+								) : (
+									<p>Nenhum membro encontrado para este projeto.</p>
+								)}
 							</div>
 						</div>
 					</div>
