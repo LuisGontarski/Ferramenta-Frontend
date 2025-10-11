@@ -263,6 +263,16 @@ body {
     align-items: start;
 }
 
+.div_flex_tarefa{
+    display: flex;
+    justify-content: space-between;
+}
+
+.div_titulo_card_tarefa{
+    display: flex;
+    flex-direction: column;
+}
+
 .card_kanban {
     background-color: white;
     padding: 1rem;
