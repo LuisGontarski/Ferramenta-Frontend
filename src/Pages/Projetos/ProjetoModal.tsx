@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./ProjetoModal.css";
 import { IoCloseOutline } from "react-icons/io5";
 import SelecionarUsuarios from "../../Components/Projeto/SelecionarUsuarios";
+import { getUserById } from "../../services/userDataService";
 import { useEffect } from "react";
 
 interface ProjetoModalProps {
@@ -118,110 +119,120 @@ const ProjetoModal: React.FC<ProjetoModalProps> = ({ fecharModal }) => {
   }
 
   async function salvarProjeto() {
-    if (!equipes.length) {
-      alert("Adicione pelo menos uma equipe.");
+  if (!equipes.length) {
+    alert("Adicione pelo menos uma equipe.");
+    return;
+  }
+
+  const tituloInput = document.querySelector<HTMLInputElement>(
+    'input[placeholder="Digite o título"]'
+  )!.value;
+  const descricaoInput = document.querySelector<HTMLTextAreaElement>(
+    'textarea[placeholder="Digite a descrição"]'
+  )!.value;
+  const dataInicioInput =
+    document.querySelector<HTMLInputElement>('input[type="date"]')!?.value;
+  const dataFimInput =
+    document.querySelectorAll<HTMLInputElement>('input[type="date"]')[1]?.value;
+
+  if (!tituloInput || !descricaoInput || !dataInicioInput || !dataFimInput) {
+    alert("Preencha todos os campos.");
+    return;
+  }
+
+  let repoName = repoSelecionado; // caso seja existente
+  const usuarioId = localStorage.getItem("usuario_id");
+  if (!usuarioId) {
+    alert("Usuário não encontrado.");
+    return;
+  }
+
+  // 🔹 busca nome do GitHub do usuário
+  const user = await getUserById(usuarioId);
+  const nomeGitHub = user.github; // campo do JSON do backend
+
+  // Caso crie novo repositório
+  if (modoRepo === "novo") {
+    if (!novoRepo.trim()) {
+      alert("Digite o nome do novo repositório.");
       return;
     }
 
-    const tituloInput = document.querySelector<HTMLInputElement>(
-      'input[placeholder="Digite o título"]'
-    )!.value;
-    const descricaoInput = document.querySelector<HTMLTextAreaElement>(
-      'textarea[placeholder="Digite a descrição"]'
-    )!.value;
-    const dataInicioInput =
-      document.querySelector<HTMLInputElement>('input[type="date"]')!?.value;
-    const dataFimInput =
-      document.querySelectorAll<HTMLInputElement>('input[type="date"]')[1]
-        ?.value;
-
-    if (!tituloInput || !descricaoInput || !dataInicioInput || !dataFimInput) {
-      alert("Preencha todos os campos.");
+    const access_token = localStorage.getItem("github_token");
+    if (!access_token) {
+      alert("Token do GitHub não encontrado.");
       return;
     }
-
-    let repoName = repoSelecionado; // Caso seja repositório existente
-
-    // Caso seja criar novo repositório
-    if (modoRepo === "novo") {
-      if (!novoRepo.trim()) {
-        alert("Digite o nome do novo repositório.");
-        return;
-      }
-
-      const access_token = localStorage.getItem("github_token");
-      if (!access_token) {
-        alert("Token do GitHub não encontrado.");
-        return;
-      }
-
-      try {
-        const repoResponse = await fetch(
-          `${import.meta.env.VITE_API_URL}/github/create/repo`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              access_token,
-              name: novoRepo,
-              description: descricaoRepo,
-              isPrivate: privadoRepo,
-            }),
-          }
-        );
-
-        if (!repoResponse.ok) {
-          const erro = await repoResponse.json();
-          alert(erro.message || "Erro ao criar repositório no GitHub.");
-          return;
-        }
-
-        const repoData = await repoResponse.json();
-        repoName = repoData.repository.name; // nome do repositório criado
-      } catch (error) {
-        console.error(error);
-        alert("Erro ao criar repositório no GitHub.");
-        return;
-      }
-    }
-
-    // Agora envia o payload para criar o projeto
-    const payload = {
-      criador_id: localStorage.getItem("usuario_id"),
-      nome: tituloInput,
-      descricao: descricaoInput,
-      data_inicio: dataInicioInput,
-      data_fim: dataFimInput,
-      equipes: equipes.map((e) => ({
-        nome: e.nome,
-        usuarios: e.usuarios.map((u) => u.usuario_id),
-      })),
-      status:
-        document.querySelector<HTMLSelectElement>("select")!?.value || "Ativo",
-      github_repo: repoName || null,
-    };
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/projects`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      const repoResponse = await fetch(
+        `${import.meta.env.VITE_API_URL}/github/create/repo`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            access_token,
+            name: novoRepo,
+            description: descricaoRepo,
+            isPrivate: privadoRepo,
+          }),
+        }
+      );
 
-      if (!response.ok) {
-        const erro = await response.json();
-        alert(erro.message || "Erro ao criar projeto.");
+      if (!repoResponse.ok) {
+        const erro = await repoResponse.json();
+        alert(erro.message || "Erro ao criar repositório no GitHub.");
         return;
       }
 
-      alert("Projeto criado com sucesso!");
-      fechar();
-      window.location.href = "/projetos";
+      const repoData = await repoResponse.json();
+      repoName = repoData.repository.name;
     } catch (error) {
       console.error(error);
-      alert("Erro ao criar projeto.");
+      alert("Erro ao criar repositório no GitHub.");
+      return;
     }
   }
+
+  // ✅ Agora salva como "nomeGitHub/repositorio"
+  const fullRepoName = nomeGitHub && repoName ? `${nomeGitHub}/${repoName}` : repoName;
+
+  const payload = {
+    criador_id: usuarioId,
+    nome: tituloInput,
+    descricao: descricaoInput,
+    data_inicio: dataInicioInput,
+    data_fim: dataFimInput,
+    equipes: equipes.map((e) => ({
+      nome: e.nome,
+      usuarios: e.usuarios.map((u) => u.usuario_id),
+    })),
+    status:
+      document.querySelector<HTMLSelectElement>("select")!?.value || "Ativo",
+    github_repo: fullRepoName || null,
+  };
+
+  try {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/projects`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      const erro = await response.json();
+      alert(erro.message || "Erro ao criar projeto.");
+      return;
+    }
+
+    alert("Projeto criado com sucesso!");
+    fechar();
+    window.location.href = "/projetos";
+  } catch (error) {
+    console.error(error);
+    alert("Erro ao criar projeto.");
+  }
+}
 
   return (
     <div
