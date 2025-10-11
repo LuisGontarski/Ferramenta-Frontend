@@ -28,10 +28,10 @@ const BASE_URL = import.meta.env.VITE_API_URL;
 
 // --- Interface para a tipagem dos membros ---
 interface Membro {
-    usuario_id: string;
-    nome: string;
-    email: string;
-    foto_perfil?: string;
+	usuario_id: string;
+	nome: string;
+	email: string;
+	foto_perfil?: string;
 }
 
 // Dados estáticos para os gráficos e outras seções
@@ -57,6 +57,7 @@ const leadTimeData = [
 	{ semana: "S3", leadtime: 3.6 },
 	{ semana: "S4", leadtime: 3.2 },
 ];
+
 const velocidadeData = [
 	{ sprint: "Sprint 1", pontos: 25 },
 	{ sprint: "Sprint 2", pontos: 28 },
@@ -78,8 +79,34 @@ const ProjetosDetalhes = () => {
 	const [status, setStatus] = useState("Carregando...");
 	const [duracao, setDuracao] = useState(0);
 	const [gerenteProjeto, setGerenteProjeto] = useState("Carregando...");
-	
+
+	const [commits, setCommits] = useState<any[]>([]);
+	const [numCommits, setNumCommits] = useState(0);
+
 	const [membrosDaEquipe, setMembrosDaEquipe] = useState<Membro[]>([]);
+
+	async function fetchCommits(repoFullName: string) {
+		try {
+			const res = await fetch(
+				`https://api.github.com/repos/${repoFullName}/commits?per_page=30`
+			);
+			if (!res.ok) throw new Error(`GitHub API: ${res.status}`);
+			const commitsGitHub = await res.json();
+
+			if (!Array.isArray(commitsGitHub)) {
+				console.error("Resposta inesperada da API:", commitsGitHub);
+				return;
+			}
+
+			setCommits(commitsGitHub.slice(0, 10)); // exibe só os 10 mais recentes
+			setNumCommits(commitsGitHub.length);
+			console.log(`✅ ${commitsGitHub.length} commits carregados de ${repoFullName}`);
+		} catch (err) {
+			console.error("❌ Erro ao buscar commits:", err);
+			setCommits([]);
+			setNumCommits(0);
+		}
+	}
 
 	// --- Efeito para buscar APENAS os membros do projeto ---
 	useEffect(() => {
@@ -111,7 +138,7 @@ const ProjetosDetalhes = () => {
 				setDescricao(projeto.descricao || "Descrição não encontrada");
 				setStatus(projeto.status || "Status não definido");
 				setGerenteProjeto(projeto.gerente_projeto || "-");
-				
+
 				const toDateInput = (v: string | null) => v ? new Date(v).toISOString().slice(0, 10) : "";
 				setDataInicio(toDateInput(projeto.data_inicio));
 				setDataFim(toDateInput(projeto.data_fim_prevista || projeto.data_fim));
@@ -126,11 +153,20 @@ const ProjetosDetalhes = () => {
 				};
 
 				setDuracao(calcDuracao(projeto.data_inicio, projeto.data_fim_prevista || projeto.data_fim));
-				
+
 				const resMembros = await fetch(`${BASE_URL}/projects/${id}/users`);
 				if (!resMembros.ok) throw new Error(`Erro ao buscar membros: ${resMembros.status}`);
 				const membros = await resMembros.json();
 				setMembrosDaEquipe(membros);
+
+				if (projeto.github_repo) {
+					console.log("📦 Repositório encontrado:", projeto.github_repo);
+					fetchCommits(projeto.github_repo);
+				} else {
+					console.warn("⚠️ Campo github_repo não definido no projeto.");
+					setCommits([]);
+					setNumCommits(0);
+				}
 
 			} catch (err) {
 				console.error("Erro ao carregar dados da página:", err);
@@ -139,8 +175,8 @@ const ProjetosDetalhes = () => {
 		}
 		fetchDadosDoProjeto();
 	}, [id]);
-    
-    // --- Lógica do Modal (mantida como estava) ---
+
+	// --- Lógica do Modal (mantida como estava) ---
 	const handleSalvar = async () => {
 		// Esta função agora usará os dados estáticos do estado se não forem alterados no modal
 		try {
@@ -604,62 +640,41 @@ const ProjetosDetalhes = () => {
 							</div>
 						</div>
 						<div className="card_atualizacoes">
-							<h2 className="titulo_homepage">Atividades Recentes</h2>
-							<div className="div_atividades_recentes">
-								<div className="container_projetos">
-									<img src={desenvolvedor1} className="img_atividade_recente" />
-									<div>
-										<h2 className="texto_atividade_recente">
-											<span className="responsavel_atividade_recente">
-												João Silva
-											</span>{" "}
-											completou a tarefa{" "}
-											<span className="projeto_atividade_recente">
-												Implementar autenticação
-											</span>
-										</h2>
-										<h2 className="texto_recente_atualizacao">2 horas atrás</h2>
+							<h2 className="titulo_homepage">Commits Recentes ({numCommits})</h2>
+
+							{commits.length > 0 ? (
+								commits.map((commit) => (
+									<div key={commit.sha} className="div_atividades_recentes">
+										<div className="container_projetos">
+											<img
+												src={
+													commit.author?.avatar_url ||
+													"https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
+												}
+												className="img_atividade_recente"
+												alt={commit.commit.author.name}
+											/>
+											<div>
+												<h2 className="texto_atividade_recente">
+													<span className="responsavel_atividade_recente">
+														{commit.commit.author.name}
+													</span>{" "}
+													— {commit.commit.message}
+												</h2>
+												<h2 className="texto_recente_atualizacao">
+													{new Date(commit.commit.author.date).toLocaleString("pt-BR")}
+												</h2>
+											</div>
+										</div>
+										<FaChevronRight color="#71717A" />
 									</div>
-								</div>
-								<FaChevronRight color="#71717A" />
-							</div>
-							<div className="div_atividades_recentes">
-								<div className="container_projetos">
-									<img src={desenvolvedor2} className="img_atividade_recente" />
-									<div>
-										<h2 className="texto_atividade_recente">
-											<span className="responsavel_atividade_recente">
-												João Silva
-											</span>{" "}
-											completou a tarefa{" "}
-											<span className="projeto_atividade_recente">
-												Implementar autenticação
-											</span>
-										</h2>
-										<h2 className="texto_recente_atualizacao">2 horas atrás</h2>
-									</div>
-								</div>
-								<FaChevronRight color="#71717A" />
-							</div>
-							<div className="div_atividades_recentes">
-								<div className="container_projetos">
-									<img src={desenvolvedor3} className="img_atividade_recente" />
-									<div>
-										<h2 className="texto_atividade_recente">
-											<span className="responsavel_atividade_recente">
-												João Silva
-											</span>{" "}
-											completou a tarefa{" "}
-											<span className="projeto_atividade_recente">
-												Implementar autenticação
-											</span>
-										</h2>
-										<h2 className="texto_recente_atualizacao">2 horas atrás</h2>
-									</div>
-								</div>
-								<FaChevronRight color="#71717A" />
-							</div>
+								))
+							) : (
+								<p className="descricao_graficos_projetos">Nenhum commit encontrado.</p>
+							)}
 						</div>
+
+
 						<div className="div_informacoes_projeto_detalhes">
 							<h2 className="titulo_card_projeto_detalhes">
 								Equipe do projeto
@@ -672,7 +687,7 @@ const ProjetosDetalhes = () => {
 												{membro.foto_perfil ? (
 													<img src={membro.foto_perfil} className="imagemEquipe" alt={`Foto de ${membro.nome}`} />
 												) : (
-                                                    // Placeholder com a inicial do nome
+													// Placeholder com a inicial do nome
 													<div className="imagemEquipe avatar-iniciais">{membro.nome.charAt(0).toUpperCase()}</div>
 												)}
 											</div>
