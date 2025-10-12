@@ -17,7 +17,7 @@ export type Card = {
   priority: "high" | "medium" | "low";
   user: string;
   date: string;
-  type: "tarefa" | "bug" | "melhoria" | "pesquisa";
+  type: "tarefa" | "bug" | "melhoria" | "feature" | "teste";
   points?: string;
   description?: string;
   notes?: string;
@@ -220,7 +220,9 @@ const KanbanModal = ({ onClose, projeto_id, sprints, onTarefaCreated }: KanbanMo
             <option value="tarefa">Tarefa</option>
             <option value="bug">Bug</option>
             <option value="melhoria">Melhoria</option>
-            <option value="pesquisa">Pesquisa</option>
+            <option value="feature">Feature</option>
+            <option value="teste">Teste</option>
+            <option value="retrabalho">Retrabalho</option>
           </select>
         </div>
 

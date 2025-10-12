@@ -7,7 +7,7 @@ type Card = {
 	priority: "high" | "medium" | "low";
 	user: string;
 	date: string;
-	type: "tarefa" | "bug" | "melhoria" | "pesquisa";
+	type: "tarefa" | "bug" | "melhoria" | "feature" | "teste" | "retrabalho";
 	points?: string;
 	description?: string;
 	notes?: string;
@@ -38,33 +38,32 @@ const KanbanCardModal = ({ card, onClose }: KanbanCardModalProps) => {
 
 	// 🔹 Carrega observação e commits
 	useEffect(() => {
-		const fetchObservacao = async () => {
-			try {
-				setLoading(true);
+    const fetchCommitsCard = async () => {
+        try {
+            const githubRepo = localStorage.getItem("github_repo");
+            if (!githubRepo) return;
 
-				// Pega o projeto_id do localStorage
-				const projetoId = localStorage.getItem("projeto_id");
+            const res = await fetch(
+                `https://api.github.com/repos/${githubRepo}/commits?per_page=30`
+            );
+            if (!res.ok) throw new Error("Erro ao buscar commits do GitHub");
+            const commitsGitHub = await res.json();
 
-				const response = await fetch(
-					`${apiUrl}/tarefas/${card.id}/${projetoId}/observacao`
-				);
+            setCommits(commitsGitHub.map((c: any) => ({
+                id: c.sha,
+                message: c.commit.message,
+                url: c.html_url,
+                data_commit: c.commit.author.date
+            })));
+        } catch (err) {
+            console.error("Erro ao carregar commits:", err);
+            setCommits([]);
+        }
+    };
 
-				if (!response.ok) throw new Error("Erro ao buscar dados da tarefa");
+    fetchCommitsCard();
+}, [card.id]);
 
-				const data = await response.json();
-
-				// Atualiza estado com observação e commits
-				setTempNotes(data.observacao || "");
-				setCommits(data.commits || []);
-			} catch (err) {
-				console.error("Erro ao carregar observação e commits:", err);
-			} finally {
-				setLoading(false);
-			}
-		};
-
-		fetchObservacao();
-	}, [card.id, apiUrl]);
 
 	// 🔹 Salva observação
 	const saveCardNotes = async () => {
@@ -95,7 +94,6 @@ const KanbanCardModal = ({ card, onClose }: KanbanCardModalProps) => {
 
 	const handleClose = () => {
 		onClose();
-		navigate("/kanban");
 	};
 
 	const formatDate = (dateStr: string) => {
@@ -106,63 +104,74 @@ const KanbanCardModal = ({ card, onClose }: KanbanCardModalProps) => {
 
 	return (
 		<div className="modal_overlay">
-			<div className="modal">
-				<h2>{card.title}</h2>
-				{card.priority}
-				<div className="div_flex_tarefa">
-					<div className="div_titulo_card_tarefa">
-						<b>Tipo</b> {card.type}
-					</div>
-					<div className="div_titulo_card_tarefa">
-						<b>Story Points/Horas:</b> {card.points || "-"}
-					</div>
-				</div>
-				<div className="div_flex_tarefa">
-					<div className="div_titulo_card_tarefa">
-						<b>Responsável</b> {card.user}
-					</div>
-					<div className="div_titulo_card_tarefa">
-						<b>Data:</b> {formatDate(card.date)}
-					</div>
-				</div>
-				<p style={{ whiteSpace: "pre-wrap", display: "flex", flexDirection: "column" }}>
-					<b>Descrição</b> 
-					{card.description || "-"}
-				</p>
+  <div className="modal_detalhes_tarefa">
+    <h2 className="titulo_tarefa">{card.title}</h2>
 
-				<label>
-					<b>Observações</b>
-				</label>
-				<textarea
-					style={{ padding: "10px", borderRadius: "4px", borderColor: "#ccc", fontSize: "14px" }}
-					placeholder="Escreva observações aqui…"
-					value={tempNotes}
-					onChange={(e) => setTempNotes(e.target.value)}
-					disabled={loading}
-				/>
+    <div className="header_badges">
+      <span className={`badge tipo_${card.type}`}>{card.type}</span>
+      <span className={`badge prioridade_${card.priority}`}>{card.priority}</span>
+      <span className="badge storypoints">
+        ⚡ {card.points || 0}
+      </span>
+    </div>
 
-				<label>Associar a commit</label>
-				<select
-					value={selectedCommit}
-					onChange={(e) => setSelectedCommit(e.target.value)}
-					disabled={loading || commits.length === 0}
-				>
-					<option value="">Selecione um commit</option>
-					{commits.map((c) => (
-						<option key={c.id} value={c.id}>
-							{c.message} ({new Date(c.data_commit).toLocaleDateString()})
-						</option>
-					))}
-				</select>
+    <div className="infos_principais">
+      <p><i className="bi bi-person"></i> <b>Responsável:</b> {card.user}</p>
+      <p><i className="bi bi-calendar-event"></i> <b>Data:</b> {formatDate(card.date)}</p>
+    </div>
 
-				<div className="modal_actions">
-					<button onClick={saveCardNotes} disabled={loading}>
-						{loading ? "Salvando..." : "Salvar"}
-					</button>
-					<button onClick={handleClose}>Fechar</button>
-				</div>
-			</div>
-		</div>
+    <div className="secao">
+      <label><b>Descrição</b></label>
+      <p className="descricao_tarefa">{card.description || "-"}</p>
+    </div>
+
+    <div className="secao">
+      <label><b>História do Usuário</b></label>
+      <textarea
+        className="textarea_tarefa"
+        placeholder="Descreva a história do usuário..."
+        value={tempNotes}
+        onChange={(e) => setTempNotes(e.target.value)}
+        disabled={loading}
+      />
+    </div>
+
+    <div className="secao">
+      <label><b>Associar a commit</b></label>
+      <select
+    className="select_commit"
+    value={selectedCommit}
+    onChange={(e) => setSelectedCommit(e.target.value)}
+    disabled={loading || commits.length === 0}
+>
+    <option value="">Selecione um commit</option>
+    {commits.map((c) => (
+        <option key={c.id} value={c.id}>
+            {c.message} ({new Date(c.data_commit).toLocaleDateString()})
+        </option>
+    ))}
+</select>
+
+      {commits.length === 0 && (
+        <p className="texto_vazio">Nenhum commit disponível.</p>
+      )}
+    </div>
+
+    <div className="botoes_modal">
+      <button
+        className="btn_primario"
+        onClick={saveCardNotes}
+        disabled={loading}
+      >
+        {loading ? "Salvando..." : "Salvar"}
+      </button>
+      <button className="btn_secundario" onClick={handleClose}>
+        Fechar
+      </button>
+    </div>
+  </div>
+</div>
+
 	);
 };
 

@@ -161,6 +161,7 @@ const ProjetosDetalhes = () => {
 
 				if (projeto.github_repo) {
 					console.log("📦 Repositório encontrado:", projeto.github_repo);
+					localStorage.setItem("github_repo", projeto.github_repo);
 					fetchCommits(projeto.github_repo);
 				} else {
 					console.warn("⚠️ Campo github_repo não definido no projeto.");

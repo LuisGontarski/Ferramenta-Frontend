@@ -30,7 +30,7 @@ type Card = {
   priority: "high" | "medium" | "low";
   user: string;
   date: string;
-  type: "tarefa" | "bug" | "melhoria" | "pesquisa";
+  type: "Tarefa" | "Bug" | "melhoria" | "feature" | "teste" | "retrabalho";
   points?: string;
   description?: string;
   notes?: string;
@@ -348,14 +348,16 @@ const ConteudoKanban = () => {
                       onClick={() => openCardModal(card.id)}
                     >
                       <div className="card_tags">
-                        <div className={`badge ${card.priority}`}>
-                          {card.priority === "high"
-                            ? "Alta"
-                            : card.priority === "medium"
-                            ? "Média"
-                            : "Baixa"}
+                        <div className="div_separadora_tags">
+                          <div className={`badge ${card.priority}`}>
+                            {card.priority === "high"
+                              ? "Alta"
+                              : card.priority === "medium"
+                                ? "Média"
+                                : "Baixa"}
+                          </div>
+                          <span className={`card_type ${card.type}`}>{card.type}</span>
                         </div>
-                        <span className="card_type">{card.type}</span>
                         <span className="card_points">{card.points || "-"}</span>
                       </div>
                       <p className="card_title">{card.title}</p>

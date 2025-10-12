@@ -56,7 +56,6 @@ body {
 .div_responsavel_card_kanban {
     display: flex;
     justify-content: space-between;
-    flex-direction: column;
     width: 100%;
 }
 
@@ -96,11 +95,14 @@ body {
     font-size: 12px;
     padding: 4px 8px;
     border-radius: 12px;
+    font-weight: 500;
     background: #479495;
+    text-transform: capitalize;
 }
 
 .card_title {
     font-size: 14px;
+    font-weight: 500;
 }
 
 .card_user {
@@ -114,6 +116,7 @@ body {
 .card_tags {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 0.4rem;
 }
 
@@ -202,7 +205,7 @@ body {
 .kanban_cards {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 0.8rem;
     height: 100%;
     overflow-y: auto;
     overflow-x: hidden;
@@ -263,12 +266,226 @@ body {
     align-items: start;
 }
 
-.div_flex_tarefa{
+.div_flex_tarefa {
     display: flex;
     justify-content: space-between;
 }
 
-.div_titulo_card_tarefa{
+.modal_overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 50;
+}
+
+.modal_detalhes_tarefa {
+    background: #fff;
+    border-radius: 16px;
+    padding: 24px;
+    width: 520px;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.2s ease;
+}
+
+.titulo_tarefa {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 16px;
+}
+
+.header_badges {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.badge {
+    color: white;
+    width: fit-content;
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 12px;
+    text-transform: capitalize;
+    font-weight: 500;
+}
+
+.low {
+    color: #198754;
+    background-color: #1987541a;
+    border: 1px solid #19875433;
+}
+
+.medium {
+    color: #db7706;
+    background-color: #db77061a;
+    border: 1px solid #db770633;
+}
+
+.high{
+    color: #ef4343;
+    background-color: #ef43431a;
+    border: 1px solid #ef434333;
+}
+
+.tarefa {
+    color: #4b5563;
+    background-color: #6b72801a;
+    border: 1px solid #6b728033;
+}
+
+.bug {
+    color: #ef4343;
+    background-color: #ef43431a;
+    border: 1px solid #ef434333;
+}
+
+.melhoria {
+    color: #198754;
+    background-color: #1987541a;
+    border: 1px solid #19875433;
+}
+
+.feature {
+    color: #007bff;
+    background-color: #007bff1a;
+    border: 1px solid #007bff33;
+}
+
+.teste {
+    color: #6f42c1;
+    background-color: #6f42c11a;
+    border: 1px solid #6f42c133;
+}
+
+.retrabalho{
+    color: #ef4343;
+    background-color: #ef43431a;
+    border: 1px solid #ef434333;
+}
+
+.storypoints {
+    background-color: #dbeafe;
+    color: #1e40af;
+    font-weight: 600;
+}
+
+.div_separadora_tags{
+    display: flex;
+    gap: 0.4rem;
+}
+
+/* Informações principais */
+.infos_principais {
+    display: flex;
+    justify-content: space-between;
+    color: #374151;
+    margin-bottom: 20px;
+    font-size: 0.95rem;
+}
+
+.secao {
+    margin-bottom: 18px;
+}
+
+.secao label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.9rem;
+    color: #374151;
+}
+
+.descricao_tarefa {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 10px;
+    min-height: 60px;
+    font-size: 0.95rem;
+    color: #111827;
+}
+
+.textarea_tarefa {
+    width: 100%;
+    min-height: 120px;
+    padding: 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    resize: vertical;
+}
+
+.select_commit {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 0.95rem;
+}
+
+.texto_vazio {
+    font-size: 0.85rem;
+    color: #6b7280;
+    margin-top: 4px;
+}
+
+.botoes_modal {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.btn_primario {
+    background-color: #2563eb;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn_primario:hover {
+    background-color: #1d4ed8;
+}
+
+.btn_secundario {
+    background-color: #e5e7eb;
+    color: #111827;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn_secundario:hover {
+    background-color: #d1d5db;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+
+.div_titulo_card_tarefa {
     display: flex;
     flex-direction: column;
 }
@@ -470,13 +687,13 @@ body {
     box-shadow: 0 2px 4px 0 rgb(0 0 0 / 0.05);
 }
 
-.div_input_columns_kanban{
+.div_input_columns_kanban {
     display: flex;
     align-items: center;
     gap: 8px;
 }
 
-.btn_salvar_column_kanban{
+.btn_salvar_column_kanban {
     background-color: #155DFC;
     color: white;
     font-weight: 500;
@@ -486,7 +703,7 @@ body {
     flex: 1;
 }
 
-.btn_cancelar_column_kanban{
+.btn_cancelar_column_kanban {
     background-color: #fc1515;
     color: white;
     font-weight: 500;
