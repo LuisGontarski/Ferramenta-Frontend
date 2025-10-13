@@ -1,24 +1,28 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
+// --- 1. ADICIONA 'commit_url' AO TIPO ---
 type Card = {
   id: string;
   title: string;
   priority: "high" | "medium" | "low";
   user: string;
   date: string;
-  type: "tarefa" | "bug" | "melhoria" | "feature" | "teste" | "retrabalho";
+  type: "Tarefa" | "Bug" | "melhoria" | "feature" | "teste" | "retrabalho";
   points?: string;
   description?: string;
   notes?: string;
+  commit_url?: string; // <-- ADICIONADO AQUI
   columnId: number;
   sprintId: string;
-  projetoId?: string; // 🔹 adiciona isso se precisar passar o id do projeto
+  projetoId?: string;
 };
 
+// --- 2. ADICIONA 'onUpdateCard' ÀS PROPS ---
 type KanbanCardModalProps = {
   card: Card;
   onClose: () => void;
+  onUpdateCard: (updatedCard: Card) => void; // <-- ADICIONADO AQUI
 };
 
 type Commit = {
@@ -28,23 +32,23 @@ type Commit = {
   data_commit: string;
 };
 
-const KanbanCardModal = ({ card, onClose }: KanbanCardModalProps) => {
+const KanbanCardModal = ({ card, onClose, onUpdateCard }: KanbanCardModalProps) => {
   const navigate = useNavigate();
   const [tempNotes, setTempNotes] = useState(card.notes || "");
   const [loading, setLoading] = useState(false);
   const [commits, setCommits] = useState<Commit[]>([]);
-  const [selectedCommit, setSelectedCommit] = useState<string>("");
+  const [selectedCommitUrl, setSelectedCommitUrl] = useState<string>(card.commit_url || "");
 
   const apiUrl = import.meta.env.VITE_API_URL;
 
-  // 🔹 Buscar observação + commits do backend ao abrir o modal
   useEffect(() => {
     const fetchCardInfo = async () => {
       try {
         setLoading(true);
-        const projetoId = localStorage.getItem("projeto_id"); // 🔸 ou passe via props
+        const projetoId = localStorage.getItem("projeto_id");
         if (!projetoId) {
           console.warn("projeto_id não encontrado no localStorage");
+          setCommits([]); // Garante que não haverá commits se não houver projeto
           return;
         }
 
@@ -54,10 +58,14 @@ const KanbanCardModal = ({ card, onClose }: KanbanCardModalProps) => {
         if (!res.ok) throw new Error("Erro ao buscar informações da tarefa");
 
         const data = await res.json();
-
-        // 🔹 Atualiza observação e commits do modal
+        
         setTempNotes(data.observacao || "");
         setCommits(data.commits || []);
+        // Pré-seleciona o commit se ele já estiver salvo na tarefa
+        if (data.commit_url) {
+          setSelectedCommitUrl(data.commit_url);
+        }
+
       } catch (err) {
         console.error("Erro ao carregar observação e commits:", err);
       } finally {
@@ -68,22 +76,29 @@ const KanbanCardModal = ({ card, onClose }: KanbanCardModalProps) => {
     fetchCardInfo();
   }, [card.id, apiUrl]);
 
-  // 🔹 Salvar observação
   const saveCardNotes = async () => {
     try {
       setLoading(true);
       const response = await fetch(`${apiUrl}/tarefas/${card.id}/comentario`, {
         method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           comentario: tempNotes,
-          commit_id: selectedCommit,
+          commit_url: selectedCommitUrl,
         }),
       });
 
       if (!response.ok) throw new Error("Erro ao salvar observação");
+      
+      const updatedTask = await response.json();
+
+      // --- 3. AVISA O COMPONENTE PAI SOBRE A MUDANÇA ---
+      const updatedCard: Card = {
+        ...card,
+        notes: updatedTask.comentario,
+        commit_url: updatedTask.commit_url,
+      };
+      onUpdateCard(updatedCard);
 
       alert("Observação salva com sucesso!");
       onClose();
@@ -119,6 +134,18 @@ const KanbanCardModal = ({ card, onClose }: KanbanCardModalProps) => {
           <p><i className="bi bi-calendar-event"></i> <b>Data:</b> {formatDate(card.date)}</p>
         </div>
 
+        {/* Mostra o link do commit se ele já estiver salvo no card */}
+        {card.commit_url && (
+            <div className="secao">
+                <label><b>Commit Associado</b></label>
+                <p className="link_commit">
+                    <a href={card.commit_url} target="_blank" rel="noopener noreferrer">
+                        Ver commit no GitHub
+                    </a>
+                </p>
+            </div>
+        )}
+
         <div className="secao">
           <label><b>Descrição</b></label>
           <p className="descricao_tarefa">{card.description || "-"}</p>
@@ -136,39 +163,25 @@ const KanbanCardModal = ({ card, onClose }: KanbanCardModalProps) => {
         </div>
 
         <div className="secao">
-  <label><b>Associar a commit</b></label>
-  <select
-    className="select_commit"
-    value={selectedCommit}
-    onChange={(e) => setSelectedCommit(e.target.value)}
-    disabled={loading || commits.length === 0}
-  >
-    <option value="">Selecione um commit</option>
-    {commits.map((c) => (
-      <option key={c.id} value={c.id}>
-        {c.message} ({new Date(c.data_commit).toLocaleDateString()})
-      </option>
-    ))}
-  </select>
+          <label><b>Associar a commit</b></label>
+          <select
+            className="select_commit"
+            value={selectedCommitUrl}
+            onChange={(e) => setSelectedCommitUrl(e.target.value)}
+            disabled={loading || commits.length === 0}
+          >
+            <option value="">Nenhum commit selecionado</option>
+            {commits.map((c) => (
+              <option key={c.id} value={c.url}>
+                {c.message.split('\n')[0]} ({new Date(c.data_commit).toLocaleDateString()})
+              </option>
+            ))}
+          </select>
 
-  {/* 🔗 Mostra o link do commit selecionado */}
-  {selectedCommit && (
-    <p className="link_commit">
-      <a
-        href={commits.find((c) => c.id === selectedCommit)?.url}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Ver commit no GitHub
-      </a>
-    </p>
-  )}
-
-  {commits.length === 0 && (
-    <p className="texto_vazio">Nenhum commit disponível.</p>
-  )}
-</div>
-
+          {commits.length === 0 && (
+            <p className="texto_vazio">Nenhum commit disponível.</p>
+          )}
+        </div>
 
         <div className="botoes_modal">
           <button

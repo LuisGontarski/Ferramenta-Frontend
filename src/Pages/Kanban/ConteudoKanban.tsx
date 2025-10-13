@@ -25,7 +25,7 @@ type Sprint = {
 };
 
 type Card = {
-  id: number;
+  id: string;
   title: string;
   priority: "high" | "medium" | "low";
   user: string;
@@ -34,6 +34,7 @@ type Card = {
   points?: string;
   description?: string;
   notes?: string;
+  commit_url?: string;
   columnId: number;
   sprintId: string;
 };
@@ -48,16 +49,24 @@ const ConteudoKanban = () => {
   const [cards, setCards] = useState<Card[]>([]);
   const [users, setUsers] = useState<{ usuario_id: string; nome: string }[]>([]);
 
-  const [draggedCardId, setDraggedCardId] = useState<number | null>(null);
+  const [draggedCardId, setDraggedCardId] = useState<string | null>(null);
   const [newColumnTitle, setNewColumnTitle] = useState("");
   const cargo = localStorage.getItem("cargo");
 
   const [showNewCardModal, setShowNewCardModal] = useState(false);
   const [showCardModal, setShowCardModal] = useState(false);
-  const [selectedCardId, setSelectedCardId] = useState<number | null>(null);
+  const [selectedCardId, setSelectedCardId] = useState<string | null>(null)
   const [tempNotes, setTempNotes] = useState("");
 
   const selectedCard = cards.find((c) => c.id === selectedCardId) || null;
+
+  const handleUpdateCard = (updatedCard: Card) => {
+    setCards(prevCards => 
+      prevCards.map(card => 
+        card.id === updatedCard.id ? updatedCard : card
+      )
+    );
+  };
 
   // Buscar sprints
   useEffect(() => {
@@ -113,6 +122,7 @@ const ConteudoKanban = () => {
           points: t.story_points?.toString() || "",
           description: t.descricao || "",
           notes: t.notes || "",
+          commit_url: t.commit_url || "",
           columnId: columnMap[t.fase_tarefa] ?? 1,
           sprintId: t.sprint_id,
         }));
@@ -180,7 +190,7 @@ const ConteudoKanban = () => {
     }
   };
 
-  const openCardModal = (cardId: number) => {
+  const openCardModal = (cardId: string) => { // <-- Corrigido para string
     setSelectedCardId(cardId);
     const found = cards.find((c) => c.id === cardId);
     setTempNotes(found?.notes || "");
@@ -193,7 +203,7 @@ const ConteudoKanban = () => {
     return `${day}/${month}/${year}`;
   };
 
-  const handleDragStart = (cardId: number) => setDraggedCardId(cardId);
+  const handleDragStart = (cardId: string) => setDraggedCardId(cardId);
   const handleDragEnd = () => setDraggedCardId(null);
 
   const deleteSprint = async (id: string) => {
@@ -383,10 +393,12 @@ const ConteudoKanban = () => {
             setSelectedCardId(null);
             setTempNotes("");
           }}
+          // --- ALTERAÇÃO FINAL: PASSANDO A PROP ---
+          onUpdateCard={handleUpdateCard}
         />
       )}
     </div>
   );
-};
+}
 
 export default ConteudoKanban;
