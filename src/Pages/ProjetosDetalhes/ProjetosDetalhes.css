@@ -59,9 +59,17 @@
 }
 
 .imagemEquipe{
-    width: 64px;
-    height: 64px;
+    width: 46px;
+    height: 46px;
     border-radius: 50%;
+    background-color: #dbeafe;
+    color: #2563eb;
+    font-weight: bold;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
 }
 
 .modal-overlay {
