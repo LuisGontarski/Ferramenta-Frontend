@@ -284,7 +284,7 @@ body {
 .modal_detalhes_tarefa {
     background: #fff;
     border-radius: 16px;
-    padding: 24px;
+    padding: 1rem;
     width: 520px;
     max-height: 85vh;
     overflow-y: auto;
@@ -372,9 +372,12 @@ body {
 }
 
 .storypoints {
-    background-color: #dbeafe;
-    color: #1e40af;
-    font-weight: 600;
+    color: white;
+    width: fit-content;
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 12px;
+    background: orange;
 }
 
 .div_separadora_tags{

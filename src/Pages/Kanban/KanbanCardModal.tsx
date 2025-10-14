@@ -124,27 +124,15 @@ const KanbanCardModal = ({ card, onClose, onUpdateCard }: KanbanCardModalProps) 
         <h2 className="titulo_tarefa">{card.title}</h2>
 
         <div className="header_badges">
-          <span className={`badge tipo_${card.type}`}>{card.type}</span>
-          <span className={`badge prioridade_${card.priority}`}>{card.priority}</span>
-          <span className="badge storypoints">⚡ {card.points || 0}</span>
+          <span className={`badge ${card.type}`}>{card.type}</span>
+          <span className={`badge ${card.priority}`}>{card.priority}</span>
+          <span className="badge storypoints">{card.points || 0}</span>
         </div>
 
         <div className="infos_principais">
           <p><i className="bi bi-person"></i> <b>Responsável:</b> {card.user}</p>
           <p><i className="bi bi-calendar-event"></i> <b>Data:</b> {formatDate(card.date)}</p>
         </div>
-
-        {/* Mostra o link do commit se ele já estiver salvo no card */}
-        {card.commit_url && (
-            <div className="secao">
-                <label><b>Commit Associado</b></label>
-                <p className="link_commit">
-                    <a href={card.commit_url} target="_blank" rel="noopener noreferrer">
-                        Ver commit no GitHub
-                    </a>
-                </p>
-            </div>
-        )}
 
         <div className="secao">
           <label><b>Descrição</b></label>
@@ -182,6 +170,17 @@ const KanbanCardModal = ({ card, onClose, onUpdateCard }: KanbanCardModalProps) 
             <p className="texto_vazio">Nenhum commit disponível.</p>
           )}
         </div>
+
+        {card.commit_url && (
+            <div className="secao">
+                <label><b>Commit Associado</b></label>
+                <p className="link_commit">
+                    <a href={card.commit_url} target="_blank" rel="noopener noreferrer">
+                        Ver commit no GitHub
+                    </a>
+                </p>
+            </div>
+        )}
 
         <div className="botoes_modal">
           <button
