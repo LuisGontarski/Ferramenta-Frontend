@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import io from "socket.io-client";
 import "./Chat.css";
 
@@ -15,8 +15,8 @@ interface Mensagem {
   data_envio: string;
 }
 
-// Conectando com o Socket.io do backend
-const socket = io("http://localhost:3000"); // coloque a URL do seu backend
+// Conexão com Socket.io usando variável do .env
+const socket = io(import.meta.env.VITE_BACKEND_URL || "http://localhost:3000");
 
 const Chat: React.FC<ChatProps> = ({
   projeto_id,
@@ -25,6 +25,12 @@ const Chat: React.FC<ChatProps> = ({
 }) => {
   const [mensagens, setMensagens] = useState<Mensagem[]>([]);
   const [texto, setTexto] = useState("");
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Rolagem automática para última mensagem
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [mensagens]);
 
   useEffect(() => {
     if (!projeto_id) return;
@@ -32,13 +38,18 @@ const Chat: React.FC<ChatProps> = ({
     // Entrar na sala do projeto
     socket.emit("joinProject", projeto_id);
 
-    // Receber novas mensagens
-    socket.on("newMessage", (mensagem: Mensagem) => {
-      setMensagens((prev) => [...prev, mensagem]);
+    // Receber histórico do backend
+    socket.on("messageHistory", (msgs: Mensagem[]) => {
+      setMensagens(msgs);
     });
 
-    // Limpar listeners ao desmontar
+    // Receber novas mensagens
+    socket.on("newMessage", (msg: Mensagem) => {
+      setMensagens((prev) => [...prev, msg]);
+    });
+
     return () => {
+      socket.off("messageHistory");
       socket.off("newMessage");
     };
   }, [projeto_id]);
@@ -46,25 +57,20 @@ const Chat: React.FC<ChatProps> = ({
   const enviarMensagem = () => {
     if (!texto.trim() || !projeto_id) return;
 
-    const mensagem: Mensagem = {
+    socket.emit("sendMessage", {
       usuario_id,
       usuario_nome,
-      texto,
-      data_envio: new Date().toISOString(),
-    };
-
-    // Emitir mensagem para o backend
-    socket.emit("sendMessage", {
-      ...mensagem,
       projeto_id,
+      texto,
     });
 
-    setTexto(""); // limpar input
+    setTexto("");
   };
 
   return (
     <div className="chat-container">
       <h2>Chat do Projeto</h2>
+
       <div className="chat-messages">
         {mensagens.map((msg, i) => (
           <div
@@ -75,11 +81,16 @@ const Chat: React.FC<ChatProps> = ({
           >
             <strong>{msg.usuario_nome}:</strong> {msg.texto}
             <span className="chat-date">
-              {new Date(msg.data_envio).toLocaleTimeString()}
+              {new Date(msg.data_envio).toLocaleTimeString("pt-BR", {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
             </span>
           </div>
         ))}
+        <div ref={messagesEndRef} />
       </div>
+
       <div className="chat-input">
         <input
           type="text"

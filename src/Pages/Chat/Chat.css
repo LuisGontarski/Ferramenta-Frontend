@@ -1,18 +1,23 @@
-/* Container principal do chat */
+/* ==============================
+   Container principal do chat
+   ============================== */
 .chat-container {
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  max-width: 600px;
-  margin: 0 auto;
+  flex: 1; /* ocupa o espaço disponível ao lado do MenuLateral */
+  max-width: 800px; /* limite máximo do chat */
+  height: calc(100vh - 80px); /* subtrai altura do Navbar */
+  margin: 20px;
   border: 1px solid #ccc;
   border-radius: 10px;
-  overflow: hidden;
   background-color: #f9f9f9;
+  overflow: hidden;
   font-family: Arial, sans-serif;
 }
 
-/* Cabeçalho do chat */
+/* ==============================
+   Cabeçalho do chat
+   ============================== */
 .chat-container h2 {
   background-color: #4a90e2;
   color: #fff;
@@ -20,28 +25,33 @@
   padding: 15px;
   text-align: center;
   font-size: 1.2rem;
+  flex-shrink: 0;
 }
 
-/* Área das mensagens */
+/* ==============================
+   Área das mensagens
+   ============================== */
 .chat-messages {
-  flex: 1;
+  flex: 1; /* ocupa todo espaço disponível */
   padding: 15px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  background-color: #f9f9f9;
 }
 
-/* Cada mensagem */
+/* ==============================
+   Cada mensagem
+   ============================== */
 .chat-message {
   max-width: 80%;
   padding: 10px 15px;
   border-radius: 20px;
-  background-color: #e0e0e0;
-  position: relative;
   word-wrap: break-word;
   font-size: 0.95rem;
   line-height: 1.3;
+  position: relative;
 }
 
 /* Mensagens do usuário logado */
@@ -60,7 +70,9 @@
   border-bottom-left-radius: 0;
 }
 
-/* Data/hora da mensagem */
+/* ==============================
+   Data/hora da mensagem
+   ============================== */
 .chat-date {
   display: block;
   font-size: 0.7rem;
@@ -69,12 +81,15 @@
   text-align: right;
 }
 
-/* Área do input */
+/* ==============================
+   Área do input
+   ============================== */
 .chat-input {
   display: flex;
   padding: 10px;
   border-top: 1px solid #ccc;
   background-color: #fff;
+  flex-shrink: 0;
 }
 
 .chat-input input {
@@ -100,4 +115,20 @@
 
 .chat-input button:hover {
   background-color: #357abd;
+}
+
+/* ==============================
+   Scroll automático no container
+   ============================== */
+.chat-messages::-webkit-scrollbar {
+  width: 8px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+  background-color: transparent;
 }
