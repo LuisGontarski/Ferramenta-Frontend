@@ -12,6 +12,7 @@ export interface LoginResponse {
   cargo: string;
   token: string;
   usuario_id: string;
+  usuario_nome: string;
 }
 
 export const login = async (payload: LoginPayload): Promise<LoginResponse> => {

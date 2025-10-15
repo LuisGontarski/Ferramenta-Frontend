@@ -1,6 +1,6 @@
 import "./NavbarHome.css";
 import { NavLink, useParams } from "react-router-dom";
-import { IoDocumentTextOutline } from "react-icons/io5";
+import { IoChatbox, IoChatboxOutline, IoDocumentTextOutline } from "react-icons/io5";
 import { LuChartColumn, LuCalendar } from "react-icons/lu";
 import { IoMdCheckboxOutline } from "react-icons/io";
 import { TfiRulerAlt2 } from "react-icons/tfi";
@@ -120,6 +120,16 @@ const NavbarHome = () => {
                 }
               >
                 <IoMdCheckboxOutline size={"16px"} /> <span>Requisitos</span>
+              </NavLink>
+              <NavLink
+                to={`/chat/${projectId}`}
+                className={({ isActive }) =>
+                  isActive
+                    ? "menu_lateral_item selecionado"
+                    : "menu_lateral_item"
+                }
+              >
+                <IoChatboxOutline size={"16px"} /> <span>Chat</span>
               </NavLink>
             </>
           )}

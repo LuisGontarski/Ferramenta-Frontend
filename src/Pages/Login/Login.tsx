@@ -32,6 +32,7 @@ const Login: React.FC = () => {
         "github_token",
         response.github_token || "Não informar"
       );
+      localStorage.setItem("usuario_nome", response.usuario_nome || "Usuário");
 
       navigate("/perfil");
     } catch (error: any) {
