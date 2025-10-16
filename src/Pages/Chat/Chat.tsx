@@ -35,15 +35,14 @@ const Chat: React.FC<ChatProps> = ({
   useEffect(() => {
     if (!projeto_id) return;
 
-    // Entrar na sala do projeto
     socket.emit("joinProject", projeto_id);
 
-    // Receber histórico do backend
+    // Receber histórico
     socket.on("messageHistory", (msgs: Mensagem[]) => {
       setMensagens(msgs);
     });
 
-    // Receber novas mensagens
+    // Receber novas mensagens em tempo real
     socket.on("newMessage", (msg: Mensagem) => {
       setMensagens((prev) => [...prev, msg]);
     });
