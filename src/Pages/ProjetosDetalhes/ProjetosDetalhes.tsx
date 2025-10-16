@@ -1,12 +1,8 @@
 import { useState, useEffect } from "react";
 import "./ProjetosDetalhes.css";
 import NavbarHome from "../../Components/Navbar/NavbarHome";
-import imgPerfil from "../../assets/desenvolvedor1.jpeg";
 import MenuLateral from "../../Components/MenuLateral/MenuLateral";
 import { FaChevronRight } from "react-icons/fa6";
-import desenvolvedor1 from "../../assets/desenvolvedor1.jpeg";
-import desenvolvedor2 from "../../assets/desenvolvedor2.jpeg";
-import desenvolvedor3 from "../../assets/desenvolvedor3.jpeg";
 import { GrEdit } from "react-icons/gr";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -35,12 +31,6 @@ interface Membro {
 }
 
 // Dados estáticos para os gráficos e outras seções
-const throughputData = [
-	{ semana: "S1", entregas: 12 },
-	{ semana: "S2", entregas: 15 },
-	{ semana: "S3", entregas: 10 },
-	{ semana: "S4", entregas: 18 },
-];
 const data = [
 	{ dia: "Dia 1", planejado: 100, real: 100 },
 	{ dia: "Dia 3", planejado: 90, real: 92 },
@@ -65,11 +55,19 @@ const velocidadeData = [
 	{ sprint: "Sprint 4", pontos: 27 },
 ];
 
+
 const cargo = localStorage.getItem("cargo");
 
 const ProjetosDetalhes = () => {
 	const { id } = useParams<{ id: string }>();
 	const navigate = useNavigate();
+
+	const [totalTarefas, setTotalTarefas] = useState<number>(0);
+
+	const [totalConcluidas, setTotalConcluidas] = useState<number>(0);
+
+	const [totalEmProgresso, setTotalEmProgresso] = useState<number>(0);
+
 
 	const [showModal, setShowModal] = useState(false);
 	const [nome, setNome] = useState("Carregando...");
@@ -98,7 +96,7 @@ const ProjetosDetalhes = () => {
 				return;
 			}
 
-			setCommits(commitsGitHub.slice(0, 10)); // exibe só os 10 mais recentes
+			setCommits(commitsGitHub.slice(0, 10));
 			setNumCommits(commitsGitHub.length);
 			console.log(`✅ ${commitsGitHub.length} commits carregados de ${repoFullName}`);
 		} catch (err) {
@@ -175,7 +173,47 @@ const ProjetosDetalhes = () => {
 			}
 		}
 		fetchDadosDoProjeto();
+
+		async function fetchTotalTarefas() {
+			try {
+				const res = await fetch(`${BASE_URL}/projects/${id}/tasks/count`);
+				if (!res.ok) throw new Error(`Erro ao buscar total de tarefas: ${res.status}`);
+				const data = await res.json();
+				setTotalTarefas(data.total);
+			} catch (err) {
+				console.error("Erro ao buscar total de tarefas:", err);
+			}
+		}
+
+		async function fetchTarefasEmProgresso() {
+			try {
+				const res = await fetch(`${BASE_URL}/projects/${id}/tasks/count?fase=Executar,Revisar`);
+				if (!res.ok) throw new Error(`Erro ao buscar tarefas em progresso: ${res.status}`);
+				const data = await res.json();
+				setTotalEmProgresso(data.total);
+			} catch (err) {
+				console.error(err);
+			}
+		}
+
+		fetchTarefasEmProgresso();
+
+
+		// Total de tarefas concluídas
+		async function fetchTarefasConcluidas() {
+			try {
+				const res = await fetch(`${BASE_URL}/projects/${id}/tasks/count?fase=Feito`);
+				if (!res.ok) throw new Error(`Erro ao buscar tarefas concluídas: ${res.status}`);
+				const data = await res.json();
+				setTotalConcluidas(data.total);
+			} catch (err) {
+				console.error("Erro ao buscar tarefas concluídas:", err);
+			}
+		}
+
+		fetchTotalTarefas().then(fetchTarefasConcluidas);
 	}, [id]);
+
 
 	// --- Lógica do Modal (mantida como estava) ---
 	const handleSalvar = async () => {
@@ -370,32 +408,32 @@ const ProjetosDetalhes = () => {
 								/>
 							</div>
 							<div className="div_informacoes_projeto_detalhes">
-								<h2 className="titulo_metricas_detalhes_projetos">
-									Tarefas concluídas
-								</h2>
-								<h2 className="valor_metricas_detalhes_projetos">29</h2>
+								<h2 className="titulo_metricas_detalhes_projetos">Tarefas concluídas</h2>
+								<h2 className="valor_metricas_detalhes_projetos">{totalConcluidas}</h2>
 								<h2 className="adicional_metricas_detalhes_projetos">
-									de 45 tarefas
+									de {totalTarefas} tarefas
 								</h2>
 							</div>
 							<div className="div_informacoes_projeto_detalhes">
 								<h2 className="titulo_metricas_detalhes_projetos">
 									Em progresso
 								</h2>
-								<h2 className="valor_metricas_detalhes_projetos">12</h2>
+								<h2 className="valor_metricas_detalhes_projetos">{totalEmProgresso}</h2>
 								<h2 className="adicional_metricas_detalhes_projetos">
 									tarefas ativas
 								</h2>
 							</div>
+
 							<div className="div_informacoes_projeto_detalhes">
 								<h2 className="titulo_metricas_detalhes_projetos">
-									Membros da Equipe
+									Cycle Time
 								</h2>
-								<h2 className="valor_metricas_detalhes_projetos">4</h2>
+								<h2 className="valor_metricas_detalhes_projetos">2.8 dias</h2>
 								<h2 className="adicional_metricas_detalhes_projetos">
-									membros ativos
+									tempo médio por tarefa
 								</h2>
 							</div>
+
 						</div>
 
 						<div className="card_atualizacoes">
@@ -542,47 +580,7 @@ const ProjetosDetalhes = () => {
 								</ResponsiveContainer>
 								<p className="valor_final">Média de 27.5 pts</p>
 							</div>
-							<div className="card_atualizacoes ultimo_grafico_metricas bg-purple-50 rounded-xl p-4 shadow-sm border border-purple-100">
-								<h2 className="titulo_projetos">
-									Throughput - Entregas por Semana
-								</h2>
-								<p className="descricao_graficos_projetos">
-									Número médio de tarefas concluídas por semana, medindo a
-									produtividade da equipe.
-								</p>
-								<ResponsiveContainer width="100%" height={200}>
-									<LineChart
-										data={throughputData}
-										margin={{ top: 5, right: 20, left: 0, bottom: 5 }} // <-- aqui
-									>
-										<CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-										<XAxis dataKey="semana" />
-										<YAxis />
-										<Tooltip />
-										<Line
-											type="monotone"
-											dataKey="entregas"
-											stroke="#1e3a8a"
-											strokeWidth={1.8}
-											dot={{ r: 6, fill: "#1e3a8a" }}
-											activeDot={{ r: 8, fill: "#1e3a8a" }}
-										/>
-									</LineChart>
-								</ResponsiveContainer>
-
-								<p className="valor_final">Média de 13.7 tarefas</p>
-							</div>
 							<div className="container_kpi">
-								<div className="div_informacoes_projeto_detalhes">
-									<h2 className="titulo_metricas_detalhes_projetos">
-										Custo por Feature
-									</h2>
-									<h2 className="valor_metricas_detalhes_projetos">R$ 1.250</h2>
-									<h2 className="adicional_metricas_detalhes_projetos">
-										média por funcionalidade
-									</h2>
-								</div>
-
 								<div className="div_informacoes_projeto_detalhes">
 									<h2 className="titulo_metricas_detalhes_projetos">
 										Taxa de Retrabalho
@@ -590,16 +588,6 @@ const ProjetosDetalhes = () => {
 									<h2 className="valor_metricas_detalhes_projetos">12%</h2>
 									<h2 className="adicional_metricas_detalhes_projetos">
 										tarefas retornadas
-									</h2>
-								</div>
-
-								<div className="div_informacoes_projeto_detalhes">
-									<h2 className="titulo_metricas_detalhes_projetos">
-										Cycle Time
-									</h2>
-									<h2 className="valor_metricas_detalhes_projetos">2.8 dias</h2>
-									<h2 className="adicional_metricas_detalhes_projetos">
-										tempo médio por tarefa
 									</h2>
 								</div>
 

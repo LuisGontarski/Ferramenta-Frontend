@@ -48,11 +48,10 @@ const KanbanModal = ({ onClose, projeto_id, sprints, onTarefaCreated }: KanbanMo
     points: "",
     description: "",
     notes: "",
-    columnId: 1,
+    columnId: 0,
     sprintId: sprints.length > 0 ? sprints[0].id : "",
   });
 
-  const [columns] = useState(initialColumns);
   const [users, setUsers] = useState<User[]>([]);
 
   useEffect(() => {
@@ -88,12 +87,10 @@ const KanbanModal = ({ onClose, projeto_id, sprints, onTarefaCreated }: KanbanMo
     }
 
     try {
-      const selectedColumn = columns.find((c) => c.id === formData.columnId);
-
       const res = await axios.post(`${baseUrl}/tarefas`, {
         titulo: formData.title,
         descricao: formData.description,
-        status: selectedColumn?.title || "Backlog",
+        status: "Backlog",
         prioridade: formData.priority,
         tipo: formData.type,
         data_inicio: formData.date,
@@ -101,7 +98,7 @@ const KanbanModal = ({ onClose, projeto_id, sprints, onTarefaCreated }: KanbanMo
         responsavel_id: formData.user,
         criador_id: localStorage.getItem("usuario_id"),
         story_points: formData.points,
-        fase_tarefa: formData.columnId,
+        fase_tarefa: 0,
         sprint_id: formData.sprintId,
       });
 
@@ -238,24 +235,6 @@ const KanbanModal = ({ onClose, projeto_id, sprints, onTarefaCreated }: KanbanMo
               setFormData({ ...formData, points: e.target.value })
             }
           />
-        </div>
-
-        {/* Fase */}
-        <div className="div_inputs_modal">
-          <label className="titulo_input">Fase</label>
-          <select
-            className="input_modal"
-            value={formData.columnId}
-            onChange={(e) =>
-              setFormData({ ...formData, columnId: Number(e.target.value) })
-            }
-          >
-            {columns.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.title}
-              </option>
-            ))}
-          </select>
         </div>
 
         {/* Sprint */}

@@ -123,7 +123,7 @@ const ConteudoKanban = () => {
           description: t.descricao || "",
           notes: t.notes || "",
           commit_url: t.commit_url || "",
-          columnId: columnMap[t.fase_tarefa] ?? 1,
+          columnId: columnMap[t.fase_tarefa] ?? 0,
           sprintId: t.sprint_id,
         }));
 
