@@ -2,12 +2,26 @@
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  max-height: 300px;       /* limita altura e deixa scroll */
+  max-height: 300px;
   overflow-y: auto;
   padding: 0.5rem;
   border: 1px solid #ccc;
   border-radius: 8px;
   background-color: #f9f9f9;
+}
+
+.titulo_usuarios {
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+  display: block;
+}
+
+.input_pesquisa {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
 }
 
 .usuario_item {
@@ -33,4 +47,10 @@
 .usuario_item span {
   font-size: 14px;
   font-weight: 500;
+}
+
+.mensagem_info {
+  font-size: 14px;
+  color: #555;
+  text-align: center;
 }

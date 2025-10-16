@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./SelecionarUsuarios.css";
 
 interface Usuario {
-  usuario_id: string; // mudou para string por ser UUID
+  usuario_id: string;
   nome_usuario: string;
   github: string;
 }
@@ -16,30 +16,43 @@ const SelecionarUsuarios: React.FC<SelecionarUsuariosProps> = ({
 }) => {
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [selecionados, setSelecionados] = useState<string[]>([]);
+  const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(false);
+  const isFirstLoad = useRef(true);
 
   useEffect(() => {
     const fetchUsuarios = async () => {
       try {
-        const baseUrl = import.meta.env.VITE_API_URL; // pegar do Vite
-        console.log("Buscando usuários em:", `${baseUrl}/user/list/github`);
-        const res = await fetch(`${baseUrl}/user/list/github`);
+        setLoading(true);
+        const baseUrl = import.meta.env.VITE_API_URL;
+        const url = `${baseUrl}/user/list/github${
+          search ? `?search=${search}` : ""
+        }`;
+
+        const res = await fetch(url);
         if (!res.ok) throw new Error("Erro ao buscar usuários");
+
         const data: Usuario[] = await res.json();
-        setUsuarios(data.filter((u) => u.github !== ""));
+
+        // Atualiza usuários apenas após resposta — sem limpar antes
+        setUsuarios(data);
       } catch (error) {
         console.error(error);
+      } finally {
+        setLoading(false);
+        isFirstLoad.current = false;
       }
     };
-    fetchUsuarios();
-  }, []);
+
+    const timeout = setTimeout(fetchUsuarios, 400); // debounce mais curto e suave
+    return () => clearTimeout(timeout);
+  }, [search]);
 
   const toggleUsuario = (id: string) => {
-    let novosSelecionados;
-    if (selecionados.includes(id)) {
-      novosSelecionados = selecionados.filter((i) => i !== id);
-    } else {
-      novosSelecionados = [...selecionados, id];
-    }
+    const novosSelecionados = selecionados.includes(id)
+      ? selecionados.filter((i) => i !== id)
+      : [...selecionados, id];
+
     setSelecionados(novosSelecionados);
 
     const usuariosSelecionados = usuarios.filter((u) =>
@@ -49,29 +62,37 @@ const SelecionarUsuarios: React.FC<SelecionarUsuariosProps> = ({
   };
 
   return (
-    <div style={{ marginTop: "1rem" }}>
-      <label
-        style={{ fontWeight: "bold", marginBottom: "0.5rem", display: "block" }}
-      >
-        Selecione os membros da equipe:
-      </label>
-      {usuarios.map((usuario) => (
-        <div
-          key={usuario.usuario_id}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            marginBottom: "0.5rem",
-          }}
-        >
-          <input
-            type="checkbox"
-            checked={selecionados.includes(usuario.usuario_id)}
-            onChange={() => toggleUsuario(usuario.usuario_id)}
-          />
-          <span style={{ marginLeft: "0.5rem" }}>{usuario.nome_usuario}</span>
-        </div>
-      ))}
+    <div className="selecionar_usuarios_container">
+      <label className="titulo_usuarios">Selecione os membros da equipe:</label>
+
+      <input
+        type="text"
+        className="input_pesquisa"
+        placeholder="Pesquisar usuário..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
+
+      {loading && !isFirstLoad.current ? (
+        <p className="mensagem_info">Carregando...</p>
+      ) : usuarios.length === 0 ? (
+        <p className="mensagem_info">Nenhum usuário encontrado.</p>
+      ) : (
+        usuarios.map((usuario) => (
+          <div
+            key={usuario.usuario_id}
+            className="usuario_item"
+            onClick={() => toggleUsuario(usuario.usuario_id)}
+          >
+            <input
+              type="checkbox"
+              checked={selecionados.includes(usuario.usuario_id)}
+              readOnly
+            />
+            <span>{usuario.nome_usuario}</span>
+          </div>
+        ))
+      )}
     </div>
   );
 };
