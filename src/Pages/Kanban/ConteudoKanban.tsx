@@ -182,13 +182,24 @@ const ConteudoKanban = () => {
   };
 
   const updateTarefaFase = async (tarefaId: string, novaFase: string) => {
-    try {
-      await axios.patch(`${baseUrl}/tarefas/${tarefaId}`, { fase_tarefa: novaFase });
-      console.log("Fase da tarefa atualizada com sucesso");
-    } catch (err) {
-      console.error("Erro ao atualizar fase da tarefa:", err);
+  try {
+    const payload: any = { fase_tarefa: novaFase };
+
+    const now = new Date().toISOString();
+
+    if (novaFase === "Executar") {
+      payload.data_inicio_real = now;
+    } else if (novaFase === "Feito") {
+      payload.data_fim_real = now;
     }
-  };
+
+    await axios.patch(`${baseUrl}/tarefas/${tarefaId}`, payload);
+    console.log("Fase da tarefa atualizada com sucesso");
+  } catch (err) {
+    console.error("Erro ao atualizar fase da tarefa:", err);
+  }
+};
+
 
   const openCardModal = (cardId: string) => { // <-- Corrigido para string
     setSelectedCardId(cardId);
