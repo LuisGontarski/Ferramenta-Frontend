@@ -33,8 +33,6 @@ const SelecionarUsuarios: React.FC<SelecionarUsuariosProps> = ({
         if (!res.ok) throw new Error("Erro ao buscar usuários");
 
         const data: Usuario[] = await res.json();
-
-        // Atualiza usuários apenas após resposta — sem limpar antes
         setUsuarios(data);
       } catch (error) {
         console.error(error);
@@ -44,7 +42,7 @@ const SelecionarUsuarios: React.FC<SelecionarUsuariosProps> = ({
       }
     };
 
-    const timeout = setTimeout(fetchUsuarios, 400); // debounce mais curto e suave
+    const timeout = setTimeout(fetchUsuarios, 400); // debounce
     return () => clearTimeout(timeout);
   }, [search]);
 
@@ -61,6 +59,13 @@ const SelecionarUsuarios: React.FC<SelecionarUsuariosProps> = ({
     onSelecionar(usuariosSelecionados);
   };
 
+  const renderMensagem = () => {
+    if (loading) return <p className="mensagem_info">Buscando usuários...</p>;
+    if (usuarios.length === 0 && !isFirstLoad.current)
+      return <p className="mensagem_info">Nenhum usuário encontrado.</p>;
+    return null;
+  };
+
   return (
     <div className="selecionar_usuarios_container">
       <label className="titulo_usuarios">Selecione os membros da equipe:</label>
@@ -73,11 +78,9 @@ const SelecionarUsuarios: React.FC<SelecionarUsuariosProps> = ({
         onChange={(e) => setSearch(e.target.value)}
       />
 
-      {loading && !isFirstLoad.current ? (
-        <p className="mensagem_info">Carregando...</p>
-      ) : usuarios.length === 0 ? (
-        <p className="mensagem_info">Nenhum usuário encontrado.</p>
-      ) : (
+      {renderMensagem()}
+
+      {!loading &&
         usuarios.map((usuario) => (
           <div
             key={usuario.usuario_id}
@@ -91,8 +94,7 @@ const SelecionarUsuarios: React.FC<SelecionarUsuariosProps> = ({
             />
             <span>{usuario.nome_usuario}</span>
           </div>
-        ))
-      )}
+        ))}
     </div>
   );
 };
