@@ -68,6 +68,10 @@ const ConteudoKanban = () => {
     );
   };
 
+  const handleDeleteCard = (cardId: string) => {
+    setCards(prevCards => prevCards.filter(card => card.id !== cardId));
+  };
+
   // Buscar sprints
   useEffect(() => {
     const fetchSprints = async () => {
@@ -406,6 +410,7 @@ const ConteudoKanban = () => {
           }}
           // --- ALTERAÇÃO FINAL: PASSANDO A PROP ---
           onUpdateCard={handleUpdateCard}
+          onDelete={handleDeleteCard}
         />
       )}
     </div>

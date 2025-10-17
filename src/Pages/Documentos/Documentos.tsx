@@ -1,85 +1,81 @@
 import "./Documentos.css";
 import NavbarHome from "../../Components/Navbar/NavbarHome";
 import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import MenuLateral from "../../Components/MenuLateral/MenuLateral";
+import axios from "axios";
+
+const BASE_URL = import.meta.env.VITE_API_URL;
 
 interface Documento {
   documento_id: string;
   nome_arquivo: string;
   caminho_arquivo: string;
-  tipo_arquivo: string;
   tamanho_arquivo: number;
+  tipo_arquivo: string;
   criado_em: string;
 }
 
 const Documentos = () => {
   const [documentos, setDocumentos] = useState<Documento[]>([]);
-  const [arquivos, setArquivos] = useState<File[]>([]);
+  const { id: projeto_id } = useParams<{ id: string }>();
 
-  const projeto_id = localStorage.getItem("projeto_id");
-
-  useEffect(() => {
+  // Função para buscar os documentos do projeto
+  const fetchDocumentos = async () => {
     if (!projeto_id) return;
-    listarDocumentos();
-  }, [projeto_id]);
-
-  const listarDocumentos = async () => {
     try {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/documento/list/${projeto_id}`
-      );
-      if (!res.ok) throw new Error("Erro ao buscar documentos");
-      const data: Documento[] = await res.json();
-      setDocumentos(data);
+      const response = await axios.get(`${BASE_URL}/list/${projeto_id}`);
+      setDocumentos(response.data);
     } catch (error) {
-      console.error(error);
+      console.error("Erro ao buscar documentos:", error);
     }
   };
+  
+  // Executa a busca ao carregar o componente
+  useEffect(() => {
+    fetchDocumentos();
+  }, [projeto_id]);
 
-  const handleAdicionarDocumento = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const arquivosSelecionados = Array.from(e.target.files || []);
-    setArquivos(arquivosSelecionados);
+  // Função para enviar o arquivo para o backend
+  const handleAdicionarDocumento = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const arquivo = e.target.files?.[0];
+    if (!arquivo || !projeto_id) return;
+
+    const formData = new FormData();
+    formData.append("arquivo", arquivo); // 'arquivo' deve ser o mesmo nome usado no middleware do multer: upload.single('arquivo')
+    formData.append("projeto_id", projeto_id);
+
+    try {
+      const response = await axios.post(`${BASE_URL}/upload`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      
+      // Atualiza a lista de documentos na tela com o novo arquivo
+      setDocumentos(prevDocs => [response.data.documento, ...prevDocs]);
+      alert("Arquivo enviado com sucesso!");
+
+    } catch (error) {
+      console.error("Erro ao enviar o arquivo:", error);
+      alert("Falha ao enviar o arquivo.");
+    }
   };
 
   const abrirInputArquivo = () => {
-    const input = document.getElementById(
-      "input_arquivo"
-    ) as HTMLInputElement | null;
+    const input = document.getElementById("input_arquivo") as HTMLInputElement | null;
     input?.click();
   };
-
-  const handleUpload = async () => {
-    if (!projeto_id || arquivos.length === 0) {
-      alert("Selecione arquivos para enviar.");
-      return;
-    }
-
-    const formData = new FormData();
-    arquivos.forEach((file) => formData.append("arquivos", file));
-
-    try {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/documento/upload/${projeto_id}`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-
-      if (!res.ok) {
-        const text = await res.text();
-        throw new Error(text);
-      }
-
-      const data: Documento[] = await res.json();
-      setDocumentos((prev) => [...prev, ...data]);
-      setArquivos([]);
-      alert("Arquivos enviados com sucesso!");
-    } catch (error) {
-      console.error(error);
-      alert("Erro ao enviar arquivos.");
-    }
-  };
+  
+  // Função para formatar o tamanho do arquivo
+  const formatBytes = (bytes: number, decimals = 2) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+  }
 
   return (
     <>
@@ -91,47 +87,33 @@ const Documentos = () => {
             <div className="div_adicionar_arquivo_documentos">
               <div className="div_titulo_documentos">
                 <h2 className="titulo_documentos">Arquivos do Projeto</h2>
-                <h2 className="subtitulo_documentos">
-                  Documentos e recursos relacionados
-                </h2>
+                <h2 className="subtitulo_documentos">Documentos e recursos relacionados</h2>
               </div>
-              <button
-                onClick={abrirInputArquivo}
-                className="button_adicionar_arquivo"
-              >
-                + Adicionar Arquivo
-              </button>
-              {arquivos.length > 0 && (
-                <button
-                  onClick={handleUpload}
-                  className="button_adicionar_arquivo"
-                  style={{ marginLeft: "0.5rem" }}
-                >
-                  Enviar Arquivos
-                </button>
-              )}
+              <button onClick={abrirInputArquivo} className="button_adicionar_arquivo">+ Adicionar Arquivo</button>
             </div>
 
             {documentos.length === 0 ? (
               <div className="div_nenhum_arquivo_documentos">
-                <h2 className="subtitulo_documentos">
-                  Nenhum arquivo encontrado
-                </h2>
+                <h2 className="subtitulo_documentos">Nenhum arquivo encontrado</h2>
               </div>
             ) : (
               <div className="lista_documentos">
                 {documentos.map((doc) => (
                   <div className="documento_item" key={doc.documento_id}>
-                    <span className="documento_nome">{doc.nome_arquivo}</span>
+                    <div className="info_documento">
+                        <span className="documento_nome">{doc.nome_arquivo}</span>
+                        <span className="documento_detalhes">
+                            {formatBytes(doc.tamanho_arquivo)} - {new Date(doc.criado_em).toLocaleDateString()}
+                        </span>
+                    </div>
+                    {/* O link para download agora aponta para o caminho servido pelo back-end */}
                     <a
-                      href={`${import.meta.env.VITE_API_URL}/${
-                        doc.caminho_arquivo
-                      }`}
-                      download={doc.nome_arquivo}
+                      href={`${BASE_URL}/${doc.caminho_arquivo.replace(/\\/g, '/')}`} 
+                      download={doc.nome_arquivo} // Sugere o nome original para o download
                       className="documento_download"
                       title="Baixar arquivo"
                     >
-                      <i className="fa-solid fa-download"></i>
+                      <i className="fa-solid fa-download"></i> 
                     </a>
                   </div>
                 ))}
@@ -143,7 +125,6 @@ const Documentos = () => {
               id="input_arquivo"
               style={{ display: "none" }}
               onChange={handleAdicionarDocumento}
-              multiple
             />
           </div>
         </div>

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 // --- 1. ADICIONA 'commit_url' AO TIPO ---
 type Card = {
@@ -23,6 +24,7 @@ type KanbanCardModalProps = {
   card: Card;
   onClose: () => void;
   onUpdateCard: (updatedCard: Card) => void; // <-- ADICIONADO AQUI
+  onDelete: (cardId: string) => void;
 };
 
 type Commit = {
@@ -32,7 +34,7 @@ type Commit = {
   data_commit: string;
 };
 
-const KanbanCardModal = ({ card, onClose, onUpdateCard }: KanbanCardModalProps) => {
+const KanbanCardModal = ({ card, onClose, onUpdateCard, onDelete }: KanbanCardModalProps) => {
   const navigate = useNavigate();
   const [tempNotes, setTempNotes] = useState(card.notes || "");
   const [loading, setLoading] = useState(false);
@@ -105,6 +107,29 @@ const KanbanCardModal = ({ card, onClose, onUpdateCard }: KanbanCardModalProps) 
     } catch (err) {
       console.error(err);
       alert("Erro ao salvar observação!");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteCard = async () => {
+    if (!window.confirm(`Tem certeza que deseja excluir a tarefa "${card.title}"?`)) {
+      return;
+    }
+    try {
+      setLoading(true);
+      const response = await axios.delete(`${apiUrl}/tarefas/${card.id}`);
+
+      if (response.status !== 200) {
+        throw new Error("Falha ao excluir a tarefa no servidor.");
+      }
+
+      onDelete(card.id); // Avisa o componente pai para remover o card da tela
+      alert("Tarefa excluída com sucesso!");
+      onClose(); // Fecha o modal
+    } catch (err) {
+      console.error("Erro ao excluir o card:", err);
+      alert("Não foi possível excluir a tarefa.");
     } finally {
       setLoading(false);
     }
@@ -189,6 +214,13 @@ const KanbanCardModal = ({ card, onClose, onUpdateCard }: KanbanCardModalProps) 
             disabled={loading}
           >
             {loading ? "Salvando..." : "Salvar"}
+          </button>
+          <button 
+            className="btn_excluir_card" // Adicione um estilo para este botão se desejar
+            onClick={handleDeleteCard} 
+            disabled={loading}
+          >
+            Excluir
           </button>
           <button className="btn_secundario" onClick={handleClose}>
             Fechar
