@@ -5,15 +5,16 @@
   display: flex;
   flex-direction: column;
   flex: 1; /* ocupa o espaço disponível ao lado do MenuLateral */
-  max-width: 800px; /* limite máximo do chat */
-  height: calc(100vh - 80px); /* subtrai altura do Navbar */
-  margin: 20px;
+  height: calc(100vh - 90.4px); /* subtrai altura do Navbar */
+  margin: 1rem;
   border: 1px solid #ccc;
   border-radius: 10px;
   background-color: #f9f9f9;
   overflow: hidden;
   font-family: Arial, sans-serif;
 }
+
+
 
 /* ==============================
    Cabeçalho do chat
@@ -22,7 +23,7 @@
   background-color: #4a90e2;
   color: #fff;
   margin: 0;
-  padding: 15px;
+  padding: 8px;
   text-align: center;
   font-size: 1.2rem;
   flex-shrink: 0;
@@ -62,6 +63,10 @@
   border-bottom-right-radius: 0;
 }
 
+.chat-message.mine .chat-date{
+  color: #fff;
+}
+
 /* Mensagens dos outros */
 .chat-message:not(.mine) {
   align-self: flex-start;
@@ -69,6 +74,12 @@
   color: #000;
   border-bottom-left-radius: 0;
 }
+
+.chat-message:not(.mine)  .chat-date{
+  text-align: start;
+}
+
+
 
 /* ==============================
    Data/hora da mensagem
