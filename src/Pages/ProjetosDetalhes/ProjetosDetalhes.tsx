@@ -68,6 +68,8 @@ const ProjetosDetalhes = () => {
 
 	const [totalEmProgresso, setTotalEmProgresso] = useState<number>(0);
 
+	const [cycleTime, setCycleTime] = useState<number | null>(null);
+
 
 	const [showModal, setShowModal] = useState(false);
 	const [nome, setNome] = useState("Carregando...");
@@ -197,6 +199,20 @@ const ProjetosDetalhes = () => {
 		}
 
 		fetchTarefasEmProgresso();
+
+		async function fetchCycleTime() {
+    if (!id) return;
+    try {
+      const res = await fetch(`${BASE_URL}/projects/${id}/cycle-time`);
+      if (!res.ok) throw new Error(`Erro ${res.status}`);
+      const data = await res.json();
+      setCycleTime(data.cycleTime);
+    } catch (err) {
+      console.error("Erro ao buscar cycle time:", err);
+      setCycleTime(null);
+    }
+  }
+  fetchCycleTime();
 
 
 		// Total de tarefas concluídas
@@ -425,14 +441,15 @@ const ProjetosDetalhes = () => {
 							</div>
 
 							<div className="div_informacoes_projeto_detalhes">
-								<h2 className="titulo_metricas_detalhes_projetos">
-									Cycle Time
-								</h2>
-								<h2 className="valor_metricas_detalhes_projetos">2.8 dias</h2>
-								<h2 className="adicional_metricas_detalhes_projetos">
-									tempo médio por tarefa
-								</h2>
-							</div>
+  <h2 className="titulo_metricas_detalhes_projetos">Cycle Time</h2>
+  <h2 className="valor_metricas_detalhes_projetos">
+    {cycleTime !== null ? `${cycleTime} dias` : "Carregando..."}
+  </h2>
+  <h2 className="adicional_metricas_detalhes_projetos">
+    tempo médio por tarefa
+  </h2>
+</div>
+
 
 						</div>
 
