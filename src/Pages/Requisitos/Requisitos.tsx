@@ -2,6 +2,11 @@ import "./Requisitos.css";
 import NavbarHome from "../../Components/Navbar/NavbarHome";
 import { useState } from "react";
 import MenuLateral from "../../Components/MenuLateral/MenuLateral";
+import { LuPencil } from "react-icons/lu";
+import { TiDocumentText } from "react-icons/ti";
+import { BsTrash3 } from "react-icons/bs";
+import { FiEdit2, FiClock, FiTrash2 } from "react-icons/fi";
+
 
 type Alteracao = {
   data: string;
@@ -14,9 +19,7 @@ type Requisito = {
   tipo: "Funcional" | "Não Funcional";
   prioridade: "Alta" | "Média" | "Baixa";
   descricao: string;
-  status: "Proposto" | "Aprovado" | "Em andamento" | "Concluído";
-  origem?: string;
-  responsavel?: string;
+  status: "Registrado" | "Em andamento" | "Finalizado";
   criterioAceite?: string;
   historico: Alteracao[];
 };
@@ -31,22 +34,18 @@ const Requisitos = () => {
 
   // Estados dos campos do formulário
   const [tipo, setTipo] = useState<"Funcional" | "Não Funcional">("Funcional");
-  const [prioridade, setPrioridade] = useState<"Alta" | "Média" | "Baixa">("Média");
+  const [prioridade, setPrioridade] = useState<"Alta" | "Média" | "Baixa">("Baixa");
   const [descricao, setDescricao] = useState("");
-  const [status, setStatus] = useState<"Proposto" | "Aprovado" | "Em andamento" | "Concluído">("Proposto");
-  const [origem, setOrigem] = useState("");
-  const [responsavel, setResponsavel] = useState("");
+  const [status, setStatus] = useState<"Registrado" | "Em andamento" | "Finalizado">("Registrado");
   const [criterioAceite, setCriterioAceite] = useState("");
 
   // Abrir modal para adicionar novo requisito
   const abrirModalNovo = () => {
     setEditandoRequisito(null);
     setTipo("Funcional");
-    setPrioridade("Média");
+    setPrioridade("Baixa");
     setDescricao("");
-    setStatus("Proposto");
-    setOrigem("");
-    setResponsavel("");
+    setStatus("Registrado");
     setCriterioAceite("");
     setMostrarModal(true);
   };
@@ -58,8 +57,6 @@ const Requisitos = () => {
     setPrioridade(requisito.prioridade);
     setDescricao(requisito.descricao);
     setStatus(requisito.status);
-    setOrigem(requisito.origem || "");
-    setResponsavel(requisito.responsavel || "");
     setCriterioAceite(requisito.criterioAceite || "");
     setMostrarModal(true);
   };
@@ -78,8 +75,6 @@ const Requisitos = () => {
       prioridade,
       descricao,
       status,
-      origem: origem || undefined,
-      responsavel: responsavel || undefined,
       criterioAceite: criterioAceite || undefined,
       historico: [
         {
@@ -100,68 +95,58 @@ const Requisitos = () => {
   };
 
   const atualizarRequisito = () => {
-  if (!editandoRequisito || descricao.trim() === "") return;
+    if (!editandoRequisito || descricao.trim() === "") return;
 
-  let alteracoes: string[] = [];
+    let alteracoes: string[] = [];
 
-  if (editandoRequisito.status !== status) {
-    alteracoes.push(`Status: "${editandoRequisito.status}" → "${status}"`);
-  }
+    if (editandoRequisito.status !== status) {
+      alteracoes.push(`Status: "${editandoRequisito.status}" → "${status}"`);
+    }
 
-  if (editandoRequisito.prioridade !== prioridade) {
-    alteracoes.push(`Prioridade: "${editandoRequisito.prioridade}" → "${prioridade}"`);
-  }
+    if (editandoRequisito.prioridade !== prioridade) {
+      alteracoes.push(`Prioridade: "${editandoRequisito.prioridade}" → "${prioridade}"`);
+    }
 
-  if (editandoRequisito.descricao !== descricao) {
-    alteracoes.push(`Descrição: "${editandoRequisito.descricao}" → "${descricao}"`);
-  }
+    if (editandoRequisito.descricao !== descricao) {
+      alteracoes.push(`Descrição: "${editandoRequisito.descricao}" → "${descricao}"`);
+    }
 
-  if (editandoRequisito.origem !== origem) {
-    alteracoes.push(`Origem: "${editandoRequisito.origem || "-"}" → "${origem || "-"}"`);
-  }
+    if (editandoRequisito.criterioAceite !== criterioAceite) {
+      alteracoes.push(
+        `Critério de Aceite: "${editandoRequisito.criterioAceite || "-"}" → "${criterioAceite || "-"}"`
+      );
+    }
 
-  if (editandoRequisito.responsavel !== responsavel) {
-    alteracoes.push(`Responsável: "${editandoRequisito.responsavel || "-"}" → "${responsavel || "-"}"`);
-  }
+    const atualizacao: Alteracao = {
+      data: new Date().toLocaleString(),
+      usuario: cargo,
+      descricao: alteracoes.length > 0
+        ? `Alterações realizadas: ${alteracoes.join("; ")}`
+        : "Edição salva sem mudanças",
+    };
 
-  if (editandoRequisito.criterioAceite !== criterioAceite) {
-    alteracoes.push(
-      `Critério de Aceite: "${editandoRequisito.criterioAceite || "-"}" → "${criterioAceite || "-"}"`
-    );
-  }
+    const requisitoAtualizado: Requisito = {
+      ...editandoRequisito,
+      tipo,
+      prioridade,
+      descricao,
+      status,
+      criterioAceite: criterioAceite || undefined,
+      historico: [...editandoRequisito.historico, atualizacao],
+    };
 
-  const atualizacao: Alteracao = {
-    data: new Date().toLocaleString(),
-    usuario: cargo,
-    descricao: alteracoes.length > 0 
-      ? `Alterações realizadas: ${alteracoes.join("; ")}`
-      : "Edição salva sem mudanças",
+    if (editandoRequisito.tipo === "Funcional") {
+      setRequisitosFuncionais(prev =>
+        prev.map(req => req.id === editandoRequisito.id ? requisitoAtualizado : req)
+      );
+    } else {
+      setRequisitosNaoFuncionais(prev =>
+        prev.map(req => req.id === editandoRequisito.id ? requisitoAtualizado : req)
+      );
+    }
+
+    fecharModal();
   };
-
-  const requisitoAtualizado: Requisito = {
-    ...editandoRequisito,
-    tipo,
-    prioridade,
-    descricao,
-    status,
-    origem: origem || undefined,
-    responsavel: responsavel || undefined,
-    criterioAceite: criterioAceite || undefined,
-    historico: [...editandoRequisito.historico, atualizacao],
-  };
-
-  if (editandoRequisito.tipo === "Funcional") {
-    setRequisitosFuncionais(prev => 
-      prev.map(req => req.id === editandoRequisito.id ? requisitoAtualizado : req)
-    );
-  } else {
-    setRequisitosNaoFuncionais(prev => 
-      prev.map(req => req.id === editandoRequisito.id ? requisitoAtualizado : req)
-    );
-  }
-
-  fecharModal();
-};
 
 
   const excluirRequisito = (requisito: Requisito) => {
@@ -187,11 +172,11 @@ const Requisitos = () => {
     };
 
     if (requisito.tipo === "Funcional") {
-      setRequisitosFuncionais(prev => 
+      setRequisitosFuncionais(prev =>
         prev.map(req => req.id === requisito.id ? requisitoAtualizado : req)
       );
     } else {
-      setRequisitosNaoFuncionais(prev => 
+      setRequisitosNaoFuncionais(prev =>
         prev.map(req => req.id === requisito.id ? requisitoAtualizado : req)
       );
     }
@@ -201,106 +186,102 @@ const Requisitos = () => {
 
   const mudarStatus = (requisito: Requisito, novoStatus: Requisito["status"]) => {
     const requisitoAtualizado = adicionarEntradaHistorico(
-      requisito, 
+      requisito,
       `Status alterado: ${requisito.status} → ${novoStatus}`
     );
-    
+
     const requisitoComStatus: Requisito = {
       ...requisitoAtualizado,
       status: novoStatus,
     };
 
     if (requisito.tipo === "Funcional") {
-      setRequisitosFuncionais(prev => 
+      setRequisitosFuncionais(prev =>
         prev.map(req => req.id === requisito.id ? requisitoComStatus : req)
       );
     } else {
-      setRequisitosNaoFuncionais(prev => 
+      setRequisitosNaoFuncionais(prev =>
         prev.map(req => req.id === requisito.id ? requisitoComStatus : req)
       );
     }
   };
 
-  const renderTabela = (titulo: string, requisitos: Requisito[], prefixo: string) => (
-  <>
-    <h3 className="subtitulo_requisitos">{titulo}</h3>
-    <div className="tabela_container">
-      <table className="tabela_requisitos">
-        <thead>
-          <tr>
-            <th className="col-id">ID</th>
-            <th className="col-prioridade">Prioridade</th>
-            <th className="col-descricao">Descrição</th>
-            <th className="col-criterio">Critério de Aceite</th>
-            <th>Status</th>
-            <th>Origem</th>
-            <th>Responsável</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          {requisitos.length === 0 ? (
+  const renderTabela = (titulo: string, requisitos: Requisito[], prefixo: string, classeExtra = "") => (
+    <>
+      <h3 className="subtitulo_requisitos">{titulo}</h3>
+      <div className="tabela_container">
+        <table className={`tabela_requisitos ${classeExtra}`}>
+          <thead>
             <tr>
-              <td colSpan={8} className="linha-vazia">Nada registrado ainda.</td>
+              <th className="col-id" id="id-head">ID</th>
+              <th className="col-prioridade">Prioridade</th>
+              <th className="col-descricao">Descrição</th>
+              <th className="col-criterio">Critério de Aceite</th>
+              <th>Status</th>
+              <th id="acoes-head">Ações</th>
             </tr>
-          ) : (
-            requisitos.map((req, index) => (
-              <tr key={req.id} className={index % 2 === 0 ? "linha-par" : "linha-impar"}>
-                <td className="col-id">{`${prefixo}-${req.id.toString().padStart(2, "0")}`}</td>
-                <td className={`col-prioridade prioridade ${req.prioridade.toLowerCase()}`}>
-                  {req.prioridade}
-                </td>
-                <td className="col-descricao">{req.descricao}</td>
-                <td>{req.criterioAceite || "-"}</td>
-                <td>
-                  <select 
-                    value={req.status} 
-                    onChange={(e) => mudarStatus(req, e.target.value as Requisito["status"])}
-                    className={`status-select status-${req.status.toLowerCase().replace(" ", "-")}`}
-                  >
-                    <option value="Proposto">Proposto</option>
-                    <option value="Aprovado">Aprovado</option>
-                    <option value="Em andamento">Em andamento</option>
-                    <option value="Concluído">Concluído</option>
-                  </select>
-                </td>
-                <td>{req.origem || "-"}</td>
-                <td>{req.responsavel || "-"}</td>
-                <td>
-                  <div className="acoes-botoes">
-                    <button 
-                      onClick={() => abrirModalEditar(req)}
-                      className="btn-editar"
-                      title="Editar requisito"
-                    >
-                      ✏️
-                    </button>
-                    <button 
-                      onClick={() => setMostrarHistorico(req)}
-                      className="btn-historico"
-                      title="Ver histórico"
-                    >
-                      📋
-                    </button>
-                    {(cargo === "Scrum Master" || cargo === "Product Owner") && (
-                      <button 
-                        onClick={() => excluirRequisito(req)}
-                        className="btn-excluir"
-                        title="Excluir requisito"
-                      >
-                        🗑️
-                      </button>
-                    )}
-                  </div>
-                </td>
+          </thead>
+          <tbody>
+            {requisitos.length === 0 ? (
+              <tr>
+                <td colSpan={6} className="linha-vazia">Nada registrado ainda.</td>
               </tr>
-            ))
-          )}
-        </tbody>
-      </table>
-    </div>
-  </>
-);
+            ) : (
+              requisitos.map((req, index) => (
+                <tr key={req.id} className={index % 2 === 0 ? "linha-par" : "linha-impar"}>
+                  <td className="col-id">{`${prefixo}${req.id.toString().padStart(3, "0")}`}</td>
+                  <td className={`col-prioridade prioridade ${req.prioridade.toLowerCase()}`}>
+                    {req.prioridade}
+                  </td>
+                  <td className="col-descricao">{req.descricao}</td>
+                  <td>{req.criterioAceite || "-"}</td>
+                  <td>
+                    <select
+                      value={req.status}
+                      onChange={(e) => mudarStatus(req, e.target.value as Requisito["status"])}
+                      className={`status-select status-${req.status.toLowerCase().replace(" ", "-")}`}
+                    >
+                      <option value="Registrado">Registrado</option>
+                      <option value="Em andamento">Em andamento</option>
+                      <option value="Finalizado">Finalizado</option>
+                    </select>
+                  </td>
+                  <td>
+                    <div className="acoes-botoes">
+                      <button
+                        onClick={() => abrirModalEditar(req)}
+                        className="btn-editar"
+                        title="Editar requisito"
+                      >
+                      <LuPencil />
+                      </button>
+                      <button
+                        onClick={() => setMostrarHistorico(req)}
+                        className="btn-historico"
+                        title="Ver histórico"
+                      >
+                       <FiClock />
+                      </button>
+                      {(cargo === "Scrum Master" || cargo === "Product Owner") && (
+                        <button
+                          onClick={() => excluirRequisito(req)}
+                          className="btn-excluir"
+                          title="Excluir requisito"
+                        >
+                        <FiTrash2 />
+                        </button>
+                      )}
+
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+    </>
+  );
 
 
   return (
@@ -322,14 +303,15 @@ const Requisitos = () => {
               )}
             </div>
 
-            {renderTabela("Requisitos Funcionais", requisitosFuncionais, "RFN")}
-            {renderTabela("Requisitos Não Funcionais", requisitosNaoFuncionais, "RNF")}
+            {renderTabela("Requisitos Funcionais", requisitosFuncionais, "RF")}
+            {renderTabela("Requisitos Não Funcionais", requisitosNaoFuncionais, "RNF", "nao-funcional")}
+
 
             {mostrarModal && (
               <div className="modal_overlay">
                 <div className={`modal_conteudo ${mostrarModal ? 'modal_mostrar' : ''}`}>
                   <h3>{editandoRequisito ? 'Editar Requisito' : 'Novo Requisito'}</h3>
-                  
+
                   <div className="form-grid">
                     <div className="form-group">
                       <label>Tipo:</label>
@@ -346,36 +328,6 @@ const Requisitos = () => {
                         <option value="Média">Média</option>
                         <option value="Baixa">Baixa</option>
                       </select>
-                    </div>
-
-                    <div className="form-group">
-                      <label>Status:</label>
-                      <select value={status} onChange={(e) => setStatus(e.target.value as any)}>
-                        <option value="Proposto">Proposto</option>
-                        <option value="Aprovado">Aprovado</option>
-                        <option value="Em andamento">Em andamento</option>
-                        <option value="Concluído">Concluído</option>
-                      </select>
-                    </div>
-
-                    <div className="form-group full-width">
-                      <label>Origem:</label>
-                      <input
-                        type="text"
-                        placeholder="Cliente, regulatório, equipe..."
-                        value={origem}
-                        onChange={(e) => setOrigem(e.target.value)}
-                      />
-                    </div>
-
-                    <div className="form-group full-width">
-                      <label>Responsável:</label>
-                      <input
-                        type="text"
-                        placeholder="Nome do responsável"
-                        value={responsavel}
-                        onChange={(e) => setResponsavel(e.target.value)}
-                      />
                     </div>
 
                     <div className="form-group full-width">
@@ -400,10 +352,10 @@ const Requisitos = () => {
                   </div>
 
                   <div className="botoes_form">
+                    <button onClick={fecharModal}>Cancelar</button>
                     <button onClick={editandoRequisito ? atualizarRequisito : adicionarRequisito}>
                       {editandoRequisito ? 'Atualizar' : 'Adicionar'}
                     </button>
-                    <button onClick={fecharModal}>Cancelar</button>
                   </div>
                 </div>
               </div>
@@ -414,7 +366,7 @@ const Requisitos = () => {
                 <div className="modal_conteudo modal_mostrar modal-historico">
                   <h3>Histórico do Requisito {mostrarHistorico.id}</h3>
                   <p><strong>Descrição:</strong> {mostrarHistorico.descricao}</p>
-                  
+
                   <div className="historico-container">
                     {mostrarHistorico.historico.length === 0 ? (
                       <p className="sem-historico">Nenhuma alteração registrada.</p>
@@ -430,7 +382,7 @@ const Requisitos = () => {
                       </ul>
                     )}
                   </div>
-                  
+
                   <div className="botoes_form">
                     <button onClick={() => setMostrarHistorico(null)}>Fechar</button>
                   </div>
