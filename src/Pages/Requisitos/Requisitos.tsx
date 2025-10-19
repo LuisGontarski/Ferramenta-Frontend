@@ -6,6 +6,7 @@ import { LuPencil } from "react-icons/lu";
 import { TiDocumentText } from "react-icons/ti";
 import { BsTrash3 } from "react-icons/bs";
 import { FiEdit2, FiClock, FiTrash2 } from "react-icons/fi";
+import RequisitoModal from "./RequisitoModal";
 
 type Alteracao = {
   data: string;
@@ -380,75 +381,21 @@ const Requisitos = () => {
             )}
 
             {mostrarModal && (
-              <div className="modal_overlay">
-                <div
-                  className={`modal_conteudo ${
-                    mostrarModal ? "modal_mostrar" : ""
-                  }`}
-                >
-                  <h3>
-                    {editandoRequisito ? "Editar Requisito" : "Novo Requisito"}
-                  </h3>
-
-                  <div className="form-grid">
-                    <div className="form-group">
-                      <label>Tipo:</label>
-                      <select
-                        value={tipo}
-                        onChange={(e) => setTipo(e.target.value as any)}
-                      >
-                        <option value="Funcional">Funcional</option>
-                        <option value="Não Funcional">Não Funcional</option>
-                      </select>
-                    </div>
-
-                    <div className="form-group">
-                      <label>Prioridade:</label>
-                      <select
-                        value={prioridade}
-                        onChange={(e) => setPrioridade(e.target.value as any)}
-                      >
-                        <option value="Alta">Alta</option>
-                        <option value="Média">Média</option>
-                        <option value="Baixa">Baixa</option>
-                      </select>
-                    </div>
-
-                    <div className="form-group full-width">
-                      <label>Descrição do Requisito:</label>
-                      <textarea
-                        placeholder="Descreva o requisito detalhadamente..."
-                        rows={3}
-                        value={descricao}
-                        onChange={(e) => setDescricao(e.target.value)}
-                      />
-                    </div>
-
-                    <div className="form-group full-width">
-                      <label>Critério de Aceite:</label>
-                      <textarea
-                        placeholder="Condições para considerar o requisito atendido..."
-                        rows={2}
-                        value={criterioAceite}
-                        onChange={(e) => setCriterioAceite(e.target.value)}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="botoes_form">
-                    <button onClick={fecharModal}>Cancelar</button>
-                    <button
-                      onClick={
-                        editandoRequisito
-                          ? atualizarRequisito
-                          : adicionarRequisito
-                      }
-                    >
-                      {editandoRequisito ? "Atualizar" : "Adicionar"}
-                    </button>
-                  </div>
-                </div>
-              </div>
+              <RequisitoModal
+                tipo={tipo}
+                setTipo={setTipo}
+                prioridade={prioridade}
+                setPrioridade={setPrioridade}
+                descricao={descricao}
+                setDescricao={setDescricao}
+                criterioAceite={criterioAceite}
+                setCriterioAceite={setCriterioAceite}
+                fecharModal={fecharModal}
+                onSubmit={
+                  editandoRequisito ? atualizarRequisito : adicionarRequisito
+                }
+                editandoRequisito={!!editandoRequisito}
+              />
             )}
 
             {mostrarHistorico && (
