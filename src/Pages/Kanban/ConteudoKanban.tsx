@@ -10,7 +10,7 @@ import { useParams } from "react-router-dom";
 
 const initialColumns = [
   { id: 0, title: "Backlog", locked: true },
-  { id: 2, title: "Planejar" },
+  { id: 1, title: "Para Fazer" },
   { id: 3, title: "Executar" },
   { id: 4, title: "Revisar" },
   { id: 5, title: "Feito" },
@@ -108,7 +108,7 @@ const ConteudoKanban = () => {
 
         const columnMap: { [key: string]: number } = {
           Backlog: 0,
-          Planejar: 2,
+          "Para Fazer": 1,
           Executar: 3,
           Revisar: 4,
           Feito: 5,
@@ -318,7 +318,7 @@ const ConteudoKanban = () => {
               onTarefaCreated={(novaTarefa: any) => {
                 const columnMap: { [key: string]: number } = {
                   Backlog: 0,
-                  Planejar: 2,
+                  "Para Fazer": 1,
                   Executar: 3,
                   Revisar: 4,
                   Feito: 5,
