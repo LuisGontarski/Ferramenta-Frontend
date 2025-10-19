@@ -2,15 +2,6 @@ import React, { useState, useEffect } from "react";
 import "./Kanban.css";
 import axios from "axios";
 
-const initialColumns = [
-  { id: 0, title: "Backlog", locked: true },
-  { id: 1, title: "Para Fazer" },
-  { id: 2, title: "Planejar" },
-  { id: 3, title: "Executar" },
-  { id: 4, title: "Revisar" },
-  { id: 5, title: "Feito" },
-];
-
 export type Card = {
   id: number;
   title: string;

@@ -10,7 +10,6 @@ import { useParams } from "react-router-dom";
 
 const initialColumns = [
   { id: 0, title: "Backlog", locked: true },
-  { id: 1, title: "Para Fazer" },
   { id: 2, title: "Planejar" },
   { id: 3, title: "Executar" },
   { id: 4, title: "Revisar" },
@@ -109,7 +108,6 @@ const ConteudoKanban = () => {
 
         const columnMap: { [key: string]: number } = {
           Backlog: 0,
-          "Para Fazer": 1,
           Planejar: 2,
           Executar: 3,
           Revisar: 4,
@@ -320,7 +318,6 @@ const ConteudoKanban = () => {
               onTarefaCreated={(novaTarefa: any) => {
                 const columnMap: { [key: string]: number } = {
                   Backlog: 0,
-                  "Para Fazer": 1,
                   Planejar: 2,
                   Executar: 3,
                   Revisar: 4,
@@ -337,7 +334,7 @@ const ConteudoKanban = () => {
                   points: novaTarefa.story_points?.toString() || "",
                   description: novaTarefa.descricao || "",
                   notes: novaTarefa.notes || "",
-                  columnId: columnMap[novaTarefa.fase_tarefa] ?? 1,
+                  columnId: columnMap[novaTarefa.fase_tarefa] ?? 0,
                   sprintId: novaTarefa.sprint_id?.toString() || "",
                 };
                 setCards((prev) => [...prev, newCard]);
