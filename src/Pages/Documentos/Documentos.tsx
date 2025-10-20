@@ -62,6 +62,28 @@ const Documentos = () => {
     }
   };
 
+  const handleDeletarDocumento = async (docId: string, docName: string) => {
+    if (!window.confirm(`Tem certeza que deseja excluir o arquivo "${docName}"?`)) {
+      return;
+    }
+
+    try {
+      // Em Documentos.tsx (parece correto)
+      const response = await axios.delete(`${BASE_URL}/documentos/${docId}`); // Chama a API de exclusão
+
+      if (response.status === 200) {
+        // Remove o documento da lista na tela
+        setDocumentos(prevDocs => prevDocs.filter(doc => doc.documento_id !== docId));
+        alert("Documento excluído com sucesso!");
+      } else {
+        throw new Error(response.data.message || "Erro ao excluir documento");
+      }
+    } catch (error) {
+      console.error("Erro ao deletar documento:", error);
+      alert("Falha ao excluir o documento.");
+    }
+  };
+
   const abrirInputArquivo = () => {
     const input = document.getElementById("input_arquivo") as HTMLInputElement | null;
     input?.click();
@@ -108,13 +130,24 @@ const Documentos = () => {
                     </div>
                     {/* O link para download agora aponta para o caminho servido pelo back-end */}
                     <a
-                      href={`${BASE_URL}/${doc.caminho_arquivo.replace(/\\/g, '/')}`} 
-                      download={doc.nome_arquivo} // Sugere o nome original para o download
+                      href={`/${doc.caminho_arquivo.replace(/\\/g, '/')}`} 
+                      download={doc.nome_arquivo} 
                       className="documento_download"
                       title="Baixar arquivo"
                     >
+                    
                       <i className="fa-solid fa-download"></i> 
                     </a>
+                    <button 
+                        onClick={(e) => {
+                          e.stopPropagation(); // Impede clique no link pai
+                          handleDeletarDocumento(doc.documento_id, doc.nome_arquivo);
+                        }}
+                        className="documento_delete"
+                        title="Excluir arquivo"
+                      >
+                         <i className="fa-solid fa-trash"></i> {/* Exemplo com ícone */}
+                      </button>
                   </div>
                 ))}
               </div>
