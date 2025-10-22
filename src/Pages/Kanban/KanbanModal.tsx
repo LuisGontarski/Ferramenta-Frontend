@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./Kanban.css";
 import axios from "axios";
+import { data } from "react-router-dom";
 
 export type Card = {
   id: number;
@@ -29,12 +30,18 @@ type KanbanModalProps = {
 
 const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
-const KanbanModal = ({ onClose, projeto_id, sprints, onTarefaCreated }: KanbanModalProps) => {
+const KanbanModal = ({
+  onClose,
+  projeto_id,
+  sprints,
+  onTarefaCreated,
+}: KanbanModalProps) => {
   const [formData, setFormData] = useState({
     title: "",
     priority: "medium",
     user: "",
     date: "",
+    data_entrega: "",
     type: "tarefa",
     points: "",
     description: "",
@@ -85,6 +92,7 @@ const KanbanModal = ({ onClose, projeto_id, sprints, onTarefaCreated }: KanbanMo
         prioridade: formData.priority,
         tipo: formData.type,
         data_inicio: formData.date,
+        data_entrega: formData.data_entrega,
         projeto_id: projeto_id,
         responsavel_id: formData.user,
         criador_id: localStorage.getItem("usuario_id"),
@@ -173,6 +181,17 @@ const KanbanModal = ({ onClose, projeto_id, sprints, onTarefaCreated }: KanbanMo
             type="date"
             value={formData.date}
             onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+          />
+        </div>
+
+        {/* Data de início */}
+        <div className="div_inputs_modal">
+          <label className="titulo_input">Data Final Prevista</label>
+          <input
+            className="input_modal"
+            type="date"
+            value={formData.data_entrega}
+            onChange={(e) => setFormData({ ...formData, data_entrega: e.target.value })}
           />
         </div>
 
