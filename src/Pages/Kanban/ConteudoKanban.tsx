@@ -36,6 +36,7 @@ type Card = {
   commit_url?: string;
   columnId: number;
   sprintId: string;
+  requisito_id?: string | null; // 👈 adicionado
 };
 
 const ConteudoKanban = () => {
@@ -46,7 +47,9 @@ const ConteudoKanban = () => {
   const [selectedSprint, setSelectedSprint] = useState<string>("");
   const [showNewSprintModal, setShowNewSprintModal] = useState(false);
   const [cards, setCards] = useState<Card[]>([]);
-  const [users, setUsers] = useState<{ usuario_id: string; nome: string }[]>([]);
+  const [users, setUsers] = useState<{ usuario_id: string; nome: string }[]>(
+    []
+  );
 
   const [draggedCardId, setDraggedCardId] = useState<string | null>(null);
   const [newColumnTitle, setNewColumnTitle] = useState("");
@@ -54,21 +57,19 @@ const ConteudoKanban = () => {
 
   const [showNewCardModal, setShowNewCardModal] = useState(false);
   const [showCardModal, setShowCardModal] = useState(false);
-  const [selectedCardId, setSelectedCardId] = useState<string | null>(null)
+  const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
   const [tempNotes, setTempNotes] = useState("");
 
   const selectedCard = cards.find((c) => c.id === selectedCardId) || null;
 
   const handleUpdateCard = (updatedCard: Card) => {
-    setCards(prevCards => 
-      prevCards.map(card => 
-        card.id === updatedCard.id ? updatedCard : card
-      )
+    setCards((prevCards) =>
+      prevCards.map((card) => (card.id === updatedCard.id ? updatedCard : card))
     );
   };
 
   const handleDeleteCard = (cardId: string) => {
-    setCards(prevCards => prevCards.filter(card => card.id !== cardId));
+    setCards((prevCards) => prevCards.filter((card) => card.id !== cardId));
   };
 
   // Buscar sprints
@@ -78,10 +79,12 @@ const ConteudoKanban = () => {
 
       try {
         const res = await axios.get(`${baseUrl}/sprint/${projectId}`);
-        const mappedSprints = res.data.map((s: { id: number; title: string }) => ({
-          id: s.id.toString(),
-          title: s.title,
-        }));
+        const mappedSprints = res.data.map(
+          (s: { id: number; title: string }) => ({
+            id: s.id.toString(),
+            title: s.title,
+          })
+        );
 
         setSprints(mappedSprints);
         if (mappedSprints.length > 0) setSelectedSprint(mappedSprints[0].id);
@@ -104,7 +107,9 @@ const ConteudoKanban = () => {
       }
 
       try {
-        const res = await axios.get(`${baseUrl}/tarefas/sprint/${selectedSprint}`);
+        const res = await axios.get(
+          `${baseUrl}/tarefas/sprint/${selectedSprint}`
+        );
 
         const columnMap: { [key: string]: number } = {
           Backlog: 0,
@@ -114,19 +119,29 @@ const ConteudoKanban = () => {
           Feito: 5,
         };
 
-        const mappedCards = res.data.map((t: any) => ({
+        const mappedCards: Card[] = res.data.map((t: any) => ({
           id: t.tarefa_id,
           title: t.titulo,
-          priority: t.prioridade || "medium",
+          priority:
+            (t.prioridade?.toLowerCase() as "high" | "medium" | "low") ||
+            "medium",
           user: t.responsavel_nome || "-",
           date: t.data_inicio ? t.data_inicio.split("T")[0] : "",
-          type: t.tipo || "tarefa",
+          type:
+            (t.tipo?.toLowerCase() as
+              | "Tarefa"
+              | "Bug"
+              | "melhoria"
+              | "feature"
+              | "teste"
+              | "retrabalho") || "Tarefa",
           points: t.story_points?.toString() || "",
           description: t.descricao || "",
           notes: t.notes || "",
           commit_url: t.commit_url || "",
           columnId: columnMap[t.fase_tarefa] ?? 0,
           sprintId: t.sprint_id,
+          requisito_id: t.requisito_id || null,
         }));
 
         setCards(mappedCards);
@@ -184,26 +199,52 @@ const ConteudoKanban = () => {
   };
 
   const updateTarefaFase = async (tarefaId: string, novaFase: string) => {
-  try {
-    const payload: any = { fase_tarefa: novaFase };
+    try {
+      const payload: any = { fase_tarefa: novaFase };
+      const now = new Date().toISOString();
 
-    const now = new Date().toISOString();
+      if (novaFase === "Executar" || novaFase === "Revisar") {
+        payload.data_inicio_real = now;
+      } else if (novaFase === "Feito") {
+        payload.data_fim_real = now;
+      }
 
-    if (novaFase === "Executar") {
-      payload.data_inicio_real = now;
-    } else if (novaFase === "Feito") {
-      payload.data_fim_real = now;
+      // Atualiza a fase da tarefa
+      const { data: tarefaAtualizada } = await axios.patch(
+        `${baseUrl}/tarefas/${tarefaId}`,
+        payload
+      );
+      console.log("Fase da tarefa atualizada:", tarefaAtualizada);
+
+      // Se tiver requisito vinculado, atualiza o status dele
+      if (tarefaAtualizada.requisito_id) {
+        let novoStatus = "";
+
+        if (novaFase === "Executar" || novaFase === "Revisar") {
+          novoStatus = "Em andamento";
+        } else if (novaFase === "Feito") {
+          novoStatus = "Finalizado";
+        }
+
+        if (novoStatus) {
+          await axios.patch(
+            `${baseUrl}/requisitos/${tarefaAtualizada.requisito_id}/status`,
+            {
+              status: novoStatus,
+            }
+          );
+          console.log(
+            `Status do requisito ${tarefaAtualizada.requisito_id} atualizado para ${novoStatus}`
+          );
+        }
+      }
+    } catch (err) {
+      console.error("Erro ao atualizar fase da tarefa ou requisito:", err);
     }
+  };
 
-    await axios.patch(`${baseUrl}/tarefas/${tarefaId}`, payload);
-    console.log("Fase da tarefa atualizada com sucesso");
-  } catch (err) {
-    console.error("Erro ao atualizar fase da tarefa:", err);
-  }
-};
-
-
-  const openCardModal = (cardId: string) => { // <-- Corrigido para string
+  const openCardModal = (cardId: string) => {
+    // <-- Corrigido para string
     setSelectedCardId(cardId);
     const found = cards.find((c) => c.id === cardId);
     setTempNotes(found?.notes || "");
@@ -221,14 +262,16 @@ const ConteudoKanban = () => {
 
   const deleteSprint = async (id: string) => {
     if (!id) return;
-    const confirmar = window.confirm("Tem certeza que deseja excluir esta sprint?");
+    const confirmar = window.confirm(
+      "Tem certeza que deseja excluir esta sprint?"
+    );
     if (!confirmar) return;
 
     try {
       await axios.delete(`${baseUrl}/sprint/${id}`);
 
       setSprints((prev) => prev.filter((s) => s.id !== id));
-      setSelectedSprint((prev) => (prev === id ? (sprints[0]?.id || "") : prev));
+      setSelectedSprint((prev) => (prev === id ? sprints[0]?.id || "" : prev));
       setCards((prev) => prev.filter((c) => c.sprintId !== id));
 
       console.log("Sprint excluída com sucesso:", id);
@@ -314,7 +357,10 @@ const ConteudoKanban = () => {
             <KanbanModal
               onClose={() => setShowNewCardModal(false)}
               projeto_id={projectId || ""}
-              sprints={sprints.map((s) => ({ id: s.id.toString(), nome: s.title }))}
+              sprints={sprints.map((s) => ({
+                id: s.id.toString(),
+                nome: s.title,
+              }))}
               onTarefaCreated={(novaTarefa: any) => {
                 const columnMap: { [key: string]: number } = {
                   Backlog: 0,
@@ -323,7 +369,9 @@ const ConteudoKanban = () => {
                   Revisar: 4,
                   Feito: 5,
                 };
-                const usuario = users.find((u) => u.usuario_id === novaTarefa.responsavel_id);
+                const usuario = users.find(
+                  (u) => u.usuario_id === novaTarefa.responsavel_id
+                );
                 const newCard: Card = {
                   id: novaTarefa.tarefa_id,
                   title: novaTarefa.titulo,
@@ -359,7 +407,10 @@ const ConteudoKanban = () => {
 
               <div className="kanban_cards">
                 {cards
-                  .filter((cd) => cd.columnId === col.id && cd.sprintId === selectedSprint)
+                  .filter(
+                    (cd) =>
+                      cd.columnId === col.id && cd.sprintId === selectedSprint
+                  )
                   .map((card) => (
                     <div
                       key={card.id}
@@ -375,18 +426,24 @@ const ConteudoKanban = () => {
                             {card.priority === "high"
                               ? "Alta"
                               : card.priority === "medium"
-                                ? "Média"
-                                : "Baixa"}
+                              ? "Média"
+                              : "Baixa"}
                           </div>
-                          <span className={`card_type ${card.type}`}>{card.type}</span>
+                          <span className={`card_type ${card.type}`}>
+                            {card.type}
+                          </span>
                         </div>
-                        <span className="card_points">{card.points || "-"}</span>
+                        <span className="card_points">
+                          {card.points || "-"}
+                        </span>
                       </div>
                       <p className="card_title">{card.title}</p>
                       <div className="card_infos">
                         <div className="div_responsavel_card_kanban">
                           <span className="card_user">{card.user}</span>
-                          <span className="card_date">{formatDate(card.date)}</span>
+                          <span className="card_date">
+                            {formatDate(card.date)}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -412,6 +469,6 @@ const ConteudoKanban = () => {
       )}
     </div>
   );
-}
+};
 
 export default ConteudoKanban;

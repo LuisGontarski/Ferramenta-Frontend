@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./Kanban.css";
 import axios from "axios";
-import { data } from "react-router-dom";
 
 export type Card = {
   id: number;
@@ -20,6 +19,7 @@ export type Card = {
 
 type SprintOption = { id: string; nome: string };
 type User = { usuario_id: string; nome: string; email: string };
+type Requisito = { requisito_id: string; descricao: string };
 
 type KanbanModalProps = {
   onClose: () => void;
@@ -48,23 +48,23 @@ const KanbanModal = ({
     notes: "",
     columnId: 0,
     sprintId: sprints.length > 0 ? sprints[0].id : "",
+    requisitoId: "",
   });
 
   const [users, setUsers] = useState<User[]>([]);
+  const [requisitos, setRequisitos] = useState<Requisito[]>([]);
 
+  // Buscar usuários do projeto
   useEffect(() => {
     if (!projeto_id) return;
 
     const fetchUsers = async () => {
       try {
         const res = await axios.get(`${baseUrl}/projects/${projeto_id}/users`);
-        if (Array.isArray(res.data)) {
-          setUsers(res.data);
-          if (res.data.length > 0) {
-            setFormData((prev) => ({ ...prev, user: res.data[0].usuario_id }));
-          }
-        } else {
-          console.error("Dados de usuários inválidos:", res.data);
+        const lista: User[] = Array.isArray(res.data) ? res.data : [];
+        setUsers(lista);
+        if (lista.length > 0) {
+          setFormData((prev) => ({ ...prev, user: lista[0].usuario_id }));
         }
       } catch (err) {
         console.error("Erro ao buscar usuários do projeto:", err);
@@ -72,6 +72,31 @@ const KanbanModal = ({
     };
 
     fetchUsers();
+  }, [projeto_id]);
+
+  // Buscar requisitos do projeto
+  useEffect(() => {
+    if (!projeto_id) return;
+
+    const fetchRequisitos = async () => {
+      try {
+        const res = await axios.get(`${baseUrl}/requisito/list/${projeto_id}`);
+        console.log("Resposta da API de requisitos:", res.data);
+
+        const lista: Requisito[] = Array.isArray(res.data.requisitos)
+          ? res.data.requisitos
+          : [];
+        setRequisitos(lista);
+
+        // Removido: não setar requisitoId aqui
+      } catch (err) {
+        console.error("Erro ao buscar requisitos:", err);
+        setRequisitos([]);
+        setFormData((prev) => ({ ...prev, requisitoId: "" }));
+      }
+    };
+
+    fetchRequisitos();
   }, [projeto_id]);
 
   const addCard = async () => {
@@ -99,20 +124,14 @@ const KanbanModal = ({
         story_points: formData.points,
         fase_tarefa: 0,
         sprint_id: formData.sprintId,
+        requisito_id: formData.requisitoId || null,
       });
 
       if (res.status === 201 || res.status === 200) {
         const novaTarefa = res.data;
-
-        if (onTarefaCreated) {
-          onTarefaCreated(novaTarefa); // ✅ avisa o pai
-        }
-
+        if (onTarefaCreated) onTarefaCreated(novaTarefa);
         onClose();
       }
-
-      console.log("Tarefa criada:", res.data);
-      onClose();
     } catch (err) {
       console.error("Erro ao criar tarefa:", err);
       alert("Não foi possível criar a tarefa.");
@@ -173,6 +192,27 @@ const KanbanModal = ({
           </select>
         </div>
 
+        {/* Requisito */}
+        <div className="div_inputs_modal">
+          <label className="titulo_input">Requisito</label>
+          <select
+            className="input_modal"
+            value={formData.requisitoId}
+            onChange={(e) =>
+              setFormData({ ...formData, requisitoId: e.target.value })
+            }
+          >
+            <option value="">Não vincular</option>
+            {requisitos.map((r) => (
+              <option key={r.requisito_id} value={r.requisito_id}>
+                {r.descricao.length > 50
+                  ? r.descricao.substring(0, 50) + "..."
+                  : r.descricao}
+              </option>
+            ))}
+          </select>
+        </div>
+
         {/* Data de início */}
         <div className="div_inputs_modal">
           <label className="titulo_input">Data de início</label>
@@ -184,14 +224,16 @@ const KanbanModal = ({
           />
         </div>
 
-        {/* Data de início */}
+        {/* Data final prevista */}
         <div className="div_inputs_modal">
           <label className="titulo_input">Data Final Prevista</label>
           <input
             className="input_modal"
             type="date"
             value={formData.data_entrega}
-            onChange={(e) => setFormData({ ...formData, data_entrega: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, data_entrega: e.target.value })
+            }
           />
         </div>
 

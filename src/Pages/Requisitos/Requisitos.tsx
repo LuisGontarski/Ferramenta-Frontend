@@ -13,7 +13,8 @@ type Alteracao = {
 };
 
 type Requisito = {
-  requisito_id: string; // ID exibido no frontend
+  uuid: string; // UUID real do banco
+  requisito_id: string; // ID exibido no frontend (RF001 / RNF001)
   tipo: "Funcional" | "Não Funcional";
   prioridade: "Alta" | "Média" | "Baixa";
   descricao: string;
@@ -38,6 +39,7 @@ const Requisitos = () => {
   const [editandoRequisito, setEditandoRequisito] = useState<Requisito | null>(
     null
   );
+
   const cargo = localStorage.getItem("cargo") || "Usuário";
 
   // Campos do formulário
@@ -62,16 +64,19 @@ const Requisitos = () => {
 
       const reqFuncionais: Requisito[] = [];
       const reqNaoFuncionais: Requisito[] = [];
-
       let countFuncional = 1;
       let countNaoFuncional = 1;
 
       (data.requisitos || []).forEach((req: any) => {
-        let novoReq: Requisito = {
-          ...req,
+        const novoReq: Requisito = {
+          uuid: req.requisito_id, // UUID real
+          requisito_id: "", // ID exibido no frontend
+          tipo: req.tipo,
+          prioridade: req.prioridade,
+          descricao: req.descricao,
+          status: req.status,
           criterioAceite: req.criterio_aceite || "-",
           historico: req.historico || [],
-          requisito_id: "",
         };
 
         if (req.tipo === "Funcional") {
@@ -141,15 +146,11 @@ const Requisitos = () => {
 
     if (requisito.tipo === "Funcional") {
       setRequisitosFuncionais((prev) =>
-        prev.map((r) =>
-          r.requisito_id === requisito.requisito_id ? requisitoAtualizado : r
-        )
+        prev.map((r) => (r.uuid === requisito.uuid ? requisitoAtualizado : r))
       );
     } else {
       setRequisitosNaoFuncionais((prev) =>
-        prev.map((r) =>
-          r.requisito_id === requisito.requisito_id ? requisitoAtualizado : r
-        )
+        prev.map((r) => (r.uuid === requisito.uuid ? requisitoAtualizado : r))
       );
     }
 
@@ -168,37 +169,44 @@ const Requisitos = () => {
 
     if (requisito.tipo === "Funcional") {
       setRequisitosFuncionais((prev) =>
-        prev.map((r) =>
-          r.requisito_id === requisito.requisito_id ? atualizadoComStatus : r
-        )
+        prev.map((r) => (r.uuid === requisito.uuid ? atualizadoComStatus : r))
       );
     } else {
       setRequisitosNaoFuncionais((prev) =>
-        prev.map((r) =>
-          r.requisito_id === requisito.requisito_id ? atualizadoComStatus : r
-        )
+        prev.map((r) => (r.uuid === requisito.uuid ? atualizadoComStatus : r))
       );
     }
   };
 
-  const excluirRequisito = (requisito: Requisito) => {
+  const excluirRequisito = async (requisito: Requisito) => {
     if (
-      window.confirm(
+      !window.confirm(
         `Tem certeza que deseja excluir o requisito "${requisito.descricao.substring(
           0,
           50
-        )}"...?`
+        )}"?`
       )
-    ) {
+    )
+      return;
+
+    try {
+      const res = await fetch(`${API_URL}/requisito/delete/${requisito.uuid}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error("Erro ao deletar requisito");
+
       if (requisito.tipo === "Funcional") {
         setRequisitosFuncionais((prev) =>
-          prev.filter((r) => r.requisito_id !== requisito.requisito_id)
+          prev.filter((r) => r.uuid !== requisito.uuid)
         );
       } else {
         setRequisitosNaoFuncionais((prev) =>
-          prev.filter((r) => r.requisito_id !== requisito.requisito_id)
+          prev.filter((r) => r.uuid !== requisito.uuid)
         );
       }
+    } catch (error) {
+      console.error(error);
+      alert("Falha ao excluir requisito");
     }
   };
 
@@ -227,7 +235,7 @@ const Requisitos = () => {
               </tr>
             ) : (
               requisitos.map((req) => (
-                <tr key={req.requisito_id}>
+                <tr key={req.uuid}>
                   <td>{req.requisito_id}</td>
                   <td className={`prioridade ${req.prioridade.toLowerCase()}`}>
                     {req.prioridade}
@@ -322,8 +330,9 @@ const Requisitos = () => {
                 criterioAceite={criterioAceite}
                 setCriterioAceite={setCriterioAceite}
                 fecharModal={fecharModal}
-                onSubmit={() => {}}
+                onSubmit={carregarRequisitos} // recarrega lista após criação ou edição
                 editandoRequisito={!!editandoRequisito}
+                requisitoId={editandoRequisito?.uuid} // UUID real para PUT
               />
             )}
 

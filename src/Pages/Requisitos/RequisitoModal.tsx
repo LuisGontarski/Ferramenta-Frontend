@@ -12,6 +12,7 @@ type Props = {
   fecharModal: () => void;
   onSubmit: () => void;
   editandoRequisito: boolean;
+  requisitoId?: string; // UUID real do requisito ao editar
 };
 
 const RequisitoModal = ({
@@ -26,6 +27,7 @@ const RequisitoModal = ({
   fecharModal,
   onSubmit,
   editandoRequisito,
+  requisitoId,
 }: Props) => {
   const handleSubmit = async () => {
     if (descricao.trim() === "") {
@@ -33,7 +35,7 @@ const RequisitoModal = ({
       return;
     }
 
-    const projeto_id = localStorage.getItem("projeto_id"); // Pegando projeto_id do localStorage
+    const projeto_id = localStorage.getItem("projeto_id");
     if (!projeto_id) {
       alert("Projeto não selecionado.");
       return;
@@ -48,33 +50,50 @@ const RequisitoModal = ({
     };
 
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/requisito/create`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(requisitoData),
-        }
-      );
+      let response;
+
+      if (editandoRequisito && requisitoId) {
+        // Edição usando PUT com UUID real
+        response = await fetch(
+          `${import.meta.env.VITE_API_URL}/requisito/update/${requisitoId}`,
+          {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(requisitoData),
+          }
+        );
+      } else {
+        // Criação de novo requisito
+        response = await fetch(
+          `${import.meta.env.VITE_API_URL}/requisito/create`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(requisitoData),
+          }
+        );
+      }
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Erro ao criar requisito");
+        throw new Error(errorData.message || "Erro ao salvar requisito");
       }
 
       const data = await response.json();
-      console.log("Requisito criado:", data);
+      console.log(
+        editandoRequisito ? "Requisito atualizado:" : "Requisito criado:",
+        data
+      );
 
-      // Atualiza o estado local no frontend
-      onSubmit();
-
-      // Fecha o modal
+      onSubmit(); // Atualiza lista no frontend
       fecharModal();
     } catch (error) {
       console.error(error);
-      alert("Falha ao criar requisito");
+      alert(
+        editandoRequisito
+          ? "Falha ao atualizar requisito"
+          : "Falha ao criar requisito"
+      );
     }
   };
 
