@@ -320,12 +320,15 @@ const ProjetosDetalhes = () => {
     }
   }
 
-  const value = 6.5;
-  const max = 10;
-  const fillPercent = (value / max) * 100;
-  const gradientStyle = {
-    background: `linear-gradient(to right, #155dfc 0%, #155dfc ${fillPercent}%, #e0e0e0 ${fillPercent}%)`,
-  };
+  const progressoPercent = totalTarefas > 0 
+    ? Math.round((totalConcluidas / totalTarefas) * 100) 
+    : 0;
+
+const max = 100; // valor máximo em percentual
+const gradientStyle = {
+  background: `linear-gradient(to right, #155dfc 0%, #155dfc ${progressoPercent}%, #e0e0e0 ${progressoPercent}%)`,
+};
+
 
   const formatDDMMYYYY = (v: string | null): string => {
     if (!v) return "";
@@ -443,15 +446,16 @@ const ProjetosDetalhes = () => {
                 <h2 className="titulo_metricas_detalhes_projetos">
                   Progresso Geral
                 </h2>
-                <h2 className="valor_metricas_detalhes_projetos">65%</h2>
+                <h2 className="valor_metricas_detalhes_projetos">{progressoPercent}%</h2>
                 <input
-                  type="range"
-                  className="custom-range"
-                  max={max}
-                  min={0}
-                  value={value}
-                  style={gradientStyle}
-                />
+  type="range"
+  className="custom-range"
+  max={max}
+  min={0}
+  value={progressoPercent}
+  style={gradientStyle}
+  readOnly
+/>
               </div>
               <div className="div_informacoes_projeto_detalhes">
                 <h2 className="titulo_metricas_detalhes_projetos">
