@@ -13,6 +13,7 @@ import Cronograma from './Pages/Cronograma/Cronograma';
 import ChatWrapper from './Pages/Chat/ChatWrapper';
 import GithubErrorIntegration from './Pages/Register/GithubErrorIntegration';
 import GithubSuccessIntegration from './Pages/Register/GithubSuccessIntegration';
+import HistoricoProjetoWrapper from './Pages/Historico/HistoricoProjetoWrapper';
 
 
 
@@ -34,6 +35,7 @@ function App() {
         <Route path="/chat/:projeto_id" element={<ChatWrapper />} />
         <Route path="/github-error-integration" element={<GithubErrorIntegration />} />
         <Route path="/github-success-integration" element={<GithubSuccessIntegration />} />
+        <Route path="/historico/:projeto_id" element={<HistoricoProjetoWrapper />} />
 
       </Routes>
     </Router>
