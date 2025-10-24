@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./Kanban.css";
 import axios from "axios";
+import { toast } from "react-hot-toast";
 
 export type Card = {
   id: number;
@@ -101,15 +102,20 @@ const KanbanModal = ({
 
   const addCard = async () => {
     if (!formData.title.trim()) {
-      alert("O título é obrigatório");
+      // ✅ Validação com toast
+      toast.error("O título é obrigatório");
       return;
     }
     if (!formData.sprintId) {
-      alert("Selecione uma sprint antes de criar a tarefa");
+      // ✅ Validação com toast
+      toast.error("Selecione uma sprint antes de criar a tarefa");
       return;
     }
 
     try {
+      // ✅ Mostrar loading durante a criação
+      const loadingToast = toast.loading("Criando tarefa...");
+
       const res = await axios.post(`${baseUrl}/tarefas`, {
         titulo: formData.title,
         descricao: formData.description,
@@ -130,11 +136,19 @@ const KanbanModal = ({
       if (res.status === 201 || res.status === 200) {
         const novaTarefa = res.data;
         if (onTarefaCreated) onTarefaCreated(novaTarefa);
+
+        // ✅ Substituir loading por sucesso
+        toast.success("Tarefa criada com sucesso!", {
+          id: loadingToast,
+        });
+
         onClose();
       }
     } catch (err) {
       console.error("Erro ao criar tarefa:", err);
-      alert("Não foi possível criar a tarefa.");
+
+      // ✅ Notificação de erro moderna
+      toast.error("Não foi possível criar a tarefa.");
     }
   };
 

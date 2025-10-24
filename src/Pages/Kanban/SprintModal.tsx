@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "./Kanban.css";
 import axios from "axios";
+import { toast } from "react-hot-toast";
 
 type Sprint = {
   id: string;
@@ -22,41 +23,55 @@ const SprintModal = ({
 }: SprintModalProps) => {
   const [newSprintName, setNewSprintName] = useState("");
   const [storyPoints, setStoryPoints] = useState("");
-  const [diasSprint, setDiasSprint] = useState(""); 
+  const [diasSprint, setDiasSprint] = useState("");
 
   const addSprint = async () => {
-  const nome_sprint = newSprintName.trim();
-  const pontos = storyPoints.trim();
-  const dias = diasSprint.trim();
+    const nome_sprint = newSprintName.trim();
+    const pontos = storyPoints.trim();
+    const dias = diasSprint.trim();
 
-  if (!nome_sprint) return;
+    if (!nome_sprint) {
+      // ✅ Validação com toast
+      toast.error("O nome da sprint é obrigatório");
+      return;
+    }
 
-  try {
-    const res = await axios.post(`${baseUrl}/sprint`, {
-      nome: nome_sprint,
-      projeto_id: projeto_id,
-      story_points: pontos ? parseInt(pontos) : null,
-      dias_sprint: dias ? parseInt(dias) : 0, // ✅ envia os dias
-    });
+    try {
+      // ✅ Mostrar loading durante a criação
+      const loadingToast = toast.loading("Criando sprint...");
 
-    console.log("Sprint criada:", res.data);
+      const res = await axios.post(`${baseUrl}/sprint`, {
+        nome: nome_sprint,
+        projeto_id: projeto_id,
+        story_points: pontos ? parseInt(pontos) : null,
+        dias_sprint: dias ? parseInt(dias) : 0,
+      });
 
-    const novaSprint: Sprint = {
-      id: res.data.sprint_id,
-      title: res.data.nome,
-    };
+      console.log("Sprint criada:", res.data);
 
-    onSprintCreated(novaSprint);
-    setNewSprintName("");
-    setStoryPoints("");
-    setDiasSprint("");
-    onClose();
-  } catch (err) {
-    console.error("Erro ao criar sprint:", err);
-    alert("Não foi possível criar a sprint.");
-  }
-};
+      const novaSprint: Sprint = {
+        id: res.data.sprint_id,
+        title: res.data.nome,
+      };
 
+      onSprintCreated(novaSprint);
+      setNewSprintName("");
+      setStoryPoints("");
+      setDiasSprint("");
+
+      // ✅ Substituir loading por sucesso
+      toast.success("Sprint criada com sucesso!", {
+        id: loadingToast,
+      });
+
+      onClose();
+    } catch (err) {
+      console.error("Erro ao criar sprint:", err);
+
+      // ✅ Notificação de erro moderna
+      toast.error("Não foi possível criar a sprint.");
+    }
+  };
 
   return (
     <div className="modal_overlay">

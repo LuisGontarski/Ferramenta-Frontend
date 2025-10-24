@@ -7,6 +7,7 @@ import KanbanCardModal from "./KanbanCardModal";
 import SprintModal from "./SprintModal";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import { toast } from "react-hot-toast";
 
 const initialColumns = [
   { id: 0, title: "Backlog", locked: true },
@@ -255,22 +256,102 @@ const ConteudoKanban = () => {
 
   const deleteSprint = async (id: string) => {
     if (!id) return;
-    const confirmar = window.confirm(
-      "Tem certeza que deseja excluir esta sprint?"
-    );
-    if (!confirmar) return;
 
+    // ✅ Confirmação customizada com toast
+    toast(
+      (t) => (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "12px",
+            minWidth: "250px",
+          }}
+        >
+          <p style={{ margin: 0, fontWeight: "500" }}>
+            Tem certeza que deseja excluir esta sprint?
+          </p>
+          <p
+            style={{
+              margin: 0,
+              fontSize: "12px",
+              color: "#666",
+              fontStyle: "italic",
+            }}
+          >
+            Todas as tarefas desta sprint também serão excluídas.
+          </p>
+          <div
+            style={{
+              display: "flex",
+              gap: "10px",
+              justifyContent: "flex-end",
+              marginTop: "8px",
+            }}
+          >
+            <button
+              onClick={() => {
+                toast.dismiss(t.id);
+                confirmarExclusaoSprint(id);
+              }}
+              style={{
+                background: "#ef4444",
+                color: "white",
+                border: "none",
+                padding: "8px 16px",
+                borderRadius: "6px",
+                cursor: "pointer",
+                fontSize: "14px",
+                fontWeight: "500",
+              }}
+            >
+              Excluir
+            </button>
+            <button
+              onClick={() => toast.dismiss(t.id)}
+              style={{
+                background: "#6b7280",
+                color: "white",
+                border: "none",
+                padding: "8px 16px",
+                borderRadius: "6px",
+                cursor: "pointer",
+                fontSize: "14px",
+              }}
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+      ),
+      {
+        duration: 15000, // 15 segundos para decidir
+        style: {
+          background: "#fff",
+          color: "#333",
+          border: "1px solid #e5e7eb",
+          borderRadius: "8px",
+          boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+        },
+      }
+    );
+  };
+
+  // Função separada para a exclusão real
+  const confirmarExclusaoSprint = async (id: string) => {
     try {
+      const loadingToast = toast.loading("Excluindo sprint...");
+
       await axios.delete(`${baseUrl}/sprint/${id}`);
 
       setSprints((prev) => prev.filter((s) => s.id !== id));
       setSelectedSprint((prev) => (prev === id ? sprints[0]?.id || "" : prev));
       setCards((prev) => prev.filter((c) => c.sprintId !== id));
 
-      console.log("Sprint excluída com sucesso:", id);
+      toast.success("Sprint excluída com sucesso!", { id: loadingToast });
     } catch (err) {
       console.error("Erro ao excluir sprint:", err);
-      alert("Erro ao excluir sprint.");
+      toast.error("Erro ao excluir sprint.");
     }
   };
 

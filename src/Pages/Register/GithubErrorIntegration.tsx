@@ -2,6 +2,7 @@ import { useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import "./Github.css";
 import axios from "axios";
+import { toast } from "react-hot-toast";
 
 export default function GithubErrorIntegration() {
   const [searchParams] = useSearchParams();
@@ -68,11 +69,14 @@ export default function GithubErrorIntegration() {
 
   const handleProceed = async () => {
     if (!payload) {
-      alert("Nenhum dado de cadastro encontrado.");
+      toast.error("Nenhum dado de cadastro encontrado.");
       return;
     }
 
     try {
+      // ✅ Mostrar loading durante o cadastro
+      const loadingToast = toast.loading("Finalizando cadastro...");
+
       const finalPayload = {
         ...payload,
         github_token: payload.github_token || null,
@@ -92,18 +96,26 @@ export default function GithubErrorIntegration() {
       }
 
       if (finalPayload.cargo) {
-      localStorage.setItem("cargo", finalPayload.cargo);
-    } else {
-      localStorage.setItem("cargo", "Não informar");
-    }
+        localStorage.setItem("cargo", finalPayload.cargo);
+      } else {
+        localStorage.setItem("cargo", "Não informar");
+      }
 
       sessionStorage.removeItem("pendingRegistration");
+
+      // ✅ Substituir loading por sucesso
+      toast.success("Cadastro realizado com sucesso!", {
+        id: loadingToast,
+      });
+
       window.location.href = "/";
     } catch (err: any) {
       console.error("Erro ao finalizar cadastro:", err);
       const statusCode = err.response?.status || "Erro desconhecido";
-      alert(
-        `Não foi possível finalizar o cadastro. Status code: ${statusCode}`
+
+      // ✅ Notificação de erro detalhada
+      toast.error(
+        `Não foi possível finalizar o cadastro. Status: ${statusCode}`
       );
     }
   };

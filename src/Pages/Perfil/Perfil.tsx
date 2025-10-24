@@ -6,6 +6,7 @@ import { getUserById } from "../../services/userDataService";
 import { formatarDataParaDDMMYYYY } from "../../utils/dateUtils";
 import AtividadesPerfil from "../../Components/AtividadesPerfil/AtividadesPerfil";
 import MenuLateral from "../../Components/MenuLateral/MenuLateral";
+import toast from "react-hot-toast";
 
 // Importando os gráficos já componentizados
 import GraficoCommits from "../Perfil/GraficoCommit";
@@ -120,18 +121,41 @@ const Perfil = () => {
 
   const handleSavePerfil = async (usuarioEditado: typeof usuario) => {
     try {
-      // aqui você pode chamar sua API de update
-      await fetch(`${import.meta.env.VITE_API_URL}/users/update`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(usuarioEditado),
-      });
+      const loadingToast = toast.loading("Salvando perfil...");
+
+      const usuarioId = localStorage.getItem("usuario_id");
+
+      if (!usuarioId) {
+        toast.error("Usuário não autenticado.");
+        return;
+      }
+
+      // ✅ APENAS nome e email são enviados para edição
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/user/${usuarioId}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            nome_usuario: usuarioEditado.nome,
+            email: usuarioEditado.email,
+            senha: "dummyPassword123", // ✅ Necessário para validação
+            cargo: usuario.cargo, // ✅ Mantém o cargo original (não editável)
+            github: usuario.github, // ✅ Mantém o github original (não editável)
+            foto_perfil: usuario.foto_perfil, // ✅ Mantém a foto original (não editável)
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Erro ao atualizar perfil");
+      }
 
       setUsuario(usuarioEditado);
-      alert("Perfil atualizado com sucesso!");
+      toast.success("Perfil atualizado com sucesso!", { id: loadingToast });
     } catch (err) {
       console.error("Erro ao atualizar perfil:", err);
-      alert("Não foi possível atualizar o perfil.");
+      toast.error("Não foi possível atualizar o perfil.");
     }
   };
 

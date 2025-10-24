@@ -1,16 +1,21 @@
+import toast from "react-hot-toast";
+
 const API_URL = import.meta.env.VITE_API_URL;
 
 export const handleGerarRelatorio = async () => {
   const usuarioId = localStorage.getItem("usuario_id");
 
-  console.log("Usuário ID:", usuarioId); // Log para verificar o valor
+  console.log("Usuário ID:", usuarioId);
 
   if (!usuarioId) {
-    alert("Usuário não encontrado no localStorage");
+    toast.error("Usuário não encontrado no localStorage");
     return;
   }
 
   try {
+    // ✅ Mostrar loading durante a geração do relatório
+    const loadingToast = toast.loading("Gerando relatório de commits...");
+
     const response = await fetch(`${API_URL}/relatorio/commits`, {
       method: "POST",
       headers: {
@@ -26,10 +31,17 @@ export const handleGerarRelatorio = async () => {
     const blob = await response.blob();
     const url = window.URL.createObjectURL(blob);
 
+    // ✅ Substituir loading por sucesso
+    toast.success("Relatório gerado com sucesso!", {
+      id: loadingToast,
+    });
+
     // Abre o PDF em uma nova aba
     window.open(url, "_blank");
   } catch (error) {
     console.error("Erro ao gerar relatório:", error);
-    alert("Erro ao gerar relatório. Verifique o console.");
+
+    // ✅ Notificação de erro moderna
+    toast.error("Erro ao gerar relatório. Verifique o console.");
   }
 };

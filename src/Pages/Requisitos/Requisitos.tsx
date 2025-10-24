@@ -6,6 +6,7 @@ import { LuPencil } from "react-icons/lu";
 import { FiClock, FiTrash2 } from "react-icons/fi";
 import RequisitoModal from "./RequisitoModal";
 import axios from "axios";
+import { toast } from "react-hot-toast";
 
 type Alteracao = {
   data_formatada: string;
@@ -82,11 +83,11 @@ const Requisitos = () => {
         });
       } else {
         console.error("Erro na resposta da API:", response.data.message);
-        alert("Erro ao carregar histórico");
+        toast.error("Erro ao carregar histórico");
       }
     } catch (error) {
       console.error("❌ Erro ao buscar histórico:", error);
-      alert("Não foi possível carregar o histórico");
+      toast.error("Não foi possível carregar o histórico");
     } finally {
       setCarregandoHistorico(false);
     }
@@ -221,20 +222,104 @@ const Requisitos = () => {
   };
 
   const excluirRequisito = async (requisito: Requisito) => {
-    if (
-      !window.confirm(
-        `Tem certeza que deseja excluir o requisito "${requisito.descricao.substring(
-          0,
-          50
-        )}"?`
-      )
-    )
-      return;
+    // ✅ Substituir confirm nativo por toast de confirmação customizado
+    toast(
+      (t) => (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "12px",
+            minWidth: "300px",
+          }}
+        >
+          <p style={{ margin: 0, fontWeight: "500", fontSize: "16px" }}>
+            Excluir requisito?
+          </p>
+          <p
+            style={{
+              margin: 0,
+              fontSize: "14px",
+              color: "#666",
+            }}
+          >
+            "{requisito.descricao.substring(0, 50)}..."
+          </p>
+          <p
+            style={{
+              margin: 0,
+              fontSize: "12px",
+              color: "#999",
+              fontStyle: "italic",
+            }}
+          >
+            Esta ação não pode ser desfeita.
+          </p>
+          <div
+            style={{
+              display: "flex",
+              gap: "10px",
+              justifyContent: "flex-end",
+              marginTop: "8px",
+            }}
+          >
+            <button
+              onClick={() => {
+                toast.dismiss(t.id);
+                confirmarExclusaoRequisito(requisito);
+              }}
+              style={{
+                background: "#ef4444",
+                color: "white",
+                border: "none",
+                padding: "8px 16px",
+                borderRadius: "6px",
+                cursor: "pointer",
+                fontSize: "14px",
+                fontWeight: "500",
+              }}
+            >
+              Excluir
+            </button>
+            <button
+              onClick={() => toast.dismiss(t.id)}
+              style={{
+                background: "#6b7280",
+                color: "white",
+                border: "none",
+                padding: "8px 16px",
+                borderRadius: "6px",
+                cursor: "pointer",
+                fontSize: "14px",
+              }}
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+      ),
+      {
+        duration: 15000, // 15 segundos para decidir
+        style: {
+          background: "#fff",
+          color: "#333",
+          border: "1px solid #e5e7eb",
+          borderRadius: "8px",
+          boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+        },
+      }
+    );
+  };
 
+  // Função separada para a exclusão real
+  const confirmarExclusaoRequisito = async (requisito: Requisito) => {
     try {
+      const loadingToast = toast.loading("Excluindo requisito...");
+
       const res = await fetch(`${API_URL}/requisito/delete/${requisito.uuid}`, {
         method: "DELETE",
       });
+
       if (!res.ok) throw new Error("Erro ao deletar requisito");
 
       if (requisito.tipo === "Funcional") {
@@ -246,9 +331,11 @@ const Requisitos = () => {
           prev.filter((r) => r.uuid !== requisito.uuid)
         );
       }
+
+      toast.success("Requisito excluído com sucesso!", { id: loadingToast });
     } catch (error) {
       console.error(error);
-      alert("Falha ao excluir requisito");
+      toast.error("Falha ao excluir requisito");
     }
   };
 

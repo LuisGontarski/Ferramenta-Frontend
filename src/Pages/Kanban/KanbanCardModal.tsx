@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toast } from "react-hot-toast";
 
 // --- 1. ADICIONA 'commit_url' AO TIPO ---
 type Card = {
@@ -34,12 +35,19 @@ type Commit = {
   data_commit: string;
 };
 
-const KanbanCardModal = ({ card, onClose, onUpdateCard, onDelete }: KanbanCardModalProps) => {
+const KanbanCardModal = ({
+  card,
+  onClose,
+  onUpdateCard,
+  onDelete,
+}: KanbanCardModalProps) => {
   const navigate = useNavigate();
   const [tempNotes, setTempNotes] = useState(card.notes || "");
   const [loading, setLoading] = useState(false);
   const [commits, setCommits] = useState<Commit[]>([]);
-  const [selectedCommitUrl, setSelectedCommitUrl] = useState<string>(card.commit_url || "");
+  const [selectedCommitUrl, setSelectedCommitUrl] = useState<string>(
+    card.commit_url || ""
+  );
 
   const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -60,14 +68,13 @@ const KanbanCardModal = ({ card, onClose, onUpdateCard, onDelete }: KanbanCardMo
         if (!res.ok) throw new Error("Erro ao buscar informações da tarefa");
 
         const data = await res.json();
-        
+
         setTempNotes(data.observacao || "");
         setCommits(data.commits || []);
         // Pré-seleciona o commit se ele já estiver salvo na tarefa
         if (data.commit_url) {
           setSelectedCommitUrl(data.commit_url);
         }
-
       } catch (err) {
         console.error("Erro ao carregar observação e commits:", err);
       } finally {
@@ -81,6 +88,10 @@ const KanbanCardModal = ({ card, onClose, onUpdateCard, onDelete }: KanbanCardMo
   const saveCardNotes = async () => {
     try {
       setLoading(true);
+
+      // ✅ Mostrar loading durante o salvamento
+      const loadingToast = toast.loading("Salvando observação...");
+
       const response = await fetch(`${apiUrl}/tarefas/${card.id}/comentario`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -91,10 +102,10 @@ const KanbanCardModal = ({ card, onClose, onUpdateCard, onDelete }: KanbanCardMo
       });
 
       if (!response.ok) throw new Error("Erro ao salvar observação");
-      
+
       const updatedTask = await response.json();
 
-      // --- 3. AVISA O COMPONENTE PAI SOBRE A MUDANÇA ---
+      // Atualizar o card
       const updatedCard: Card = {
         ...card,
         notes: updatedTask.comentario,
@@ -102,22 +113,37 @@ const KanbanCardModal = ({ card, onClose, onUpdateCard, onDelete }: KanbanCardMo
       };
       onUpdateCard(updatedCard);
 
-      alert("Observação salva com sucesso!");
+      // ✅ Substituir loading por sucesso
+      toast.success("Observação salva com sucesso!", {
+        id: loadingToast,
+      });
+
       onClose();
     } catch (err) {
       console.error(err);
-      alert("Erro ao salvar observação!");
+
+      // ✅ Notificação de erro moderna
+      toast.error("Erro ao salvar observação!");
     } finally {
       setLoading(false);
     }
   };
 
   const handleDeleteCard = async () => {
-    if (!window.confirm(`Tem certeza que deseja excluir a tarefa "${card.title}"?`)) {
+    if (
+      !window.confirm(
+        `Tem certeza que deseja excluir a tarefa "${card.title}"?`
+      )
+    ) {
       return;
     }
+
     try {
       setLoading(true);
+
+      // ✅ Mostrar loading durante a exclusão
+      const loadingToast = toast.loading("Excluindo tarefa...");
+
       const response = await axios.delete(`${apiUrl}/tarefas/${card.id}`);
 
       if (response.status !== 200) {
@@ -125,11 +151,18 @@ const KanbanCardModal = ({ card, onClose, onUpdateCard, onDelete }: KanbanCardMo
       }
 
       onDelete(card.id); // Avisa o componente pai para remover o card da tela
-      alert("Tarefa excluída com sucesso!");
+
+      // ✅ Substituir loading por sucesso
+      toast.success("Tarefa excluída com sucesso!", {
+        id: loadingToast,
+      });
+
       onClose(); // Fecha o modal
     } catch (err) {
       console.error("Erro ao excluir o card:", err);
-      alert("Não foi possível excluir a tarefa.");
+
+      // ✅ Notificação de erro moderna
+      toast.error("Não foi possível excluir a tarefa.");
     } finally {
       setLoading(false);
     }
@@ -155,17 +188,26 @@ const KanbanCardModal = ({ card, onClose, onUpdateCard, onDelete }: KanbanCardMo
         </div>
 
         <div className="infos_principais">
-          <p><i className="bi bi-person"></i> <b>Responsável:</b> {card.user}</p>
-          <p><i className="bi bi-calendar-event"></i> <b>Data:</b> {formatDate(card.date)}</p>
+          <p>
+            <i className="bi bi-person"></i> <b>Responsável:</b> {card.user}
+          </p>
+          <p>
+            <i className="bi bi-calendar-event"></i> <b>Data:</b>{" "}
+            {formatDate(card.date)}
+          </p>
         </div>
 
         <div className="secao">
-          <label><b>Descrição</b></label>
+          <label>
+            <b>Descrição</b>
+          </label>
           <p className="descricao_tarefa">{card.description || "-"}</p>
         </div>
 
         <div className="secao">
-          <label><b>Observação / História do Usuário</b></label>
+          <label>
+            <b>Observação / História do Usuário</b>
+          </label>
           <textarea
             className="textarea_tarefa"
             placeholder="Escreva observações sobre a tarefa..."
@@ -176,7 +218,9 @@ const KanbanCardModal = ({ card, onClose, onUpdateCard, onDelete }: KanbanCardMo
         </div>
 
         <div className="secao">
-          <label><b>Associar a commit</b></label>
+          <label>
+            <b>Associar a commit</b>
+          </label>
           <select
             className="select_commit"
             value={selectedCommitUrl}
@@ -186,7 +230,8 @@ const KanbanCardModal = ({ card, onClose, onUpdateCard, onDelete }: KanbanCardMo
             <option value="">Nenhum commit selecionado</option>
             {commits.map((c) => (
               <option key={c.id} value={c.url}>
-                {c.message.split('\n')[0]} ({new Date(c.data_commit).toLocaleDateString()})
+                {c.message.split("\n")[0]} (
+                {new Date(c.data_commit).toLocaleDateString()})
               </option>
             ))}
           </select>
@@ -197,14 +242,20 @@ const KanbanCardModal = ({ card, onClose, onUpdateCard, onDelete }: KanbanCardMo
         </div>
 
         {card.commit_url && (
-            <div className="secao">
-                <label><b>Commit Associado</b></label>
-                <p className="link_commit">
-                    <a href={card.commit_url} target="_blank" rel="noopener noreferrer">
-                        Ver commit no GitHub
-                    </a>
-                </p>
-            </div>
+          <div className="secao">
+            <label>
+              <b>Commit Associado</b>
+            </label>
+            <p className="link_commit">
+              <a
+                href={card.commit_url}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Ver commit no GitHub
+              </a>
+            </p>
+          </div>
         )}
 
         <div className="botoes_modal">
@@ -215,9 +266,9 @@ const KanbanCardModal = ({ card, onClose, onUpdateCard, onDelete }: KanbanCardMo
           >
             {loading ? "Salvando..." : "Salvar"}
           </button>
-          <button 
+          <button
             className="btn_excluir_card" // Adicione um estilo para este botão se desejar
-            onClick={handleDeleteCard} 
+            onClick={handleDeleteCard}
             disabled={loading}
           >
             Excluir

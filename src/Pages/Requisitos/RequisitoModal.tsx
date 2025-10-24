@@ -1,4 +1,5 @@
 import React from "react";
+import { toast } from "react-hot-toast";
 
 type Props = {
   tipo: "Funcional" | "Não Funcional";
@@ -31,13 +32,13 @@ const RequisitoModal = ({
 }: Props) => {
   const handleSubmit = async () => {
     if (descricao.trim() === "") {
-      alert("A descrição não pode estar vazia.");
+      toast.error("A descrição não pode estar vazia.");
       return;
     }
 
     const projeto_id = localStorage.getItem("projeto_id");
     if (!projeto_id) {
-      alert("Projeto não selecionado.");
+      toast.error("Projeto não selecionado.");
       return;
     }
 
@@ -50,6 +51,11 @@ const RequisitoModal = ({
     };
 
     try {
+      // ✅ Mostrar loading durante o salvamento
+      const loadingToast = toast.loading(
+        editandoRequisito ? "Atualizando requisito..." : "Criando requisito..."
+      );
+
       let response;
 
       if (editandoRequisito && requisitoId) {
@@ -86,10 +92,23 @@ const RequisitoModal = ({
       );
 
       onSubmit(); // Atualiza lista no frontend
+
+      // ✅ Substituir loading por sucesso
+      toast.success(
+        editandoRequisito
+          ? "Requisito atualizado com sucesso!"
+          : "Requisito criado com sucesso!",
+        {
+          id: loadingToast,
+        }
+      );
+
       fecharModal();
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      alert(
+
+      // ✅ Notificação de erro específica
+      toast.error(
         editandoRequisito
           ? "Falha ao atualizar requisito"
           : "Falha ao criar requisito"
