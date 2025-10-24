@@ -78,10 +78,27 @@ const ProjetosDetalhes = () => {
   const [duracao, setDuracao] = useState(0);
   const [gerenteProjeto, setGerenteProjeto] = useState("Carregando...");
 
+  const [membrosDaEquipe, setMembrosDaEquipe] = useState<Membro[]>([]);
+
+  const [burndownData, setBurndownData] = useState([
+    { dia: "Dia 1", planejado: 100, real: 100 },
+    { dia: "Dia 2", planejado: 90, real: 95 },
+  ]);
+
+  useEffect(() => {
+    async function fetchBurndown() {
+      const sprintId = "24c873a0-de8c-496c-b76d-935b65489c3a";
+      const res = await fetch(`${BASE_URL}/sprint/${sprintId}/burndown`);
+      const data = await res.json();
+      console.log("Burndown Data:", data);
+
+      setBurndownData(data);
+    }
+    fetchBurndown();
+  }, []); // ✅ Correto
+
   const [commits, setCommits] = useState<any[]>([]);
   const [numCommits, setNumCommits] = useState(0);
-
-  const [membrosDaEquipe, setMembrosDaEquipe] = useState<Membro[]>([]);
 
   async function fetchCommits(repoFullName: string) {
     try {
