@@ -21,29 +21,32 @@ const SprintModal = ({
   onSprintCreated,
 }: SprintModalProps) => {
   const [newSprintName, setNewSprintName] = useState("");
+  const [storyPoints, setStoryPoints] = useState(""); // ✅ novo estado
 
   const addSprint = async () => {
     const nome_sprint = newSprintName.trim();
+    const pontos = storyPoints.trim();
+
     if (!nome_sprint) return;
 
     try {
       const res = await axios.post(`${baseUrl}/sprint`, {
         nome: nome_sprint,
         projeto_id: projeto_id,
+        story_points: pontos ? parseInt(pontos) : null, // ✅ enviar os pontos
       });
 
       console.log("Sprint criada:", res.data);
 
-      // Mapeando para o formato do frontend
       const novaSprint: Sprint = {
-        id: res.data.sprint_id, // já é string
+        id: res.data.sprint_id,
         title: res.data.nome,
       };
 
-      // AVISA O PAI que a sprint foi criada
       onSprintCreated(novaSprint);
 
       setNewSprintName("");
+      setStoryPoints("");
       onClose();
     } catch (err) {
       console.error("Erro ao criar sprint:", err);
@@ -61,7 +64,7 @@ const SprintModal = ({
           </h2>
         </div>
         <div className="div_inputs_modal">
-          <label className="titulo_input">Nome da tarefa</label>
+          <label className="titulo_input">Nome da sprint</label>
           <input
             className="input_modal"
             placeholder="Nome da sprint"
@@ -69,7 +72,17 @@ const SprintModal = ({
             value={newSprintName}
             onChange={(e) => setNewSprintName(e.target.value)}
           />
+
+          <label className="titulo_input">Story Points</label>
+          <input
+            className="input_modal"
+            placeholder="Quantidade de pontos"
+            type="number"
+            value={storyPoints}
+            onChange={(e) => setStoryPoints(e.target.value)} // ✅ controle do input
+          />
         </div>
+
         <div className="modal_actions">
           <button className="btn_cancelar" onClick={onClose}>
             Cancelar
