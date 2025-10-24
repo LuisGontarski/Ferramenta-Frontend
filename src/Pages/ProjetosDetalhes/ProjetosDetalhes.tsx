@@ -499,58 +499,10 @@ const ProjetosDetalhes = () => {
                 </p>
               </div>
               <ResponsiveContainer width="100%" height={300}>
-                <LineChart
-                  data={data}
-                  margin={{ top: 20, right: 30, left: 0, bottom: 5 }}
-                >
-                  <CartesianGrid
-                    stroke="#e5e7eb"
-                    strokeOpacity={0.4}
-                    strokeDasharray="4 4"
-                  />
-
-                  <XAxis
-                    dataKey="dia"
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fill: "#6b7280", fontSize: 12 }}
-                  />
-                  <YAxis
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fill: "#6b7280", fontSize: 12 }}
-                  />
-
-                  <Tooltip
-                    contentStyle={{
-                      borderRadius: "10px",
-                      border: "1px solid #e5e7eb",
-                      boxShadow: "0px 2px 8px rgba(0,0,0,0.1)",
-                      fontSize: "12px",
-                    }}
-                  />
-                  <Legend
-                    wrapperStyle={{ fontSize: "12px", color: "#6b7280" }}
-                  />
-
-                  <Line
-                    type="monotone"
-                    dataKey="planejado"
-                    stroke="#3b82f6"
-                    strokeWidth={2}
-                    strokeDasharray="5 5"
-                    dot={false}
-                  />
-
-                  <Line
-                    type="monotone"
-                    dataKey="real"
-                    stroke="#10b981"
-                    strokeWidth={2.5}
-                    dot={{ r: 5, fill: "#10b981" }}
-                    activeDot={{ r: 7 }}
-                  />
-                </LineChart>
+                <LineChart data={burndownData}>
+  <Line dataKey="planejado" stroke="#3b82f6" strokeDasharray="5 5" />
+  <Line dataKey="real" stroke="#10b981" strokeWidth={2} />
+</LineChart>
               </ResponsiveContainer>
               <div className="cards_resumo">
                 <div className="card_kpi bg-blue-50">
