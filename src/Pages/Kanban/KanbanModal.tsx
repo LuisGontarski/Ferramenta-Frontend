@@ -80,7 +80,7 @@ const KanbanModal = ({
 
     const fetchRequisitos = async () => {
       try {
-        const res = await axios.get(`${baseUrl}/requisito/list/${projeto_id}`);
+        const res = await axios.get(`${baseUrl}/requisito/list2/${projeto_id}`);
         console.log("Resposta da API de requisitos:", res.data);
 
         const lista: Requisito[] = Array.isArray(res.data.requisitos)

@@ -5,11 +5,15 @@ import MenuLateral from "../../Components/MenuLateral/MenuLateral";
 import { LuPencil } from "react-icons/lu";
 import { FiClock, FiTrash2 } from "react-icons/fi";
 import RequisitoModal from "./RequisitoModal";
+import axios from "axios";
 
 type Alteracao = {
-  data: string;
-  usuario: string;
-  descricao: string;
+  data_formatada: string;
+  usuario_nome: string;
+  status_anterior: string;
+  status_novo: string;
+  observacao: string;
+  criado_em: string;
 };
 
 type Requisito = {
@@ -33,12 +37,15 @@ const Requisitos = () => {
     Requisito[]
   >([]);
   const [mostrarModal, setMostrarModal] = useState(false);
-  const [mostrarHistorico, setMostrarHistorico] = useState<Requisito | null>(
-    null
-  );
+  const [mostrarHistorico, setMostrarHistorico] = useState<{
+    requisito_id: string;
+    descricao: string;
+    historico: Alteracao[];
+  } | null>(null);
   const [editandoRequisito, setEditandoRequisito] = useState<Requisito | null>(
     null
   );
+  const [carregandoHistorico, setCarregandoHistorico] = useState(false);
 
   const cargo = localStorage.getItem("cargo") || "Usuário";
 
@@ -52,6 +59,38 @@ const Requisitos = () => {
     "Registrado" | "Em andamento" | "Finalizado"
   >("Registrado");
   const [criterioAceite, setCriterioAceite] = useState("");
+
+  // Função para buscar histórico do requisito
+  const buscarHistoricoRequisito = async (
+    requisito_uuid: string,
+    descricao: string,
+    requisito_id_frontend: string
+  ) => {
+    setCarregandoHistorico(true);
+    try {
+      console.log(`🔍 Buscando histórico para requisito: ${requisito_uuid}`);
+
+      const response = await axios.get(
+        `${API_URL}/requisito/${requisito_uuid}/historico`
+      );
+
+      if (response.data.success) {
+        setMostrarHistorico({
+          requisito_id: requisito_id_frontend,
+          descricao,
+          historico: response.data.historico,
+        });
+      } else {
+        console.error("Erro na resposta da API:", response.data.message);
+        alert("Erro ao carregar histórico");
+      }
+    } catch (error) {
+      console.error("❌ Erro ao buscar histórico:", error);
+      alert("Não foi possível carregar o histórico");
+    } finally {
+      setCarregandoHistorico(false);
+    }
+  };
 
   // Carregar requisitos do backend e gerar IDs RF/RNF
   const carregarRequisitos = async () => {
@@ -76,7 +115,7 @@ const Requisitos = () => {
           descricao: req.descricao,
           status: req.status,
           criterioAceite: req.criterio_aceite || "-",
-          historico: req.historico || [],
+          historico: [], // Inicialmente vazio, será carregado sob demanda
         };
 
         if (req.tipo === "Funcional") {
@@ -135,9 +174,12 @@ const Requisitos = () => {
     descricao: string
   ) => {
     const novaEntrada: Alteracao = {
-      data: new Date().toLocaleString(),
-      usuario: cargo,
-      descricao,
+      data_formatada: new Date().toLocaleString(),
+      usuario_nome: cargo,
+      status_anterior: requisito.status,
+      status_novo: requisito.status,
+      observacao: descricao,
+      criado_em: new Date().toISOString(),
     };
     const requisitoAtualizado: Requisito = {
       ...requisito,
@@ -243,17 +285,12 @@ const Requisitos = () => {
                   <td>{req.descricao}</td>
                   <td>{req.criterioAceite}</td>
                   <td>{req.tipo}</td>
-                  <td>
-                    <select
-                      value={req.status}
-                      onChange={(e) =>
-                        mudarStatus(req, e.target.value as Requisito["status"])
-                      }
-                    >
-                      <option value="Registrado">Registrado</option>
-                      <option value="Em andamento">Em andamento</option>
-                      <option value="Finalizado">Finalizado</option>
-                    </select>
+                  <td
+                    className={`status ${req.status
+                      .replace(" ", "-")
+                      .toLowerCase()}`}
+                  >
+                    {req.status}
                   </td>
                   <td>
                     <div className="acoes-botoes">
@@ -264,7 +301,13 @@ const Requisitos = () => {
                         <LuPencil />
                       </button>
                       <button
-                        onClick={() => setMostrarHistorico(req)}
+                        onClick={() =>
+                          buscarHistoricoRequisito(
+                            req.uuid,
+                            req.descricao,
+                            req.requisito_id
+                          )
+                        }
                         title="Ver histórico"
                       >
                         <FiClock />
@@ -339,33 +382,56 @@ const Requisitos = () => {
             {mostrarHistorico && (
               <div className="modal_overlay">
                 <div className="modal_conteudo modal_mostrar modal-historico">
-                  <h3>
-                    Histórico do Requisito {mostrarHistorico.requisito_id}
-                  </h3>
+                  <h3>Histórico do Requisito</h3>
+                  <p>
+                    <strong>ID:</strong> {mostrarHistorico.requisito_id}
+                  </p>
                   <p>
                     <strong>Descrição:</strong> {mostrarHistorico.descricao}
                   </p>
-                  <div className="historico-container">
-                    {mostrarHistorico.historico.length === 0 ? (
-                      <p className="sem-historico">
-                        Nenhuma alteração registrada.
-                      </p>
-                    ) : (
-                      <ul className="lista_historico">
-                        {mostrarHistorico.historico.map((alt, i) => (
-                          <li key={i} className="item-historico">
-                            <div className="historico-data">{alt.data}</div>
-                            <div className="historico-usuario">
-                              {alt.usuario}
-                            </div>
-                            <div className="historico-descricao">
-                              {alt.descricao}
-                            </div>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
+
+                  {carregandoHistorico ? (
+                    <div className="carregando">Carregando histórico...</div>
+                  ) : (
+                    <div className="historico-container">
+                      {mostrarHistorico.historico.length === 0 ? (
+                        <p className="sem-historico">
+                          Nenhuma alteração registrada.
+                        </p>
+                      ) : (
+                        <ul className="lista_historico">
+                          {mostrarHistorico.historico.map((alt, i) => (
+                            <li key={i} className="item-historico">
+                              <div className="historico-header">
+                                <div className="historico-data">
+                                  {alt.data_formatada ||
+                                    new Date(alt.criado_em).toLocaleString()}
+                                </div>
+                                <div className="historico-usuario">
+                                  {alt.usuario_nome || "Sistema"}
+                                </div>
+                              </div>
+                              <div className="historico-status">
+                                <span className="status-anterior">
+                                  {alt.status_anterior || "N/A"}
+                                </span>
+                                <span className="seta">→</span>
+                                <span className="status-novo">
+                                  {alt.status_novo}
+                                </span>
+                              </div>
+                              {alt.observacao && (
+                                <div className="historico-observacao">
+                                  <strong>Observação:</strong> {alt.observacao}
+                                </div>
+                              )}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  )}
+
                   <div className="botoes_form">
                     <button onClick={() => setMostrarHistorico(null)}>
                       Fechar

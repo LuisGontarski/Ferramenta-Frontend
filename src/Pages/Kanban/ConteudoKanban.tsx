@@ -36,7 +36,6 @@ type Card = {
   commit_url?: string;
   columnId: number;
   sprintId: string;
-  requisito_id?: string | null; // 👈 adicionado
 };
 
 const ConteudoKanban = () => {
@@ -119,29 +118,19 @@ const ConteudoKanban = () => {
           Feito: 5,
         };
 
-        const mappedCards: Card[] = res.data.map((t: any) => ({
+        const mappedCards = res.data.map((t: any) => ({
           id: t.tarefa_id,
           title: t.titulo,
-          priority:
-            (t.prioridade?.toLowerCase() as "high" | "medium" | "low") ||
-            "medium",
+          priority: t.prioridade || "medium",
           user: t.responsavel_nome || "-",
           date: t.data_inicio ? t.data_inicio.split("T")[0] : "",
-          type:
-            (t.tipo?.toLowerCase() as
-              | "Tarefa"
-              | "Bug"
-              | "melhoria"
-              | "feature"
-              | "teste"
-              | "retrabalho") || "Tarefa",
+          type: t.tipo || "tarefa",
           points: t.story_points?.toString() || "",
           description: t.descricao || "",
           notes: t.notes || "",
           commit_url: t.commit_url || "",
           columnId: columnMap[t.fase_tarefa] ?? 0,
           sprintId: t.sprint_id,
-          requisito_id: t.requisito_id || null,
         }));
 
         setCards(mappedCards);
@@ -203,43 +192,47 @@ const ConteudoKanban = () => {
       const payload: any = { fase_tarefa: novaFase };
       const now = new Date().toISOString();
 
-      if (novaFase === "Executar" || novaFase === "Revisar") {
+      // Atualiza datas conforme fase
+      if (novaFase === "Executar") {
         payload.data_inicio_real = now;
       } else if (novaFase === "Feito") {
         payload.data_fim_real = now;
       }
 
-      // Atualiza a fase da tarefa
-      const { data: tarefaAtualizada } = await axios.patch(
+      // Faz o PATCH da tarefa normalmente
+      const response = await axios.patch(
         `${baseUrl}/tarefas/${tarefaId}`,
         payload
       );
-      console.log("Fase da tarefa atualizada:", tarefaAtualizada);
+      console.log("Fase da tarefa atualizada com sucesso");
 
-      // Se tiver requisito vinculado, atualiza o status dele
-      if (tarefaAtualizada.requisito_id) {
-        let novoStatus = "";
+      // ✅ Se a tarefa tiver um requisito vinculado, atualiza também o status do requisito
+      const tarefa = response.data;
+      const requisitoId = tarefa.requisito_id;
 
+      if (requisitoId) {
+        let novoStatusRequisito = "Registrado";
+
+        // Mapeamento de fases → status do requisito
         if (novaFase === "Executar" || novaFase === "Revisar") {
-          novoStatus = "Em andamento";
+          novoStatusRequisito = "Em andamento";
         } else if (novaFase === "Feito") {
-          novoStatus = "Finalizado";
+          novoStatusRequisito = "Finalizado";
         }
 
-        if (novoStatus) {
-          await axios.patch(
-            `${baseUrl}/requisitos/${tarefaAtualizada.requisito_id}/status`,
-            {
-              status: novoStatus,
-            }
-          );
-          console.log(
-            `Status do requisito ${tarefaAtualizada.requisito_id} atualizado para ${novoStatus}`
-          );
-        }
+        await axios.patch(`${baseUrl}/requisito/${requisitoId}/status`, {
+          status: novoStatusRequisito,
+        });
+
+        console.log(
+          `Status do requisito atualizado para: ${novoStatusRequisito}`
+        );
       }
     } catch (err) {
-      console.error("Erro ao atualizar fase da tarefa ou requisito:", err);
+      console.error(
+        "Erro ao atualizar fase da tarefa ou status do requisito:",
+        err
+      );
     }
   };
 
