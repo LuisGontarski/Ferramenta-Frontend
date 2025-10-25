@@ -373,7 +373,11 @@ const ConteudoKanban = () => {
               <select
                 className="select_sprint"
                 value={selectedSprint}
-                onChange={(e) => setSelectedSprint(e.target.value)}
+                onChange={(e) => {
+                  const newSprintId = e.target.value;
+                  setSelectedSprint(newSprintId);
+                  localStorage.setItem("sprintSelecionada", newSprintId); // ✅ salva no localStorage
+                }}
                 disabled={!projectId}
               >
                 {sprints.map((sp) => (
@@ -382,6 +386,7 @@ const ConteudoKanban = () => {
                   </option>
                 ))}
               </select>
+
             )}
 
             {cargo === "Product Owner" && (
@@ -500,8 +505,8 @@ const ConteudoKanban = () => {
                             {card.priority === "high"
                               ? "Alta"
                               : card.priority === "medium"
-                              ? "Média"
-                              : "Baixa"}
+                                ? "Média"
+                                : "Baixa"}
                           </div>
                           <span className={`card_type ${card.type}`}>
                             {card.type}
