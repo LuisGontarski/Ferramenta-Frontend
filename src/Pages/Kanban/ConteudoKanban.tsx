@@ -371,21 +371,32 @@ const ConteudoKanban = () => {
           <div className="sprint_selector">
             {sprints.length > 0 && (
               <select
-                className="select_sprint"
-                value={selectedSprint}
-                onChange={(e) => {
-                  const newSprintId = e.target.value;
-                  setSelectedSprint(newSprintId);
-                  localStorage.setItem("sprintSelecionada", newSprintId); // ✅ salva no localStorage
-                }}
-                disabled={!projectId}
-              >
-                {sprints.map((sp) => (
-                  <option key={sp.id} value={sp.id}>
-                    {sp.title}
-                  </option>
-                ))}
-              </select>
+  className="select_sprint"
+  value={selectedSprint}
+  onChange={async (e) => {
+    const newSprintId = e.target.value;
+    setSelectedSprint(newSprintId);
+    localStorage.setItem("sprintSelecionada", newSprintId);
+
+    try {
+      await axios.patch(`${baseUrl}/projects/${projectId}/sprint-selecionada`, {
+  sprint_id: newSprintId,
+});
+
+      console.log("Sprint selecionada salva no banco com sucesso!");
+    } catch (err) {
+      console.error("Erro ao salvar sprint selecionada:", err);
+    }
+  }}
+  disabled={!projectId}
+>
+  {sprints.map((sp) => (
+    <option key={sp.id} value={sp.id}>
+      {sp.title}
+    </option>
+  ))}
+</select>
+
 
             )}
 

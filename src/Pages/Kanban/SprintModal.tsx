@@ -27,22 +27,20 @@ const SprintModal = ({
   const [dataInicio, setDataInicio] = useState("");
   const [dataFim, setDataFim] = useState("");
 
-
   const addSprint = async () => {
     const nome_sprint = newSprintName.trim();
     const pontos = storyPoints.trim();
     const dias = diasSprint.trim();
 
     if (!nome_sprint) {
-      // ✅ Validação com toast
       toast.error("O nome da sprint é obrigatório");
       return;
     }
 
     try {
-      // ✅ Mostrar loading durante a criação
       const loadingToast = toast.loading("Criando sprint...");
 
+      // ✅ Cria a nova sprint
       const res = await axios.post(`${baseUrl}/sprint`, {
         nome: nome_sprint,
         projeto_id: projeto_id,
@@ -52,29 +50,34 @@ const SprintModal = ({
         data_fim: dataFim || null,
       });
 
-
-      console.log("Sprint criada:", res.data);
-
       const novaSprint: Sprint = {
         id: res.data.sprint_id,
         title: res.data.nome,
       };
 
+      // ✅ Atualiza o projeto para definir a sprint criada como a "selecionada"
+      await axios.patch(`${baseUrl}/projects/${projeto_id}/sprint-selecionada`, {
+        sprint_id: novaSprint.id,
+      });
+
+      console.log("Sprint criada e definida como selecionada:", novaSprint);
+
+      // ✅ Atualiza o estado no front-end
       onSprintCreated(novaSprint);
+      localStorage.setItem("sprintSelecionada", novaSprint.id);
+
+      // ✅ Limpa os campos
       setNewSprintName("");
       setStoryPoints("");
       setDiasSprint("");
 
-      // ✅ Substituir loading por sucesso
-      toast.success("Sprint criada com sucesso!", {
+      toast.success("Sprint criada e definida como selecionada!", {
         id: loadingToast,
       });
 
       onClose();
     } catch (err) {
       console.error("Erro ao criar sprint:", err);
-
-      // ✅ Notificação de erro moderna
       toast.error("Não foi possível criar a sprint.");
     }
   };
@@ -88,6 +91,7 @@ const SprintModal = ({
             Crie uma nova sprint para poder separar as tarefas
           </h2>
         </div>
+
         <div className="div_inputs_modal">
           <label className="titulo_input">Nome da sprint</label>
           <input
@@ -115,6 +119,7 @@ const SprintModal = ({
             value={diasSprint}
             onChange={(e) => setDiasSprint(e.target.value)}
           />
+
           <label className="titulo_input">Data de Início</label>
           <input
             type="date"
@@ -130,7 +135,6 @@ const SprintModal = ({
             value={dataFim}
             onChange={(e) => setDataFim(e.target.value)}
           />
-
         </div>
 
         <div className="modal_actions">
