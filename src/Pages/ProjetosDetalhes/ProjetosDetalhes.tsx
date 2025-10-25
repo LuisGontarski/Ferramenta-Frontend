@@ -97,7 +97,8 @@ const ProjetosDetalhes = () => {
 
   useEffect(() => {
     async function fetchBurndown() {
-      const sprintId = "24c873a0-de8c-496c-b76d-935b65489c3a";
+      const sprintId = localStorage.getItem("sprintSelecionada");
+      console.log("Buscando burndown para sprint ID:", sprintId);
       const res = await fetch(`${BASE_URL}/sprint/${sprintId}/burndown`);
       const data = await res.json();
       console.log("Burndown Data:", data);

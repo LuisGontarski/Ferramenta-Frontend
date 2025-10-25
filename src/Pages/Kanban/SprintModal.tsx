@@ -24,6 +24,9 @@ const SprintModal = ({
   const [newSprintName, setNewSprintName] = useState("");
   const [storyPoints, setStoryPoints] = useState("");
   const [diasSprint, setDiasSprint] = useState("");
+  const [dataInicio, setDataInicio] = useState("");
+  const [dataFim, setDataFim] = useState("");
+
 
   const addSprint = async () => {
     const nome_sprint = newSprintName.trim();
@@ -45,7 +48,10 @@ const SprintModal = ({
         projeto_id: projeto_id,
         story_points: pontos ? parseInt(pontos) : null,
         dias_sprint: dias ? parseInt(dias) : 0,
+        data_inicio: dataInicio || null,
+        data_fim: dataFim || null,
       });
+
 
       console.log("Sprint criada:", res.data);
 
@@ -109,6 +115,22 @@ const SprintModal = ({
             value={diasSprint}
             onChange={(e) => setDiasSprint(e.target.value)}
           />
+          <label className="titulo_input">Data de Início</label>
+          <input
+            type="date"
+            className="input_modal"
+            value={dataInicio}
+            onChange={(e) => setDataInicio(e.target.value)}
+          />
+
+          <label className="titulo_input">Data de Fim</label>
+          <input
+            type="date"
+            className="input_modal"
+            value={dataFim}
+            onChange={(e) => setDataFim(e.target.value)}
+          />
+
         </div>
 
         <div className="modal_actions">
