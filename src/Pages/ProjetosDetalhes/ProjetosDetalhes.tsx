@@ -131,6 +131,7 @@ const ProjetosDetalhes = () => {
       if (!id) return;
       try {
         localStorage.setItem("projeto_id", id);
+        
 
         const resMembros = await fetch(`${BASE_URL}/projects/${id}/users`);
         if (!resMembros.ok)
@@ -141,7 +142,9 @@ const ProjetosDetalhes = () => {
         console.error("Erro ao carregar membros da equipe:", err);
       }
     }
+
     fetchMembrosDoProjeto();
+
     async function fetchDadosDoProjeto() {
       if (!id) return;
       try {
@@ -320,15 +323,13 @@ const ProjetosDetalhes = () => {
     }
   }
 
-  const progressoPercent = totalTarefas > 0 
-    ? Math.round((totalConcluidas / totalTarefas) * 100) 
-    : 0;
+  const progressoPercent =
+    totalTarefas > 0 ? Math.round((totalConcluidas / totalTarefas) * 100) : 0;
 
-const max = 100; // valor máximo em percentual
-const gradientStyle = {
-  background: `linear-gradient(to right, #155dfc 0%, #155dfc ${progressoPercent}%, #e0e0e0 ${progressoPercent}%)`,
-};
-
+  const max = 100; // valor máximo em percentual
+  const gradientStyle = {
+    background: `linear-gradient(to right, #155dfc 0%, #155dfc ${progressoPercent}%, #e0e0e0 ${progressoPercent}%)`,
+  };
 
   const formatDDMMYYYY = (v: string | null): string => {
     if (!v) return "";
@@ -446,16 +447,18 @@ const gradientStyle = {
                 <h2 className="titulo_metricas_detalhes_projetos">
                   Progresso Geral
                 </h2>
-                <h2 className="valor_metricas_detalhes_projetos">{progressoPercent}%</h2>
+                <h2 className="valor_metricas_detalhes_projetos">
+                  {progressoPercent}%
+                </h2>
                 <input
-  type="range"
-  className="custom-range"
-  max={max}
-  min={0}
-  value={progressoPercent}
-  style={gradientStyle}
-  readOnly
-/>
+                  type="range"
+                  className="custom-range"
+                  max={max}
+                  min={0}
+                  value={progressoPercent}
+                  style={gradientStyle}
+                  readOnly
+                />
               </div>
               <div className="div_informacoes_projeto_detalhes">
                 <h2 className="titulo_metricas_detalhes_projetos">
@@ -504,9 +507,13 @@ const gradientStyle = {
               </div>
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={burndownData}>
-  <Line dataKey="planejado" stroke="#3b82f6" strokeDasharray="5 5" />
-  <Line dataKey="real" stroke="#10b981" strokeWidth={2} />
-</LineChart>
+                  <Line
+                    dataKey="planejado"
+                    stroke="#3b82f6"
+                    strokeDasharray="5 5"
+                  />
+                  <Line dataKey="real" stroke="#10b981" strokeWidth={2} />
+                </LineChart>
               </ResponsiveContainer>
               <div className="cards_resumo">
                 <div className="card_kpi bg-blue-50">
