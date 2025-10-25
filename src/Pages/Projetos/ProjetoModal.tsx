@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./ProjetoModal.css";
 import { IoCloseOutline } from "react-icons/io5";
+import { FaUsers, FaGitAlt, FaCalendarAlt, FaInfoCircle } from "react-icons/fa";
 import SelecionarUsuarios from "../../Components/Projeto/SelecionarUsuarios";
 import { getUserById } from "../../services/userDataService";
 import { useEffect } from "react";
@@ -65,7 +66,6 @@ const ProjetoModal: React.FC<ProjetoModalProps> = ({ fecharModal }) => {
 
         const data = await response.json();
 
-        // Se o backend retorna o JSON completo dos repositórios
         setRepositorios(
           data.map((repo: any) => ({
             name: repo.name,
@@ -119,6 +119,11 @@ const ProjetoModal: React.FC<ProjetoModalProps> = ({ fecharModal }) => {
     setMostrarMembros(false);
   }
 
+  function removerEquipe(index: number) {
+    const novasEquipes = equipes.filter((_, i) => i !== index);
+    setEquipes(novasEquipes);
+  }
+
   async function salvarProjeto() {
     if (!equipes.length) {
       toast.error("Adicione pelo menos uma equipe.");
@@ -126,10 +131,10 @@ const ProjetoModal: React.FC<ProjetoModalProps> = ({ fecharModal }) => {
     }
 
     const tituloInput = document.querySelector<HTMLInputElement>(
-      'input[placeholder="Digite o título"]'
+      'input[placeholder="Digite o título do projeto"]'
     )!.value;
     const descricaoInput = document.querySelector<HTMLTextAreaElement>(
-      'textarea[placeholder="Digite a descrição"]'
+      'textarea[placeholder="Descreva o objetivo do projeto..."]'
     )!.value;
     const dataInicioInput =
       document.querySelector<HTMLInputElement>('input[type="date"]')!?.value;
@@ -138,7 +143,7 @@ const ProjetoModal: React.FC<ProjetoModalProps> = ({ fecharModal }) => {
         ?.value;
 
     if (!tituloInput || !descricaoInput || !dataInicioInput || !dataFimInput) {
-      toast.error("Preencha todos os campos.");
+      toast.error("Preencha todos os campos obrigatórios.");
       return;
     }
 
@@ -149,11 +154,9 @@ const ProjetoModal: React.FC<ProjetoModalProps> = ({ fecharModal }) => {
       return;
     }
 
-    // 🔹 busca nome do GitHub do usuário
     const user = await getUserById(usuarioId);
     const nomeGitHub = user.github;
 
-    // Caso crie novo repositório
     if (modoRepo === "novo") {
       if (!novoRepo.trim()) {
         toast.error("Digite o nome do novo repositório.");
@@ -196,7 +199,6 @@ const ProjetoModal: React.FC<ProjetoModalProps> = ({ fecharModal }) => {
       }
     }
 
-    // ✅ Agora salva como "nomeGitHub/repositorio"
     const fullRepoName =
       nomeGitHub && repoName ? `${nomeGitHub}/${repoName}` : repoName;
 
@@ -216,7 +218,6 @@ const ProjetoModal: React.FC<ProjetoModalProps> = ({ fecharModal }) => {
     };
 
     try {
-      // ✅ Mostrar loading durante a criação do projeto
       const loadingToast = toast.loading("Criando projeto...");
 
       const response = await fetch(`${import.meta.env.VITE_API_URL}/projects`, {
@@ -231,7 +232,6 @@ const ProjetoModal: React.FC<ProjetoModalProps> = ({ fecharModal }) => {
         return;
       }
 
-      // ✅ Substituir loading por sucesso
       toast.success("Projeto criado com sucesso!", {
         id: loadingToast,
       });
@@ -246,206 +246,277 @@ const ProjetoModal: React.FC<ProjetoModalProps> = ({ fecharModal }) => {
 
   return (
     <div
-      className="container_modal"
+      className="projeto-modal-container"
       id="card_modal"
       style={{ opacity: 0, pointerEvents: "none" }}
     >
       <div
-        className="modal_conteudo"
+        className="projeto-modal-content"
         id="modal_adicionar_projeto"
         style={{ transform: "translateY(10px)", opacity: 0 }}
       >
-        <div className="modal_header">
-          <h2>Novo Projeto</h2>
-          <button className="btn_fechar_modal" onClick={fechar}>
-            <IoCloseOutline size={20} />
+        <div className="projeto-modal-header">
+          <div className="projeto-modal-title-section">
+            <h2>Criar Novo Projeto</h2>
+            <p className="projeto-modal-subtitle">
+              Preencha as informações abaixo para criar um novo projeto
+            </p>
+          </div>
+          <button className="projeto-modal-close-btn" onClick={fechar}>
+            <IoCloseOutline size={24} />
           </button>
         </div>
 
-        <div className="modal_body">
-          <label>Título do Projeto</label>
-          <input
-            type="text"
-            className="input_modal"
-            placeholder="Digite o título"
-          />
-
-          <label>Descrição</label>
-          <textarea
-            className="input_modal"
-            placeholder="Digite a descrição"
-          ></textarea>
-
-          <label>Data Início</label>
-          <input type="date" className="input_modal" />
-
-          <label>Data Término</label>
-          <input type="date" className="input_modal" />
-
-          <label>Equipe</label>
-          <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1rem" }}>
-            <input
-              type="text"
-              className="input_modal"
-              placeholder="Digite o nome da equipe"
-              value={novoNomeEquipe}
-              onChange={(e) => setNovoNomeEquipe(e.target.value)}
-            />
-            <button
-              className="btn_adicionar_equipe"
-              onClick={iniciarSelecaoMembros}
-              disabled={!novoNomeEquipe.trim()}
-            >
-              Adicionar
-            </button>
-          </div>
-
-          {mostrarMembros && (
-            <div>
-              <SelecionarUsuarios onSelecionar={setUsuariosSelecionados} />
-              <button
-                className="btn_adicionar_equipe"
-                style={{ marginTop: "0.5rem" }}
-                onClick={confirmarEquipe}
-              >
-                Confirmar Seleção
-              </button>
+        <div className="projeto-modal-body">
+          {/* Informações Básicas */}
+          <div className="projeto-modal-section">
+            <div className="projeto-modal-section-header">
+              <FaInfoCircle className="section-icon" />
+              <h3>Informações Básicas</h3>
             </div>
-          )}
+            <div className="projeto-modal-grid">
+              <div className="projeto-modal-input-group">
+                <label>Título do Projeto *</label>
+                <input
+                  type="text"
+                  className="projeto-modal-input"
+                  placeholder="Digite o título do projeto"
+                />
+              </div>
 
-          {equipes.length > 0 && (
-            <div className="container_equipes">
-              {equipes.map((equipe, idx) => (
-                <div key={idx} className="card_equipe">
-                  <strong>{equipe.nome}</strong>
-                  <div className="grid_membros">
-                    {equipe.usuarios.map((u) => (
-                      <div key={u.usuario_id} className="membro_item">
-                        {u.nome_usuario}
-                      </div>
-                    ))}
-                  </div>
+              <div className="projeto-modal-input-group full-width">
+                <label>Descrição *</label>
+                <textarea
+                  className="projeto-modal-textarea"
+                  placeholder="Descreva o objetivo do projeto..."
+                  rows={3}
+                ></textarea>
+              </div>
+
+              <div className="projeto-modal-input-group">
+                <label>Data de Início *</label>
+                <div className="projeto-modal-input-with-icon">
+                  <FaCalendarAlt className="input-icon" />
+                  <input type="date" className="projeto-modal-input" />
                 </div>
-              ))}
-            </div>
-          )}
+              </div>
 
-          <label>Status</label>
-          <select className="input_modal">
-            <option>Ativo</option>
-            <option>Concluído</option>
-            <option>Arquivado</option>
-          </select>
-
-          {/* Opções de escolha */}
-          <div style={{ display: "flex", gap: "1rem", marginBottom: "0.5rem" }}>
-            <label
-              style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}
-            >
-              <input
-                type="radio"
-                name="repoOption"
-                value="existente"
-                checked={modoRepo === "existente"}
-                onChange={() => setModoRepo("existente")}
-              />
-              Usar repositório existente
-            </label>
-
-            <label
-              style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}
-            >
-              <input
-                type="radio"
-                name="repoOption"
-                value="novo"
-                checked={modoRepo === "novo"}
-                onChange={() => setModoRepo("novo")}
-              />
-              Criar novo repositório
-            </label>
-          </div>
-
-          {/* Se escolheu repositório existente */}
-          {modoRepo === "existente" && (
-            <select
-              className="input_modal"
-              value={repoSelecionado}
-              onChange={(e) => setRepoSelecionado(e.target.value)}
-            >
-              <option value="">Selecione um repositório</option>
-              {repositorios.map((repo: Repositorio) => (
-                <option key={repo.name} value={repo.name}>
-                  {repo.name}
-                </option>
-              ))}
-            </select>
-          )}
-
-          {/* Se escolheu criar novo repositório */}
-          {modoRepo === "novo" && (
-            <div className="container_novo_repo">
-              <label>Nome do repositório</label>
-              <input
-                type="text"
-                className="input_modal"
-                placeholder="Digite o nome do novo repositório"
-                value={novoRepo}
-                onChange={(e) => setNovoRepo(e.target.value)}
-              />
-
-              <label>Descrição do repositório</label>
-              <textarea
-                className="input_modal"
-                placeholder="Digite uma descrição (opcional)"
-                value={descricaoRepo}
-                onChange={(e) => setDescricaoRepo(e.target.value)}
-              ></textarea>
-
-              <label>Visibilidade</label>
-              <div
-                style={{ display: "flex", gap: "1rem", marginBottom: "0.5rem" }}
-              >
-                <label
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.3rem",
-                  }}
-                >
-                  <input
-                    type="radio"
-                    name="privacidadeRepo"
-                    value="public"
-                    checked={!privadoRepo}
-                    onChange={() => setPrivadoRepo(false)}
-                  />
-                  Público
-                </label>
-
-                <label
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.3rem",
-                  }}
-                >
-                  <input
-                    type="radio"
-                    name="privacidadeRepo"
-                    value="private"
-                    checked={privadoRepo}
-                    onChange={() => setPrivadoRepo(true)}
-                  />
-                  Privado
-                </label>
+              <div className="projeto-modal-input-group">
+                <label>Data de Término *</label>
+                <div className="projeto-modal-input-with-icon">
+                  <FaCalendarAlt className="input-icon" />
+                  <input type="date" className="projeto-modal-input" />
+                </div>
               </div>
             </div>
-          )}
+          </div>
 
-          <button className="btn_salvar_modal" onClick={salvarProjeto}>
-            Salvar Projeto
-          </button>
+          {/* Gestão de Equipes */}
+          <div className="projeto-modal-section">
+            <div className="projeto-modal-section-header">
+              <FaUsers className="section-icon" />
+              <h3>Gestão de Equipes</h3>
+            </div>
+
+            <div className="projeto-modal-team-creation">
+              <div className="projeto-modal-input-group">
+                <label>Nome da Equipe *</label>
+                <div className="projeto-modal-input-with-button">
+                  <input
+                    type="text"
+                    className="projeto-modal-input"
+                    placeholder="Digite o nome da equipe"
+                    value={novoNomeEquipe}
+                    onChange={(e) => setNovoNomeEquipe(e.target.value)}
+                  />
+                  <button
+                    className="projeto-modal-add-btn"
+                    onClick={iniciarSelecaoMembros}
+                    disabled={!novoNomeEquipe.trim()}
+                  >
+                    <FaUsers size={14} />
+                    Adicionar Membros
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {mostrarMembros && (
+              <div className="projeto-modal-members-selection">
+                <SelecionarUsuarios onSelecionar={setUsuariosSelecionados} />
+                <div className="projeto-modal-confirm-section">
+                  <p>{usuariosSelecionados.length} membro(s) selecionado(s)</p>
+                  <button
+                    className="projeto-modal-confirm-btn"
+                    onClick={confirmarEquipe}
+                    disabled={usuariosSelecionados.length === 0}
+                  >
+                    Confirmar Equipe
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {equipes.length > 0 && (
+              <div className="projeto-modal-teams-list">
+                <h4>Equipes Adicionadas ({equipes.length})</h4>
+                {equipes.map((equipe, idx) => (
+                  <div key={idx} className="projeto-modal-team-card">
+                    <div className="projeto-modal-team-header">
+                      <strong>{equipe.nome}</strong>
+                      <button
+                        className="projeto-modal-remove-btn"
+                        onClick={() => removerEquipe(idx)}
+                      >
+                        <IoCloseOutline size={16} />
+                      </button>
+                    </div>
+                    <div className="projeto-modal-members-grid">
+                      {equipe.usuarios.map((u) => (
+                        <div
+                          key={u.usuario_id}
+                          className="projeto-modal-member-tag"
+                        >
+                          {u.nome_usuario}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Configuração do Repositório */}
+          <div className="projeto-modal-section">
+            <div className="projeto-modal-section-header">
+              <FaGitAlt className="section-icon" />
+              <h3>Repositório GitHub</h3>
+            </div>
+
+            <div className="projeto-modal-repo-options">
+              <div className="projeto-modal-radio-group">
+                <label className="projeto-modal-radio">
+                  <input
+                    type="radio"
+                    name="repoOption"
+                    value="existente"
+                    checked={modoRepo === "existente"}
+                    onChange={() => setModoRepo("existente")}
+                  />
+                  <span className="radio-custom"></span>
+                  Usar repositório existente
+                </label>
+                <label className="projeto-modal-radio">
+                  <input
+                    type="radio"
+                    name="repoOption"
+                    value="novo"
+                    checked={modoRepo === "novo"}
+                    onChange={() => setModoRepo("novo")}
+                  />
+                  <span className="radio-custom"></span>
+                  Criar novo repositório
+                </label>
+              </div>
+
+              {modoRepo === "existente" && (
+                <div className="projeto-modal-input-group">
+                  <label>Selecionar Repositório</label>
+                  <select
+                    className="projeto-modal-input"
+                    value={repoSelecionado}
+                    onChange={(e) => setRepoSelecionado(e.target.value)}
+                  >
+                    <option value="">Selecione um repositório</option>
+                    {repositorios.map((repo: Repositorio) => (
+                      <option key={repo.name} value={repo.name}>
+                        {repo.name} {repo.language && `(${repo.language})`}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              {modoRepo === "novo" && (
+                <div className="projeto-modal-new-repo">
+                  <div className="projeto-modal-grid">
+                    <div className="projeto-modal-input-group">
+                      <label>Nome do Repositório *</label>
+                      <input
+                        type="text"
+                        className="projeto-modal-input"
+                        placeholder="Digite o nome do repositório"
+                        value={novoRepo}
+                        onChange={(e) => setNovoRepo(e.target.value)}
+                      />
+                    </div>
+
+                    <div className="projeto-modal-input-group full-width">
+                      <label>Descrição</label>
+                      <textarea
+                        className="projeto-modal-textarea"
+                        placeholder="Descrição do repositório (opcional)"
+                        value={descricaoRepo}
+                        onChange={(e) => setDescricaoRepo(e.target.value)}
+                        rows={2}
+                      ></textarea>
+                    </div>
+
+                    <div className="projeto-modal-input-group">
+                      <label>Visibilidade</label>
+                      <div className="projeto-modal-visibility-options">
+                        <label className="projeto-modal-radio">
+                          <input
+                            type="radio"
+                            name="privacidadeRepo"
+                            value="public"
+                            checked={!privadoRepo}
+                            onChange={() => setPrivadoRepo(false)}
+                          />
+                          <span className="radio-custom"></span>
+                          Público
+                        </label>
+                        <label className="projeto-modal-radio">
+                          <input
+                            type="radio"
+                            name="privacidadeRepo"
+                            value="private"
+                            checked={privadoRepo}
+                            onChange={() => setPrivadoRepo(true)}
+                          />
+                          <span className="radio-custom"></span>
+                          Privado
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Status do Projeto */}
+          <div className="projeto-modal-section">
+            <div className="projeto-modal-input-group">
+              <label>Status do Projeto</label>
+              <select className="projeto-modal-input">
+                <option>Ativo</option>
+                <option>Concluído</option>
+                <option>Arquivado</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Botão de Ação */}
+          <div className="projeto-modal-actions">
+            <button className="projeto-modal-cancel-btn" onClick={fechar}>
+              Cancelar
+            </button>
+            <button className="projeto-modal-save-btn" onClick={salvarProjeto}>
+              Criar Projeto
+            </button>
+          </div>
         </div>
       </div>
     </div>

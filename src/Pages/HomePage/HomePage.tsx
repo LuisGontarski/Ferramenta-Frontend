@@ -1,477 +1,209 @@
 import "./HomePage.css";
 import NavbarHome from "../../Components/Navbar/NavbarHome";
-import desenvolvedor1 from "../../Assets/desenvolvedor1.jpeg";
-import desenvolvedor2 from "../../Assets/desenvolvedor2.jpeg";
-import desenvolvedor3 from "../../Assets/desenvolvedor3.jpeg";
-import { FaChevronRight } from "react-icons/fa6";
-import { MdAccessTime } from "react-icons/md";
-import { GoPeople } from "react-icons/go";
-import { handleGerarRelatorio } from "../../services/relatorioService";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  AreaChart,
-  Area,
-} from "recharts";
 import MenuLateral from "../../Components/MenuLateral/MenuLateral";
 import { NavLink } from "react-router-dom";
-const value = 5.5;
-const max = 10;
-const params = new URLSearchParams(window.location.search);
-const accessToken = params.get("access_token");
-
-const userAvatars: Record<string, string> = {
-  João: desenvolvedor1,
-  Maria: desenvolvedor2,
-  Ana: desenvolvedor3,
-};
-
-if (accessToken) {
-  localStorage.setItem("access_token", accessToken);
-}
-
-const fillPercent = (value / max) * 100;
-
-const gradientStyle = {
-  background: `linear-gradient(to right, #155DFC 0%, #155DFC ${fillPercent}%, #e0e0e0 ${fillPercent}%)`,
-};
-
-const data = [
-  { dia: "Seg", commits: 12, issues: 3 },
-  { dia: "Ter", commits: 18, issues: 5 },
-  { dia: "Qua", commits: 10, issues: 2 },
-  { dia: "Qui", commits: 22, issues: 6 },
-  { dia: "Sex", commits: 17, issues: 4 },
-  { dia: "Sáb", commits: 6, issues: 1 },
-  { dia: "Dom", commits: 9, issues: 2 },
-];
+import {
+  FaProjectDiagram,
+  FaTrello,
+  FaCodeBranch,
+  FaCalendarAlt,
+  FaChartBar,
+  FaFileAlt,
+  FaTasks,
+  FaComments,
+  FaHistory,
+  FaRocket,
+  FaUsers,
+  FaSync,
+  FaShieldAlt,
+  FaCheckCircle,
+  FaArrowRight,
+  FaRegCheckCircle,
+} from "react-icons/fa";
 
 const HomePage = () => {
+  const features = [
+    {
+      icon: <FaProjectDiagram className="homepage-feature-icon" />,
+      title: "Criação de Projetos",
+      description:
+        "Organize e gerencie múltiplos projetos com equipes, prazos e metas bem definidas.",
+      color: "#1D4ED8",
+    },
+    {
+      icon: <FaTrello className="homepage-feature-icon" />,
+      title: "Kanban Integrado",
+      description:
+        "Fluxo visual intuitivo com boards personalizáveis para acompanhar todo o progresso.",
+      color: "#059669",
+    },
+    {
+      icon: <FaCodeBranch className="homepage-feature-icon" />,
+      title: "Integração com GitHub",
+      description:
+        "Sincronização automática com repositórios Git e acompanhamento em tempo real.",
+      color: "#7C3AED",
+    },
+    {
+      icon: <FaCalendarAlt className="homepage-feature-icon" />,
+      title: "Cronograma Inteligente",
+      description:
+        "Planejamento visual com datas, dependências e milestones do projeto.",
+      color: "#DC2626",
+    },
+    {
+      icon: <FaChartBar className="homepage-feature-icon" />,
+      title: "Relatórios Detalhados",
+      description:
+        "Gere insights valiosos com relatórios personalizados de performance.",
+      color: "#D97706",
+    },
+    {
+      icon: <FaFileAlt className="homepage-feature-icon" />,
+      title: "Documentação Centralizada",
+      description:
+        "Armazene e version toda a documentação do projeto em um só lugar.",
+      color: "#DB2777",
+    },
+    {
+      icon: <FaTasks className="homepage-feature-icon" />,
+      title: "Gestão de Requisitos",
+      description:
+        "Organize requisitos funcionais e não funcionais com rastreabilidade.",
+      color: "#0891B2",
+    },
+    {
+      icon: <FaComments className="homepage-feature-icon" />,
+      title: "Chat em Tempo Real",
+      description:
+        "Comunicação instantânea com sua equipe através de chat integrado.",
+      color: "#65A30D",
+    },
+    {
+      icon: <FaHistory className="homepage-feature-icon" />,
+      title: "Histórico Completo",
+      description:
+        "Acompanhe todo histórico de alterações e evolução do projeto.",
+      color: "#475569",
+    },
+  ];
+
+  const benefits = [
+    "Aumente a produtividade da equipe",
+    "Visualize suas tarefas com clareza",
+    "Melhore a visibilidade do progresso dos projetos",
+    "Centralize toda a comunicação do time",
+  ];
+
   return (
     <>
       <div>
         <NavbarHome />
       </div>
 
-      <main className="container_conteudos">
+      <main className="homepage-container">
         <MenuLateral />
-        <div className="container_vertical_conteudos">
-          <div className="container_dashboard">
-            <div className="container_metricas_dashboard">
-              <div className="card_atualizacoes">
-                <h2 className="titulo_metricas_dashboard">Projetos ativos</h2>
-                <h2 className="numero_metricas_dashboard">12</h2>
-                <h2 className="adicional_metricas_dashboard metricas_ganhos">
-                  +2 desde o mês passado
-                </h2>
-              </div>
-              <div className="card_atualizacoes">
-                <h2 className="titulo_metricas_dashboard">
-                  Commits Esta Semana
-                </h2>
-                <h2 className="numero_metricas_dashboard">106</h2>
-                <h2 className="adicional_metricas_dashboard metricas_ganhos">
-                  +15% desde a semana passada
-                </h2>
-              </div>
-              <div className="card_atualizacoes">
-                <h2 className="titulo_metricas_dashboard">Issues Abertas</h2>
-                <h2 className="numero_metricas_dashboard">37</h2>
-                <h2 className="adicional_metricas_dashboard">-4 desde ontem</h2>
-              </div>
-              <div className="card_atualizacoes">
-                <h2 className="titulo_metricas_dashboard">Produtividade</h2>
-                <h2 className="numero_metricas_dashboard">94%</h2>
-                <h2 className="adicional_metricas_dashboard metricas_perdas">
-                  -5% esta semana
-                </h2>
-              </div>
-               <button
-                  className="btn_relatorio"
-                  onClick={handleGerarRelatorio}
-                >
-                  Gerar Relatório
-                </button>
-            </div>
+        <div className="homepage-content">
+          {/* Hero Section */}
+          <section className="homepage-hero-section">
+            <div className="homepage-hero-content">
+              <div className="homepage-hero-text">
+                <div className="homepage-hero-badge">
+                  <FaCheckCircle className="homepage-badge-icon" />
+                  Plataforma All-in-One para Gestão de Projetos
+                </div>
+                <h1 className="homepage-hero-title">
+                  Gerencie projetos com
+                  <span className="homepage-highlight"> eficiência</span> e
+                  <span className="homepage-highlight"> colaboração</span>
+                </h1>
+                <p className="homepage-hero-description">
+                  Una sua equipe, ferramentas e processos em uma plataforma
+                  integrada. Do planejamento à entrega, temos tudo que você
+                  precisa para o sucesso do seu projeto.
+                </p>
 
-            <div className="card_atualizacoes">
-              <h2 className="titulo_grafico_dashboard">Atividade Semanal</h2>
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart
-                  data={data}
-                  margin={{ top: 20, right: 30, left: 0, bottom: 5 }}
-                >
-                  <CartesianGrid
-                    stroke="#e5e7eb"
-                    strokeOpacity={0.6}
-                    strokeDasharray="4 4"
-                  />
-
-                  <XAxis
-                    dataKey="dia"
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fill: "#6b7280", fontSize: 12 }}
-                  />
-                  <YAxis
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fill: "#6b7280", fontSize: 12 }}
-                  />
-
-                  <Tooltip
-                    contentStyle={{
-                      borderRadius: "10px",
-                      border: "1px solid #e5e7eb",
-                      boxShadow: "0px 2px 8px rgba(0,0,0,0.1)",
-                      fontSize: "12px",
-                    }}
-                  />
-                  <Legend
-                    wrapperStyle={{ fontSize: "12px", color: "#6b7280" }}
-                  />
-
-                  <Line
-                    type="monotone"
-                    dataKey="commits"
-                    stroke="#3b82f6"
-                    strokeWidth={2.5}
-                    dot={{ r: 5, fill: "#3b82f6" }}
-                    activeDot={{ r: 7 }}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="issues"
-                    stroke="#10b981"
-                    strokeWidth={2.5}
-                    dot={{ r: 5, fill: "#10b981" }}
-                    activeDot={{ r: 7 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-
-            <div className="card_atualizacoes">
-              <div className="div_titulo_projetos">
-                <div>
-                  <h2 className="titulo_homepage">Projetos Recentes</h2>
-                  <h2 className="descricao_projetos">
-                    Você tem 12 projetos ativos no momento.
-                  </h2>
+                <div className="homepage-benefits-list">
+                  {benefits.map((benefit, index) => (
+                    <div key={index} className="homepage-benefit-item">
+                      <FaCheckCircle className="homepage-benefit-icon" />
+                      <span>{benefit}</span>
+                    </div>
+                  ))}
                 </div>
-                <NavLink to={"/projetos"} className="div_ver_projetos">
-                  <span className="texto_ver_projetos">Ver todos</span>
-                  <FaChevronRight color="black" size={"12px"} />
-                </NavLink>
+
+                <div className="homepage-hero-actions">
+                  <NavLink
+                    to="/projetos"
+                    className="homepage-btn homepage-btn-primary"
+                  >
+                    <FaRocket className="homepage-btn-icon" />
+                    Começar Agora
+                    <FaArrowRight className="homepage-btn-arrow" />
+                  </NavLink>
+                </div>
               </div>
-              <div className="container_card_projetos_recentes">
-                <div className="card_projetos_recentes">
-                  <div>
-                    <h2 className="texto_projetos">Projeto AllLuga</h2>
-                    <h2 className="texto_atualizacao">
-                      Sistema completo de alugueis de todos os itens
-                    </h2>
+
+              <div className="homepage-hero-visual">
+                <div className="homepage-hero-cards">
+                  <div className="homepage-hero-card homepage-card-1">
+                    <FaTrello className="homepage-card-icon" />
+                    <span>Quadro Kanban</span>
                   </div>
-                  <div className="div_progresso_projeto">
-                    <div className="div_dois_projetos_recentes">
-                      <h2 className="texto_progresso">Progresso</h2>
-                      <h2 className="texto_progresso">55%</h2>
-                    </div>
-                    <input
-                      type="range"
-                      className="custom-range"
-                      max={max}
-                      min={0}
-                      defaultValue={value}
-                      style={gradientStyle}
-                    />
+                  <div className="homepage-hero-card homepage-card-2">
+                    <FaCodeBranch className="homepage-card-icon" />
+                    <span>Integração com Git</span>
                   </div>
-                  <div className="div_icones_projetos">
-                    <div className="div_items_icones">
-                      <MdAccessTime size={"16px"} color="#71717A" />
-                      <h2 className="texto_atualizacao">
-                        Atualizado há 2 horas
-                      </h2>
-                    </div>
-                    <div className="div_items_icones">
-                      <GoPeople size={"16px"} color="#71717A" />
-                      <h2 className="texto_atualizacao">6 membros</h2>
-                    </div>
+                  <div className="homepage-hero-card homepage-card-3">
+                    <FaChartBar className="homepage-card-icon" />
+                    <span>Métricas</span>
                   </div>
-                  <NavLink
-                    to={"/ProjetosDetalhes"}
-                    className="btn_entrar_projeto"
-                  >
-                    Acessar projeto
-                  </NavLink>
-                </div>
-                <div className="card_projetos_recentes">
-                  <div>
-                    <h2 className="texto_projetos">Projeto AllLuga</h2>
-                    <h2 className="texto_atualizacao">
-                      Sistema completo de alugueis de todos os itens
-                    </h2>
+                  <div className="homepage-hero-card homepage-card-4">
+                    <FaComments className="homepage-card-icon" />
+                    <span>Chat em tempo real</span>
                   </div>
-                  <div className="div_progresso_projeto">
-                    <div className="div_dois_projetos_recentes">
-                      <h2 className="texto_progresso">Progresso</h2>
-                      <h2 className="texto_progresso">55%</h2>
-                    </div>
-                    <input
-                      type="range"
-                      className="custom-range"
-                      max={max}
-                      min={0}
-                      defaultValue={value}
-                      style={gradientStyle}
-                    />
-                  </div>
-                  <div className="div_icones_projetos">
-                    <div className="div_items_icones">
-                      <MdAccessTime size={"16px"} color="#71717A" />
-                      <h2 className="texto_atualizacao">
-                        Atualizado há 2 horas
-                      </h2>
-                    </div>
-                    <div className="div_items_icones">
-                      <GoPeople size={"16px"} color="#71717A" />
-                      <h2 className="texto_atualizacao">6 membros</h2>
-                    </div>
-                  </div>
-                  <NavLink
-                    to={"/ProjetosDetalhes"}
-                    className="btn_entrar_projeto"
-                  >
-                    Acessar projeto
-                  </NavLink>
-                </div>
-                <div className="card_projetos_recentes">
-                  <div>
-                    <h2 className="texto_projetos">Projeto AllLuga</h2>
-                    <h2 className="texto_atualizacao">
-                      Sistema completo de alugueis de todos os itens
-                    </h2>
-                  </div>
-                  <div className="div_progresso_projeto">
-                    <div className="div_dois_projetos_recentes">
-                      <h2 className="texto_progresso">Progresso</h2>
-                      <h2 className="texto_progresso">55%</h2>
-                    </div>
-                    <input
-                      type="range"
-                      className="custom-range"
-                      max={max}
-                      min={0}
-                      defaultValue={value}
-                      style={gradientStyle}
-                    />
-                  </div>
-                  <div className="div_icones_projetos">
-                    <div className="div_items_icones">
-                      <MdAccessTime size={"16px"} color="#71717A" />
-                      <h2 className="texto_atualizacao">
-                        Atualizado há 2 horas
-                      </h2>
-                    </div>
-                    <div className="div_items_icones">
-                      <GoPeople size={"16px"} color="#71717A" />
-                      <h2 className="texto_atualizacao">6 membros</h2>
-                    </div>
-                  </div>
-                  <NavLink
-                    to={"/ProjetosDetalhes"}
-                    className="btn_entrar_projeto"
-                  >
-                    Acessar projeto
-                  </NavLink>
-                </div>
-                <div className="card_projetos_recentes">
-                  <div>
-                    <h2 className="texto_projetos">Projeto AllLuga</h2>
-                    <h2 className="texto_atualizacao">
-                      Sistema completo de alugueis de todos os itens
-                    </h2>
-                  </div>
-                  <div className="div_progresso_projeto">
-                    <div className="div_dois_projetos_recentes">
-                      <h2 className="texto_progresso">Progresso</h2>
-                      <h2 className="texto_progresso">55%</h2>
-                    </div>
-                    <input
-                      type="range"
-                      className="custom-range"
-                      max={max}
-                      min={0}
-                      defaultValue={value}
-                      style={gradientStyle}
-                    />
-                  </div>
-                  <div className="div_icones_projetos">
-                    <div className="div_items_icones">
-                      <MdAccessTime size={"16px"} color="#71717A" />
-                      <h2 className="texto_atualizacao">
-                        Atualizado há 2 horas
-                      </h2>
-                    </div>
-                    <div className="div_items_icones">
-                      <GoPeople size={"16px"} color="#71717A" />
-                      <h2 className="texto_atualizacao">6 membros</h2>
-                    </div>
-                  </div>
-                  <NavLink
-                    to={"/ProjetosDetalhes"}
-                    className="btn_entrar_projeto"
-                  >
-                    Acessar projeto
-                  </NavLink>
-                </div>
-                <div className="card_projetos_recentes">
-                  <div>
-                    <h2 className="texto_projetos">Projeto AllLuga</h2>
-                    <h2 className="texto_atualizacao">
-                      Sistema completo de alugueis de todos os itens
-                    </h2>
-                  </div>
-                  <div className="div_progresso_projeto">
-                    <div className="div_dois_projetos_recentes">
-                      <h2 className="texto_progresso">Progresso</h2>
-                      <h2 className="texto_progresso">55%</h2>
-                    </div>
-                    <input
-                      type="range"
-                      className="custom-range"
-                      max={max}
-                      min={0}
-                      defaultValue={value}
-                      style={gradientStyle}
-                    />
-                  </div>
-                  <div className="div_icones_projetos">
-                    <div className="div_items_icones">
-                      <MdAccessTime size={"16px"} color="#71717A" />
-                      <h2 className="texto_atualizacao">
-                        Atualizado há 2 horas
-                      </h2>
-                    </div>
-                    <div className="div_items_icones">
-                      <GoPeople size={"16px"} color="#71717A" />
-                      <h2 className="texto_atualizacao">6 membros</h2>
-                    </div>
-                  </div>
-                  <NavLink
-                    to={"/ProjetosDetalhes"}
-                    className="btn_entrar_projeto"
-                  >
-                    Acessar projeto
-                  </NavLink>
-                </div>
-                <div className="card_projetos_recentes">
-                  <div>
-                    <h2 className="texto_projetos">Projeto AllLuga</h2>
-                    <h2 className="texto_atualizacao">
-                      Sistema completo de alugueis de todos os itens
-                    </h2>
-                  </div>
-                  <div className="div_progresso_projeto">
-                    <div className="div_dois_projetos_recentes">
-                      <h2 className="texto_progresso">Progresso</h2>
-                      <h2 className="texto_progresso">55%</h2>
-                    </div>
-                    <input
-                      type="range"
-                      className="custom-range"
-                      max={max}
-                      min={0}
-                      defaultValue={value}
-                      style={gradientStyle}
-                    />
-                  </div>
-                  <div className="div_icones_projetos">
-                    <div className="div_items_icones">
-                      <MdAccessTime size={"16px"} color="#71717A" />
-                      <h2 className="texto_atualizacao">
-                        Atualizado há 2 horas
-                      </h2>
-                    </div>
-                    <div className="div_items_icones">
-                      <GoPeople size={"16px"} color="#71717A" />
-                      <h2 className="texto_atualizacao">6 membros</h2>
-                    </div>
-                  </div>
-                  <NavLink
-                    to={"/ProjetosDetalhes"}
-                    className="btn_entrar_projeto"
-                  >
-                    Acessar projeto
-                  </NavLink>
                 </div>
               </div>
             </div>
+          </section>
 
-            <div className="card_atualizacoes">
-              <h2 className="titulo_homepage">Atividades Recentes</h2>
-              <div className="div_atividades_recentes">
-                <div className="container_projetos">
-                  <img src={desenvolvedor1} className="img_atividade_recente" />
-                  <div>
-                    <h2 className="texto_atividade_recente">
-                      <span className="responsavel_atividade_recente">
-                        João Silva
-                      </span>{" "}
-                      fez commit em{" "}
-                      <span className="projeto_atividade_recente">
-                        E-commerce Platform
-                      </span>
-                    </h2>
-                    <h2 className="texto_recente_atualizacao">2 horas atrás</h2>
-                  </div>
-                </div>
-                <FaChevronRight color="#71717A" />
-              </div>
-              <div className="div_atividades_recentes">
-                <div className="container_projetos">
-                  <img src={desenvolvedor2} className="img_atividade_recente" />
-                  <div>
-                    <h2 className="texto_atividade_recente">
-                      <span className="responsavel_atividade_recente">
-                        João Silva
-                      </span>{" "}
-                      fez commit em{" "}
-                      <span className="projeto_atividade_recente">
-                        E-commerce Platform
-                      </span>
-                    </h2>
-                    <h2 className="texto_recente_atualizacao">2 horas atrás</h2>
-                  </div>
-                </div>
-                <FaChevronRight color="#71717A" />
-              </div>
-              <div className="div_atividades_recentes">
-                <div className="container_projetos">
-                  <img src={desenvolvedor3} className="img_atividade_recente" />
-                  <div>
-                    <h2 className="texto_atividade_recente">
-                      <span className="responsavel_atividade_recente">
-                        João Silva
-                      </span>{" "}
-                      fez commit em{" "}
-                      <span className="projeto_atividade_recente">
-                        E-commerce Platform
-                      </span>
-                    </h2>
-                    <h2 className="texto_recente_atualizacao">2 horas atrás</h2>
-                  </div>
-                </div>
-                <FaChevronRight color="#71717A" />
-              </div>
+          {/* Features Section */}
+          <section className="homepage-features-section">
+            <div className="homepage-section-header">
+              <h2 className="homepage-section-title">
+                Tudo que sua equipe precisa em um só lugar
+              </h2>
+              <p className="homepage-section-description">
+                Integre todas as ferramentas do seu fluxo de trabalho e aumente
+                a produtividade da equipe
+              </p>
             </div>
-          </div>
+
+            <div className="homepage-features-grid">
+              {features.map((feature, index) => (
+                <div key={index} className="homepage-feature-card">
+                  <div
+                    className="homepage-feature-icon-container"
+                    style={{ backgroundColor: `${feature.color}15` }}
+                  >
+                    <div
+                      className="homepage-feature-icon-wrapper"
+                      style={{ color: feature.color }}
+                    >
+                      {feature.icon}
+                    </div>
+                  </div>
+                  <h3 className="homepage-feature-title">{feature.title}</h3>
+                  <p className="homepage-feature-description">
+                    {feature.description}
+                  </p>
+                  <div className="homepage-feature-link">
+                    <FaRegCheckCircle className="homepage-feature-arrow" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
         </div>
       </main>
     </>

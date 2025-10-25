@@ -1,201 +1,500 @@
 /* ==================== Container Modal ==================== */
-.container_modal {
+.projeto-modal-container {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 101;
+  z-index: 1000;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease-in-out;
+  padding: 1rem;
 }
 
 /* ==================== Conteúdo Modal ==================== */
-.modal_conteudo {
+.projeto-modal-content {
   background-color: #fff;
-  border-radius: 12px;
-  padding: 3rem; /* mais espaçamento interno */
-  max-width: 900px; /* largura maior */
-  width: 90%;
-  max-height: 90%; /* altura maior */
+  border-radius: 16px;
+  padding: 2.5rem;
+  max-width: 800px;
+  width: 100%;
+  max-height: 90vh;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem; /* espaçamento maior entre elementos */
+  gap: 2rem;
   transform: translateY(10px);
   opacity: 0;
   transition: all 0.3s ease-out;
-  position: relative;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  border: 1px solid #e2e8f0;
 }
 
 /* ==================== Header ==================== */
-.modal_header {
+.projeto-modal-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-}
-
-.modal_header h2 {
-  font-size: 20px;
-  font-weight: 600;
-  margin: 0;
-}
-
-.btn_fechar_modal {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  color: #333;
-  transition: color 0.2s;
-}
-
-.btn_fechar_modal:hover {
-  color: #155dfc;
-}
-
-/* ==================== Body Inputs ==================== */
-.modal_body {
-  display: flex;
-  flex-direction: column;
+  align-items: flex-start;
   gap: 1rem;
 }
 
-.modal_body label {
-  font-size: 14px;
-  font-weight: 500;
-  margin-bottom: 0.3rem;
+.projeto-modal-title-section h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 0.5rem 0;
 }
 
-.input_modal {
-  height: 40px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  padding: 0.5rem 0.75rem;
-  font-size: 14px;
-  outline: none;
-  transition: all 0.2s;
+.projeto-modal-subtitle {
+  font-size: 0.95rem;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.5;
 }
 
-.input_modal:focus {
-  border-color: #155dfc;
-  box-shadow: 0 0 0 2px rgba(21, 93, 252, 0.2);
-}
-
-textarea.input_modal {
-  resize: vertical;
-  min-height: 80px;
-}
-
-select.input_modal {
-  appearance: none;
-  cursor: pointer;
-}
-
-/* ==================== Botões ==================== */
-.btn_salvar_modal,
-.btn_adicionar_equipe {
+.projeto-modal-close-btn {
+  background: transparent;
   border: none;
   cursor: pointer;
-  font-size: 14px;
-  height: 40px;
-  padding: 0.6rem 1rem;
-  border-radius: 6px;
-  text-align: center;
-  transition: background 0.3s, transform 0.2s;
+  color: #6b7280;
+  padding: 0.5rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
 }
 
-.btn_salvar_modal {
-  width: 100%;
-  background-color: #155dfc;
-  color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+.projeto-modal-close-btn:hover {
+  background: #f3f4f6;
+  color: #374151;
 }
 
-.btn_salvar_modal:hover {
-  background-color: #0f46c3;
-  transform: translateY(-1px);
-}
-
-.btn_adicionar_equipe {
-  background-color: #155dfc;
-  color: #fff;
-}
-
-.btn_adicionar_equipe:hover {
-  background-color: #0f46c3;
-  transform: translateY(-1px);
-}
-
-/* ==================== Equipes/Membros ==================== */
-.container_equipes {
+/* ==================== Body ==================== */
+.projeto-modal-body {
   display: flex;
   flex-direction: column;
-  gap: 0.8rem;
+  gap: 2rem;
 }
 
-.card_equipe {
-  border: 1px solid #ccc;
-  background-color: #f8f9fc;
-  padding: 0.75rem;
-  border-radius: 8px;
+/* ==================== Sections ==================== */
+.projeto-modal-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.projeto-modal-section-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #f3f4f6;
+}
+
+.projeto-modal-section-header h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 0;
+}
+
+.section-icon {
+  color: #1d4ed8;
+  font-size: 1.1rem;
+}
+
+/* ==================== Grid Layout ==================== */
+.projeto-modal-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+/* ==================== Input Groups ==================== */
+.projeto-modal-input-group {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+}
+
+.projeto-modal-input-group label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.projeto-modal-input,
+.projeto-modal-textarea,
+.projeto-modal-select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  background: #fff;
+}
+
+.projeto-modal-input:focus,
+.projeto-modal-textarea:focus,
+.projeto-modal-select:focus {
+  outline: none;
+  border-color: #1d4ed8;
+  box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.1);
+}
+
+.projeto-modal-textarea {
+  resize: vertical;
+  min-height: 80px;
+  font-family: inherit;
+}
+
+.projeto-modal-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.5rem center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+  padding-right: 2.5rem;
+}
+
+/* ==================== Input with Icon ==================== */
+.projeto-modal-input-with-icon {
   position: relative;
 }
 
-.nome_equipe {
-  font-weight: 500;
-  font-size: 16px;
+.input-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6b7280;
+  font-size: 1rem;
 }
 
-.grid_membros {
+.projeto-modal-input-with-icon .projeto-modal-input {
+  padding-left: 2.5rem;
+}
+
+/* ==================== Team Creation ==================== */
+.projeto-modal-input-with-button {
   display: flex;
+  gap: 0.75rem;
+  align-items: flex-end;
+}
+
+.projeto-modal-add-btn {
+  background: #1d4ed8;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.25rem;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
   gap: 0.5rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.projeto-modal-add-btn:hover:not(:disabled) {
+  background: #1e40af;
+  transform: translateY(-1px);
+}
+
+.projeto-modal-add-btn:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ==================== Members Selection ==================== */
+.projeto-modal-members-selection {
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.5rem;
+  background: #fafafa;
+}
+
+.projeto-modal-confirm-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.projeto-modal-confirm-section p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.projeto-modal-confirm-btn {
+  background: #059669;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.projeto-modal-confirm-btn:hover:not(:disabled) {
+  background: #047857;
+  transform: translateY(-1px);
+}
+
+.projeto-modal-confirm-btn:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* ==================== Teams List ==================== */
+.projeto-modal-teams-list h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 0 0 1rem 0;
+}
+
+.projeto-modal-team-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+  transition: all 0.2s ease;
+}
+
+.projeto-modal-team-card:hover {
+  border-color: #1d4ed8;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.projeto-modal-team-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.projeto-modal-team-header strong {
+  font-size: 1rem;
+  color: #1f2937;
+}
+
+.projeto-modal-remove-btn {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 0.4rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.projeto-modal-remove-btn:hover {
+  background: #dc2626;
+  transform: scale(1.05);
+}
+
+.projeto-modal-members-grid {
+  display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
+}
+
+.projeto-modal-member-tag {
+  background: #1d4ed8;
+  color: white;
+  padding: 0.4rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+/* ==================== Radio Groups ==================== */
+.projeto-modal-radio-group {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.projeto-modal-radio {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: #374151;
+}
+
+.projeto-modal-radio input {
+  display: none;
+}
+
+.radio-custom {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #d1d5db;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.radio-custom::after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #1d4ed8;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.projeto-modal-radio input:checked + .radio-custom {
+  border-color: #1d4ed8;
+}
+
+.projeto-modal-radio input:checked + .radio-custom::after {
+  opacity: 1;
+}
+
+.projeto-modal-visibility-options {
+  display: flex;
+  gap: 1.5rem;
   margin-top: 0.5rem;
 }
 
-.membro_item {
-  padding: 0.25rem 0.5rem;
-  border-radius: 5px;
-  text-align: center;
-  cursor: pointer;
-  background-color: #e0e0e0;
-  transition: all 0.2s;
+/* ==================== Actions ==================== */
+.projeto-modal-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e7eb;
 }
 
-.membro_item.ativo {
-  background-color: #155dfc;
-  color: #fff;
-}
-
-/* ==================== Remover equipe ==================== */
-.btn_remover_equipe {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  background: none;
+.projeto-modal-cancel-btn {
+  background: #6b7280;
+  color: white;
   border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
   cursor: pointer;
-  color: red;
-  font-size: 18px;
+  transition: all 0.2s ease;
 }
 
-/* ==================== Scroll suave ==================== */
-.modal_conteudo::-webkit-scrollbar {
+.projeto-modal-cancel-btn:hover {
+  background: #4b5563;
+  transform: translateY(-1px);
+}
+
+.projeto-modal-save-btn {
+  background: #1d4ed8;
+  color: white;
+  border: none;
+  padding: 0.75rem 2rem;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.projeto-modal-save-btn:hover {
+  background: #1e40af;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
+}
+
+/* ==================== Scrollbar ==================== */
+.projeto-modal-content::-webkit-scrollbar {
   width: 6px;
 }
 
-.modal_conteudo::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0.2);
+.projeto-modal-content::-webkit-scrollbar-track {
+  background: #f1f5f9;
   border-radius: 3px;
+}
+
+.projeto-modal-content::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.projeto-modal-content::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* ==================== Responsive ==================== */
+@media (max-width: 768px) {
+  .projeto-modal-content {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+
+  .projeto-modal-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .projeto-modal-input-with-button {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .projeto-modal-radio-group {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .projeto-modal-actions {
+    flex-direction: column;
+  }
+
+  .projeto-modal-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  .projeto-modal-title-section h2 {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .projeto-modal-content {
+    padding: 1.25rem;
+  }
+
+  .projeto-modal-confirm-section {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
 }
