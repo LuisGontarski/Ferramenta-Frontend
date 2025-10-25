@@ -36,7 +36,7 @@ interface Commit {
   url: string;
   data_commit: string;
   nome_autor_plataforma: string; // This field now comes from the backend
-  avatar_url?: string | null;     // GitHub avatar URL
+  avatar_url?: string | null; // GitHub avatar URL
 }
 
 // Dados estáticos para os gráficos e outras seções
@@ -89,24 +89,35 @@ const ProjetosDetalhes = () => {
 
   const [membrosDaEquipe, setMembrosDaEquipe] = useState<Membro[]>([]);
 
+  const [sprints, setSprints] = useState<{ id: string; title: string }[]>([]);
+  const [selectedSprint, setSelectedSprint] = useState<string>("");
+
   const [burndownData, setBurndownData] = useState([
     { dia: "Dia 1", planejado: 100, real: 100 },
     { dia: "Dia 2", planejado: 90, real: 95 },
   ]);
-  
 
-  useEffect(() => {
-    async function fetchBurndown() {
-      const sprintId = localStorage.getItem("sprintSelecionada");
-      console.log("Buscando burndown para sprint ID:", sprintId);
-      const res = await fetch(`${BASE_URL}/sprint/${sprintId}/burndown`);
-      const data = await res.json();
-      console.log("Burndown Data:", data);
+  async function fetchBurndown(sprintId?: string) {
+    const sprintIdToUse =
+      sprintId || localStorage.getItem("sprint_selecionada_id");
 
-      setBurndownData(data);
+    if (!sprintIdToUse) {
+      console.warn("Nenhuma sprint selecionada encontrada no localStorage.");
+      return;
     }
+
+    console.log("Buscando burndown para sprint ID:", sprintIdToUse);
+    const res = await fetch(`${BASE_URL}/sprint/${sprintIdToUse}/burndown`);
+    const data = await res.json();
+    console.log("Burndown Data:", data);
+
+    setBurndownData(data);
+  }
+
+  // E modifique o useEffect para usar a nova função
+  useEffect(() => {
     fetchBurndown();
-  }, []); // ✅ Correto
+  }, []);
 
   const [commits, setCommits] = useState<any[]>([]);
   const [numCommits, setNumCommits] = useState(0);
@@ -142,7 +153,6 @@ const ProjetosDetalhes = () => {
       if (!id) return;
       try {
         localStorage.setItem("projeto_id", id);
-        
 
         const resMembros = await fetch(`${BASE_URL}/projects/${id}/users`);
         if (!resMembros.ok)
@@ -154,80 +164,173 @@ const ProjetosDetalhes = () => {
       }
     }
 
+    async function fetchSprintSelecionada() {
+      if (!id) return;
+      try {
+        console.log("🔄 Buscando sprint selecionada para projeto:", id);
+
+        const response = await fetch(
+          `${BASE_URL}/projects/${id}/sprint-selecionada`
+        );
+
+        if (!response.ok) {
+          throw new Error(
+            `Erro ao buscar sprint selecionada: ${response.status}`
+          );
+        }
+
+        const data = await response.json();
+
+        if (data.success && data.sprint_selecionada_id) {
+          localStorage.setItem(
+            "sprint_selecionada_id", // ← CORRIGIDO: sprint_selecionada_id
+            data.sprint_selecionada_id
+          );
+          console.log(
+            "✅ Sprint selecionada salva no localStorage:",
+            data.sprint_selecionada_id
+          );
+
+          // Atualiza o estado selectedSprint também
+          setSelectedSprint(data.sprint_selecionada_id);
+        } else {
+          console.log(
+            "ℹ️ Nenhuma sprint selecionada encontrada para este projeto"
+          );
+          localStorage.removeItem("sprint_selecionada_id"); // ← CORRIGIDO
+        }
+      } catch (error) {
+        console.error("❌ Erro ao buscar sprint selecionada:", error);
+      }
+    }
+
+    async function fetchSprints() {
+      try {
+        const res = await fetch(`${BASE_URL}/sprint/${id}`);
+        if (!res.ok) throw new Error(`Erro ao buscar sprints: ${res.status}`);
+        const sprintsData = await res.json();
+
+        const mappedSprints = sprintsData.map((s: any) => ({
+          id: s.id.toString(),
+          title: s.title,
+        }));
+
+        setSprints(mappedSprints);
+
+        // PRIORIDADE: usa a sprint_selecionada_id do localStorage
+        const sprintSelecionadaId = localStorage.getItem(
+          "sprint_selecionada_id"
+        );
+
+        if (
+          sprintSelecionadaId &&
+          mappedSprints.some(
+            (sprint: { id: string; title: string }) =>
+              sprint.id === sprintSelecionadaId
+          )
+        ) {
+          setSelectedSprint(sprintSelecionadaId);
+          console.log(
+            "✅ Sprint selecionada do localStorage:",
+            sprintSelecionadaId
+          );
+        } else if (mappedSprints.length > 0) {
+          // Se não houver sprint selecionada válida, usa a primeira
+          setSelectedSprint(mappedSprints[0].id);
+          localStorage.setItem("sprint_selecionada_id", mappedSprints[0].id);
+          console.log("🔄 Usando primeira sprint:", mappedSprints[0].id);
+        }
+      } catch (err) {
+        console.error("Erro ao buscar sprints:", err);
+        setSprints([]);
+        setSelectedSprint("");
+      }
+    }
+
     fetchMembrosDoProjeto();
+    fetchSprintSelecionada();
+    fetchSprints();
 
     async function fetchDadosDoProjeto() {
-  if (!id) return; // 'id' deve vir do useParams() no componente
-  try {
-    localStorage.setItem("projeto_id", id); //
-
-    // Busca detalhes do projeto
-    const res = await fetch(`${BASE_URL}/projects/${id}`); //
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const projeto = await res.json(); //
-
-    // Atualiza estados do projeto
-    setNome(projeto.nome || "Nome não encontrado"); //
-    setDescricao(projeto.descricao || "Descrição não encontrada"); //
-    setStatus(projeto.status || "Status não definido"); //
-    setGerenteProjeto(projeto.gerente_projeto || "-"); //
-
-    const toDateInput = (v: string | null) =>
-      v ? new Date(v).toISOString().slice(0, 10) : ""; //
-    setDataInicio(toDateInput(projeto.data_inicio)); //
-    setDataFim(toDateInput(projeto.data_fim_prevista || projeto.data_fim)); //
-
-    const calcDuracao = (inicio: any, fim: any) => {
-      if (!inicio || !fim) return 0;
-      const d1 = new Date(inicio);
-      const d2 = new Date(fim);
-      if (isNaN(d1.getTime()) || isNaN(d2.getTime())) return 0;
-      const diffTime = Math.abs(d2.getTime() - d1.getTime());
-      return Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
-    }; //
-
-    setDuracao(
-      calcDuracao(
-        projeto.data_inicio,
-        projeto.data_fim_prevista || projeto.data_fim
-      )
-    ); //
-
-    // Busca membros do projeto
-    const resMembros = await fetch(`${BASE_URL}/projects/${id}/users`); //
-    if (!resMembros.ok)
-      throw new Error(`Erro ao buscar membros: ${resMembros.status}`); //
-    const membros: Membro[] = await resMembros.json(); //
-    setMembrosDaEquipe(membros); //
-
-    // Busca commits do backend se o repositório estiver definido
-    if (projeto.github_repo) { //
-      console.log("📦 Repositório encontrado:", projeto.github_repo); //
-      localStorage.setItem("github_repo", projeto.github_repo); //
+      if (!id) return; // 'id' deve vir do useParams() no componente
       try {
-        const resCommits = await fetch(`${BASE_URL}/projects/${id}/commits`); //
-        if (!resCommits.ok) throw new Error(`Erro ao buscar commits do backend: ${resCommits.status}`);
-        const commitsData: Commit[] = await resCommits.json();
-        setCommits(commitsData.slice(0, 10)); // Limita a 10 no frontend //
-        setNumCommits(commitsData.length); //
-        console.log(`✅ ${commitsData.length} commits carregados do backend`); //
-      } catch (commitError) {
-        console.error("❌ Erro ao buscar commits do backend:", commitError); //
-        setCommits([]); //
-        setNumCommits(0); //
+        localStorage.setItem("projeto_id", id); //
+
+        // Busca detalhes do projeto
+        const res = await fetch(`${BASE_URL}/projects/${id}`); //
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const projeto = await res.json(); //
+
+        // Atualiza estados do projeto
+        setNome(projeto.nome || "Nome não encontrado"); //
+        setDescricao(projeto.descricao || "Descrição não encontrada"); //
+        setStatus(projeto.status || "Status não definido"); //
+        setGerenteProjeto(projeto.gerente_projeto || "-"); //
+
+        const toDateInput = (v: string | null) =>
+          v ? new Date(v).toISOString().slice(0, 10) : ""; //
+        setDataInicio(toDateInput(projeto.data_inicio)); //
+        setDataFim(toDateInput(projeto.data_fim_prevista || projeto.data_fim)); //
+
+        const calcDuracao = (inicio: any, fim: any) => {
+          if (!inicio || !fim) return 0;
+          const d1 = new Date(inicio);
+          const d2 = new Date(fim);
+          if (isNaN(d1.getTime()) || isNaN(d2.getTime())) return 0;
+          const diffTime = Math.abs(d2.getTime() - d1.getTime());
+          return Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+        }; //
+
+        setDuracao(
+          calcDuracao(
+            projeto.data_inicio,
+            projeto.data_fim_prevista || projeto.data_fim
+          )
+        ); //
+
+        // Busca membros do projeto
+        const resMembros = await fetch(`${BASE_URL}/projects/${id}/users`); //
+        if (!resMembros.ok)
+          throw new Error(`Erro ao buscar membros: ${resMembros.status}`); //
+        const membros: Membro[] = await resMembros.json(); //
+        setMembrosDaEquipe(membros); //
+
+        // Busca commits do backend se o repositório estiver definido
+        if (projeto.github_repo) {
+          //
+          console.log("📦 Repositório encontrado:", projeto.github_repo); //
+          localStorage.setItem("github_repo", projeto.github_repo); //
+          try {
+            const resCommits = await fetch(
+              `${BASE_URL}/projects/${id}/commits`
+            ); //
+            if (!resCommits.ok)
+              throw new Error(
+                `Erro ao buscar commits do backend: ${resCommits.status}`
+              );
+            const commitsData: Commit[] = await resCommits.json();
+            setCommits(commitsData.slice(0, 10)); // Limita a 10 no frontend //
+            setNumCommits(commitsData.length); //
+            console.log(
+              `✅ ${commitsData.length} commits carregados do backend`
+            ); //
+          } catch (commitError) {
+            console.error("❌ Erro ao buscar commits do backend:", commitError); //
+            setCommits([]); //
+            setNumCommits(0); //
+          }
+        } else {
+          console.warn("⚠️ Campo github_repo não definido no projeto."); //
+          setCommits([]); //
+          setNumCommits(0); //
+        }
+      } catch (err) {
+        console.error("Erro ao carregar dados da página:", err); //
+        setNome("Erro ao carregar projeto"); // Define um estado de erro //
+        // Considere adicionar um estado de erro para exibir uma mensagem ao usuário
+        // setError("Falha ao carregar os dados do projeto.");
       }
-    } else {
-      console.warn("⚠️ Campo github_repo não definido no projeto."); //
-      setCommits([]); //
-      setNumCommits(0); //
     }
-  } catch (err) {
-    console.error("Erro ao carregar dados da página:", err); //
-    setNome("Erro ao carregar projeto"); // Define um estado de erro //
-    // Considere adicionar um estado de erro para exibir uma mensagem ao usuário
-    // setError("Falha ao carregar os dados do projeto.");
-  }
-}
     fetchDadosDoProjeto();
 
     async function fetchTotalTarefas() {
@@ -312,6 +415,42 @@ const ProjetosDetalhes = () => {
       console.error("Erro ao atualizar projeto:", err);
     }
   };
+
+  const handleSprintChange = async (sprintId: string) => {
+    try {
+      // Atualiza o estado local
+      setSelectedSprint(sprintId);
+      localStorage.setItem("sprint_selecionada_id", sprintId);
+      console.log("✅ Sprint selecionada:", sprintId);
+
+      // Chama o PATCH para atualizar no banco de dados
+      const res = await fetch(`${BASE_URL}/projects/${id}/sprint-selecionada`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          sprint_id: sprintId,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error(`Erro ao atualizar sprint selecionada: ${res.status}`);
+      }
+
+      const result = await res.json();
+      console.log("✅ Sprint selecionada atualizada no banco:", result.message);
+
+      // Recarregar o burndown com a nova sprint selecionada
+      fetchBurndown(sprintId);
+    } catch (err) {
+      console.error("❌ Erro ao atualizar sprint selecionada:", err);
+      // Opcional: reverter a seleção em caso de erro
+      const previousSprint = localStorage.getItem("sprint_selecionada_id");
+      setSelectedSprint(previousSprint || "");
+    }
+  };
+
   const handleExcluir = async () => {
     if (!window.confirm("Tem certeza?")) return;
     try {
@@ -379,15 +518,41 @@ const ProjetosDetalhes = () => {
                 <h1 className="titulo_projetos">{nome}</h1>
                 <p className="descricao_titulo_projetos">{descricao}</p>
               </div>
-              {cargo === "Product Owner" && (
-                <button
-                  className="btn_novo_projeto"
-                  onClick={() => mostrarModal()}
-                >
-                  <GrEdit size={"14px"} />
-                  Editar projeto
-                </button>
-              )}
+              <div className="container_botoes_titulo">
+                {/* Select de Sprints */}
+                {sprints.length > 0 && (
+                  <div className="sprint-selector">
+                    <label
+                      htmlFor="sprint-select"
+                      className="sprint-selector-label"
+                    >
+                      Sprint:
+                    </label>
+                    <select
+                      id="sprint-select"
+                      value={selectedSprint}
+                      onChange={(e) => handleSprintChange(e.target.value)}
+                      className="sprint-select"
+                    >
+                      {sprints.map((sprint) => (
+                        <option key={sprint.id} value={sprint.id}>
+                          {sprint.title}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                {cargo === "Product Owner" && (
+                  <button
+                    className="btn_novo_projeto"
+                    onClick={() => mostrarModal()}
+                  >
+                    <GrEdit size={"14px"} />
+                    Editar projeto
+                  </button>
+                )}
+              </div>
 
               <div className="modal-overlay sumir" id="modal_editar">
                 <div className="modal-content" id="modal_editar_projeto">
@@ -694,36 +859,57 @@ const ProjetosDetalhes = () => {
               </h2>
 
               {commits.length > 0 ? (
-          commits.map((commit) => (
-            <div key={commit.id} className="div_atividades_recentes"> {/* */}
-              <div className="container_projetos"> {/* */}
-  
-                <div>
-                  <h2 className="texto_atividade_recente"> {/* */}
-                    {/* --- Display Platform Username --- */}
-                    <span className="responsavel_atividade_recente"> {/* */}
-                      {commit.nome_autor_plataforma}
-                    </span>{" "}
-                    — {commit.message.split('\n')[0]} {/* Show first line of commit message */} {/* */}
-                  </h2>
-                  <h2 className="texto_recente_atualizacao"> {/* */}
-                    {new Date(commit.data_commit).toLocaleString( //
-                      "pt-BR"
-                    )}
-                  </h2>
-                </div>
-              </div>
-              <a href={commit.url} target="_blank" rel="noopener noreferrer" title="Ver commit no GitHub"> {/* */}
-                  <FaChevronRight color="#71717A" /> {/* */}
-              </a>
+                commits.map((commit) => (
+                  <div key={commit.id} className="div_atividades_recentes">
+                    {" "}
+                    {/* */}
+                    <div className="container_projetos">
+                      {" "}
+                      {/* */}
+                      <div>
+                        <h2 className="texto_atividade_recente">
+                          {" "}
+                          {/* */}
+                          {/* --- Display Platform Username --- */}
+                          <span className="responsavel_atividade_recente">
+                            {" "}
+                            {/* */}
+                            {commit.nome_autor_plataforma}
+                          </span>{" "}
+                          — {commit.message.split("\n")[0]}{" "}
+                          {/* Show first line of commit message */} {/* */}
+                        </h2>
+                        <h2 className="texto_recente_atualizacao">
+                          {" "}
+                          {/* */}
+                          {new Date(commit.data_commit).toLocaleString(
+                            //
+                            "pt-BR"
+                          )}
+                        </h2>
+                      </div>
+                    </div>
+                    <a
+                      href={commit.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title="Ver commit no GitHub"
+                    >
+                      {" "}
+                      {/* */}
+                      <FaChevronRight color="#71717A" /> {/* */}
+                    </a>
+                  </div>
+                ))
+              ) : (
+                <p className="descricao_graficos_projetos">
+                  {" "}
+                  {/* */}
+                  Nenhum commit encontrado ou o repositório não está vinculado.{" "}
+                  {/* */}
+                </p>
+              )}
             </div>
-          ))
-        ) : (
-          <p className="descricao_graficos_projetos"> {/* */}
-            Nenhum commit encontrado ou o repositório não está vinculado. {/* */}
-          </p>
-        )}
-      </div>
 
             <div className="div_informacoes_projeto_detalhes">
               <h2 className="titulo_card_projeto_detalhes">

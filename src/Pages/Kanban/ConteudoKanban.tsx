@@ -87,7 +87,24 @@ const ConteudoKanban = () => {
         );
 
         setSprints(mappedSprints);
-        if (mappedSprints.length > 0) setSelectedSprint(mappedSprints[0].id);
+
+        // VERIFICA SE JÁ EXISTE UMA SPRINT SELECIONADA NO LOCALSTORAGE
+        const sprintSelecionadaId = localStorage.getItem(
+          "sprint_selecionada_id"
+        );
+        if (
+          sprintSelecionadaId &&
+          mappedSprints.some((s: any) => s.id === sprintSelecionadaId)
+        ) {
+          setSelectedSprint(sprintSelecionadaId);
+          console.log(
+            "✅ Sprint selecionada do localStorage:",
+            sprintSelecionadaId
+          );
+        } else if (mappedSprints.length > 0) {
+          setSelectedSprint(mappedSprints[0].id);
+          localStorage.setItem("sprint_selecionada_id", mappedSprints[0].id);
+        }
       } catch (err) {
         console.error("Erro ao buscar sprints:", err);
         setSprints([]);
@@ -371,33 +388,42 @@ const ConteudoKanban = () => {
           <div className="sprint_selector">
             {sprints.length > 0 && (
               <select
-  className="select_sprint"
-  value={selectedSprint}
-  onChange={async (e) => {
-    const newSprintId = e.target.value;
-    setSelectedSprint(newSprintId);
-    localStorage.setItem("sprintSelecionada", newSprintId);
+                className="select_sprint"
+                value={selectedSprint}
+                onChange={async (e) => {
+                  const newSprintId = e.target.value;
+                  setSelectedSprint(newSprintId);
 
-    try {
-      await axios.patch(`${baseUrl}/projects/${projectId}/sprint-selecionada`, {
-  sprint_id: newSprintId,
-});
+                  // ATUALIZA NO LOCALSTORAGE PARA SINCRONIZAR COM PROJETODETALHES
+                  localStorage.setItem("sprint_selecionada_id", newSprintId);
 
-      console.log("Sprint selecionada salva no banco com sucesso!");
-    } catch (err) {
-      console.error("Erro ao salvar sprint selecionada:", err);
-    }
-  }}
-  disabled={!projectId}
->
-  {sprints.map((sp) => (
-    <option key={sp.id} value={sp.id}>
-      {sp.title}
-    </option>
-  ))}
-</select>
+                  try {
+                    // ATUALIZA NO BANCO DE DADOS
+                    await axios.patch(
+                      `${baseUrl}/projects/${projectId}/sprint-selecionada`,
+                      {
+                        sprint_id: newSprintId,
+                      }
+                    );
 
-
+                    console.log(
+                      "✅ Sprint selecionada sincronizada com ProjetoDetalhes!"
+                    );
+                  } catch (err) {
+                    console.error(
+                      "❌ Erro ao sincronizar sprint selecionada:",
+                      err
+                    );
+                  }
+                }}
+                disabled={!projectId}
+              >
+                {sprints.map((sp) => (
+                  <option key={sp.id} value={sp.id}>
+                    {sp.title}
+                  </option>
+                ))}
+              </select>
             )}
 
             {cargo === "Product Owner" && (
@@ -516,8 +542,8 @@ const ConteudoKanban = () => {
                             {card.priority === "high"
                               ? "Alta"
                               : card.priority === "medium"
-                                ? "Média"
-                                : "Baixa"}
+                              ? "Média"
+                              : "Baixa"}
                           </div>
                           <span className={`card_type ${card.type}`}>
                             {card.type}
