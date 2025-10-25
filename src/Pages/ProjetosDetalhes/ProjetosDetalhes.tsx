@@ -30,6 +30,15 @@ interface Membro {
   foto_perfil?: string;
 }
 
+interface Commit {
+  id: string;
+  message: string;
+  url: string;
+  data_commit: string;
+  nome_autor_plataforma: string; // This field now comes from the backend
+  avatar_url?: string | null;     // GitHub avatar URL
+}
+
 // Dados estáticos para os gráficos e outras seções
 const data = [
   { dia: "Dia 1", planejado: 100, real: 100 },
@@ -84,6 +93,7 @@ const ProjetosDetalhes = () => {
     { dia: "Dia 1", planejado: 100, real: 100 },
     { dia: "Dia 2", planejado: 90, real: 95 },
   ]);
+  
 
   useEffect(() => {
     async function fetchBurndown() {
@@ -146,60 +156,77 @@ const ProjetosDetalhes = () => {
     fetchMembrosDoProjeto();
 
     async function fetchDadosDoProjeto() {
-      if (!id) return;
+  if (!id) return; // 'id' deve vir do useParams() no componente
+  try {
+    localStorage.setItem("projeto_id", id); //
+
+    // Busca detalhes do projeto
+    const res = await fetch(`${BASE_URL}/projects/${id}`); //
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const projeto = await res.json(); //
+
+    // Atualiza estados do projeto
+    setNome(projeto.nome || "Nome não encontrado"); //
+    setDescricao(projeto.descricao || "Descrição não encontrada"); //
+    setStatus(projeto.status || "Status não definido"); //
+    setGerenteProjeto(projeto.gerente_projeto || "-"); //
+
+    const toDateInput = (v: string | null) =>
+      v ? new Date(v).toISOString().slice(0, 10) : ""; //
+    setDataInicio(toDateInput(projeto.data_inicio)); //
+    setDataFim(toDateInput(projeto.data_fim_prevista || projeto.data_fim)); //
+
+    const calcDuracao = (inicio: any, fim: any) => {
+      if (!inicio || !fim) return 0;
+      const d1 = new Date(inicio);
+      const d2 = new Date(fim);
+      if (isNaN(d1.getTime()) || isNaN(d2.getTime())) return 0;
+      const diffTime = Math.abs(d2.getTime() - d1.getTime());
+      return Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+    }; //
+
+    setDuracao(
+      calcDuracao(
+        projeto.data_inicio,
+        projeto.data_fim_prevista || projeto.data_fim
+      )
+    ); //
+
+    // Busca membros do projeto
+    const resMembros = await fetch(`${BASE_URL}/projects/${id}/users`); //
+    if (!resMembros.ok)
+      throw new Error(`Erro ao buscar membros: ${resMembros.status}`); //
+    const membros: Membro[] = await resMembros.json(); //
+    setMembrosDaEquipe(membros); //
+
+    // Busca commits do backend se o repositório estiver definido
+    if (projeto.github_repo) { //
+      console.log("📦 Repositório encontrado:", projeto.github_repo); //
+      localStorage.setItem("github_repo", projeto.github_repo); //
       try {
-        localStorage.setItem("projeto_id", id);
-
-        const res = await fetch(`${BASE_URL}/projects/${id}`);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const projeto = await res.json();
-
-        setNome(projeto.nome || "Nome não encontrado");
-        setDescricao(projeto.descricao || "Descrição não encontrada");
-        setStatus(projeto.status || "Status não definido");
-        setGerenteProjeto(projeto.gerente_projeto || "-");
-
-        const toDateInput = (v: string | null) =>
-          v ? new Date(v).toISOString().slice(0, 10) : "";
-        setDataInicio(toDateInput(projeto.data_inicio));
-        setDataFim(toDateInput(projeto.data_fim_prevista || projeto.data_fim));
-
-        const calcDuracao = (inicio: any, fim: any) => {
-          if (!inicio || !fim) return 0;
-          const d1 = new Date(inicio);
-          const d2 = new Date(fim);
-          if (isNaN(d1.getTime()) || isNaN(d2.getTime())) return 0;
-          const diffTime = Math.abs(d2.getTime() - d1.getTime());
-          return Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
-        };
-
-        setDuracao(
-          calcDuracao(
-            projeto.data_inicio,
-            projeto.data_fim_prevista || projeto.data_fim
-          )
-        );
-
-        const resMembros = await fetch(`${BASE_URL}/projects/${id}/users`);
-        if (!resMembros.ok)
-          throw new Error(`Erro ao buscar membros: ${resMembros.status}`);
-        const membros = await resMembros.json();
-        setMembrosDaEquipe(membros);
-
-        if (projeto.github_repo) {
-          console.log("📦 Repositório encontrado:", projeto.github_repo);
-          localStorage.setItem("github_repo", projeto.github_repo);
-          fetchCommits(projeto.github_repo);
-        } else {
-          console.warn("⚠️ Campo github_repo não definido no projeto.");
-          setCommits([]);
-          setNumCommits(0);
-        }
-      } catch (err) {
-        console.error("Erro ao carregar dados da página:", err);
-        setNome("Erro ao carregar projeto");
+        const resCommits = await fetch(`${BASE_URL}/projects/${id}/commits`); //
+        if (!resCommits.ok) throw new Error(`Erro ao buscar commits do backend: ${resCommits.status}`);
+        const commitsData: Commit[] = await resCommits.json();
+        setCommits(commitsData.slice(0, 10)); // Limita a 10 no frontend //
+        setNumCommits(commitsData.length); //
+        console.log(`✅ ${commitsData.length} commits carregados do backend`); //
+      } catch (commitError) {
+        console.error("❌ Erro ao buscar commits do backend:", commitError); //
+        setCommits([]); //
+        setNumCommits(0); //
       }
+    } else {
+      console.warn("⚠️ Campo github_repo não definido no projeto."); //
+      setCommits([]); //
+      setNumCommits(0); //
     }
+  } catch (err) {
+    console.error("Erro ao carregar dados da página:", err); //
+    setNome("Erro ao carregar projeto"); // Define um estado de erro //
+    // Considere adicionar um estado de erro para exibir uma mensagem ao usuário
+    // setError("Falha ao carregar os dados do projeto.");
+  }
+}
     fetchDadosDoProjeto();
 
     async function fetchTotalTarefas() {
@@ -666,40 +693,36 @@ const ProjetosDetalhes = () => {
               </h2>
 
               {commits.length > 0 ? (
-                commits.map((commit) => (
-                  <div key={commit.sha} className="div_atividades_recentes">
-                    <div className="container_projetos">
-                      <img
-                        src={
-                          commit.author?.avatar_url ||
-                          "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
-                        }
-                        className="img_atividade_recente"
-                        alt={commit.commit.author.name}
-                      />
-                      <div>
-                        <h2 className="texto_atividade_recente">
-                          <span className="responsavel_atividade_recente">
-                            {commit.commit.author.name}
-                          </span>{" "}
-                          — {commit.commit.message}
-                        </h2>
-                        <h2 className="texto_recente_atualizacao">
-                          {new Date(commit.commit.author.date).toLocaleString(
-                            "pt-BR"
-                          )}
-                        </h2>
-                      </div>
-                    </div>
-                    <FaChevronRight color="#71717A" />
-                  </div>
-                ))
-              ) : (
-                <p className="descricao_graficos_projetos">
-                  Nenhum commit encontrado.
-                </p>
-              )}
+          commits.map((commit) => (
+            <div key={commit.id} className="div_atividades_recentes"> {/* */}
+              <div className="container_projetos"> {/* */}
+  
+                <div>
+                  <h2 className="texto_atividade_recente"> {/* */}
+                    {/* --- Display Platform Username --- */}
+                    <span className="responsavel_atividade_recente"> {/* */}
+                      {commit.nome_autor_plataforma}
+                    </span>{" "}
+                    — {commit.message.split('\n')[0]} {/* Show first line of commit message */} {/* */}
+                  </h2>
+                  <h2 className="texto_recente_atualizacao"> {/* */}
+                    {new Date(commit.data_commit).toLocaleString( //
+                      "pt-BR"
+                    )}
+                  </h2>
+                </div>
+              </div>
+              <a href={commit.url} target="_blank" rel="noopener noreferrer" title="Ver commit no GitHub"> {/* */}
+                  <FaChevronRight color="#71717A" /> {/* */}
+              </a>
             </div>
+          ))
+        ) : (
+          <p className="descricao_graficos_projetos"> {/* */}
+            Nenhum commit encontrado ou o repositório não está vinculado. {/* */}
+          </p>
+        )}
+      </div>
 
             <div className="div_informacoes_projeto_detalhes">
               <h2 className="titulo_card_projeto_detalhes">
