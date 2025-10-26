@@ -92,18 +92,15 @@ const ProjetosDetalhes = () => {
   const [sprints, setSprints] = useState<{ id: string; title: string }[]>([]);
   const [selectedSprint, setSelectedSprint] = useState<string>("");
 
-<<<<<<< HEAD
+  
   const [burndownData, setBurndownData] = useState<any[]>([]); // Inicializa como array vazio
   const [loadingBurndown, setLoadingBurndown] = useState(false); // Estado de loading para o gráfico
   const [errorBurndown, setErrorBurndown] = useState<string | null>(null); // Estado de erro para o gráfico
-=======
+
   const sprintSelecionadaLocal = localStorage.getItem("sprint_selecionada_id");
 
-  const [burndownData, setBurndownData] = useState([
-    { dia: "Dia 1", planejado: 100, real: 100 },
-    { dia: "Dia 2", planejado: 90, real: 95 },
-  ]);
->>>>>>> ddafff135bc7cf4524359f85b0f08b9d8e27f3c1
+
+
 
   async function fetchBurndown(sprintId?: string) {
         const sprintIdToUse = sprintId || selectedSprint || localStorage.getItem("sprint_selecionada_id"); // Garante que temos um ID
