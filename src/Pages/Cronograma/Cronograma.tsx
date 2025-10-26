@@ -269,7 +269,11 @@ const Cronograma = () => {
         <MenuLateral />
         <div className="container_vertical_conteudos">
           <div className="cronograma-container">
-            <h1>Cronograma do Projeto</h1>
+            <div className="titulo_cronograma">
+              <h1>Cronograma do Projeto</h1>
+              <h2>Visualize o progresso, prazos e etapas do desenvolvimento</h2>
+            </div>
+
 
             <div className="gantt-container">
               <div className="tasks-column">
