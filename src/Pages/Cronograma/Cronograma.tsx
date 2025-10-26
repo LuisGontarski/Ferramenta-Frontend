@@ -77,13 +77,19 @@ const Cronograma = () => {
         const data: ApiResponse = await response.json();
 
         if (data.success) {
-          setTarefas(data.tarefas);
+          // 🔽 Ordena da mais antiga para a mais recente
+          const tarefasOrdenadas = [...data.tarefas].sort(
+            (a, b) => new Date(a.data_criacao).getTime() - new Date(b.data_criacao).getTime()
+          );
+
+          setTarefas(tarefasOrdenadas);
           console.log(
-            `✅ ${data.tarefas.length} tarefas carregadas para o projeto ${projetoId}`
+            `✅ ${tarefasOrdenadas.length} tarefas carregadas (ordenadas) para o projeto ${projetoId}`
           );
         } else {
           throw new Error("Falha ao buscar tarefas");
         }
+
       } catch (err) {
         console.error("❌ Erro ao buscar tarefas:", err);
         setError(err instanceof Error ? err.message : "Erro desconhecido");
@@ -143,9 +149,8 @@ const Cronograma = () => {
       headers.push(
         <div key={`${month}-${year}`} className="month-container">
           <div className="month-name">
-            {`${
-              monthName.charAt(0).toUpperCase() + monthName.slice(1)
-            } ${year}`}
+            {`${monthName.charAt(0).toUpperCase() + monthName.slice(1)
+              } ${year}`}
           </div>
           <div className="days-container">{days}</div>
         </div>
