@@ -17,10 +17,10 @@
   display: flex;
   border: 1px solid #ddd;
   border-radius: 8px;
-  overflow: auto;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   background-color: white;
-  min-height: 500px;
+  overflow: auto;
+  scrollbar-width: none;
 }
 
 .tasks-column {
@@ -29,6 +29,7 @@
   border-right: 1px solid #ddd;
   background-color: #f8f9fa;
   z-index: 10;
+  position: fixed;
 }
 
 .tasks-header {
@@ -69,6 +70,7 @@
 .timeline-column {
   flex: 1;
   position: relative;
+  margin-left: 300px;
 }
 
 .timeline-header {
