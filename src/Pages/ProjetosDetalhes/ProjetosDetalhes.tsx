@@ -421,7 +421,64 @@ const ProjetosDetalhes = () => {
 
     
 
-    async function fetchTarefasEmProgresso() {
+    
+
+	
+  }, [id]);
+
+  // --- Lógica do Modal (mantida como estava) ---
+  const handleSalvar = async () => {
+    // Esta função agora usará os dados estáticos do estado se não forem alterados no modal
+    try {
+      const res = await fetch(`${BASE_URL}/projects/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nome,
+          descricao,
+          status,
+          data_inicio: dataInicio,
+          data_fim_prevista: dataFim,
+        }),
+      });
+      if (!res.ok) throw new Error("Falha ao salvar");
+      alert("Projeto atualizado!");
+      setShowModal(false);
+    } catch (err) {
+      console.error("Erro ao atualizar projeto:", err);
+    }
+  };
+
+  async function fetchTotalTarefas() {
+      try {
+        const res = await fetch(`${BASE_URL}/projects/${sprintSelecionadaLocal}/tasks/count`);
+        if (!res.ok)
+          throw new Error(`Erro ao buscar total de tarefas: ${res.status}`);
+        const data = await res.json();
+        setTotalTarefas(data.total);
+      } catch (err) {
+        console.error("Erro ao buscar total de tarefas:", err);
+      }
+    }
+
+    // Total de tarefas concluídas
+    async function fetchTarefasConcluidas() {
+      try {
+        const res = await fetch(
+          `${BASE_URL}/projects/${sprintSelecionadaLocal}/tasks/count?fase=Feito`
+        );
+        if (!res.ok)
+          throw new Error(`Erro ao buscar tarefas concluídas: ${res.status}`);
+        const data = await res.json();
+        setTotalConcluidas(data.total);
+      } catch (err) {
+        console.error("Erro ao buscar tarefas concluídas:", err);
+      }
+    }
+
+    fetchTotalTarefas().then(fetchTarefasConcluidas);
+
+	async function fetchTarefasEmProgresso() {
       try {
         const res = await fetch(
           `${BASE_URL}/projects/${sprintSelecionadaLocal}/tasks/count?fase=Executar,Revisar`
@@ -451,59 +508,6 @@ const ProjetosDetalhes = () => {
     }
     fetchCycleTime();
 
-	async function fetchTotalTarefas() {
-      try {
-        const res = await fetch(`${BASE_URL}/projects/${sprintSelecionadaLocal}/tasks/count`);
-        if (!res.ok)
-          throw new Error(`Erro ao buscar total de tarefas: ${res.status}`);
-        const data = await res.json();
-        setTotalTarefas(data.total);
-      } catch (err) {
-        console.error("Erro ao buscar total de tarefas:", err);
-      }
-    }
-
-    // Total de tarefas concluídas
-    async function fetchTarefasConcluidas() {
-      try {
-        const res = await fetch(
-          `${BASE_URL}/projects/${sprintSelecionadaLocal}/tasks/count?fase=Feito`
-        );
-        if (!res.ok)
-          throw new Error(`Erro ao buscar tarefas concluídas: ${res.status}`);
-        const data = await res.json();
-        setTotalConcluidas(data.total);
-      } catch (err) {
-        console.error("Erro ao buscar tarefas concluídas:", err);
-      }
-    }
-
-    fetchTotalTarefas().then(fetchTarefasConcluidas);
-  }, [id]);
-
-  // --- Lógica do Modal (mantida como estava) ---
-  const handleSalvar = async () => {
-    // Esta função agora usará os dados estáticos do estado se não forem alterados no modal
-    try {
-      const res = await fetch(`${BASE_URL}/projects/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          nome,
-          descricao,
-          status,
-          data_inicio: dataInicio,
-          data_fim_prevista: dataFim,
-        }),
-      });
-      if (!res.ok) throw new Error("Falha ao salvar");
-      alert("Projeto atualizado!");
-      setShowModal(false);
-    } catch (err) {
-      console.error("Erro ao atualizar projeto:", err);
-    }
-  };
-
   const handleSprintChange = async (sprintId: string) => {
     try {
       // Atualiza o estado local
@@ -531,6 +535,10 @@ const ProjetosDetalhes = () => {
 
       // Recarregar o burndown com a nova sprint selecionada
       fetchBurndown(sprintId);
+	  fetchTotalTarefas();
+	  fetchTarefasConcluidas();
+	  fetchTarefasEmProgresso();
+	  fetchCycleTime();
     } catch (err) {
       console.error("❌ Erro ao atualizar sprint selecionada:", err);
       // Opcional: reverter a seleção em caso de erro
