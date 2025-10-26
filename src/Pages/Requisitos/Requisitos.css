@@ -30,7 +30,7 @@
 }
 
 
-#acoes-head{
+#acoes-head {
   border-top-right-radius: 8px;
   width: 10%;
 }
@@ -152,6 +152,14 @@
   justify-content: space-between;
 }
 
+.acoes-botoes button {
+  padding: 0.4rem 0.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #cbcbcb;
+}
+
 
 
 .btn-editar,
@@ -243,8 +251,10 @@
 }
 
 .status-em-andamento {
-  background-color: #ffe9cc; /* laranja pastel, suave como os outros */
-  color: #b76300; /* laranja mais escuro, harmonizando com o fundo */
+  background-color: #ffe9cc;
+  /* laranja pastel, suave como os outros */
+  color: #b76300;
+  /* laranja mais escuro, harmonizando com o fundo */
   font-weight: 600;
 }
 
@@ -253,6 +263,58 @@
   color: #00796b;
   font-weight: 600;
 }
+
+.status.em-análise {
+  background-color: #cfbaef;
+  /* roxo/lilás claro */
+  color: #5b2fb0;
+  /* roxo mais forte */
+  font-weight: 600;
+}
+
+th{
+  width: 10%;
+}
+
+.largura_head_acoes{
+  width: 12% !important;
+}
+
+.largura_head_descricao{
+  width: 18% !important;
+}
+
+.largura_head_status{
+  width: 14% !important;
+}
+
+.largura_head_criterio{
+  width: 18% !important;
+}
+
+
+.status.registrado {
+  background-color: #cce4f6;
+  /* azul claro */
+  color: #1a3f6c;
+  /* azul escuro */
+  font-weight: 600;
+}
+
+.status.em-andamento {
+  background-color: #ffe9cc;
+  /* laranja claro */
+  color: #b76300;
+  /* laranja mais forte */
+  font-weight: 600;
+}
+
+.status.finalizado {
+  background-color: #e0f7fa;
+  color: #00796b;
+  font-weight: 600;
+}
+
 
 /* Estilos para o histórico */
 .modal-historico {
@@ -417,15 +479,19 @@
 .tabela_requisitos th,
 .tabela_requisitos td {
   border: 1px solid #ddd;
-  border-right: none; /* 🔹 remove a borda direita */
-  border-bottom: none; /* 🔹 remove a borda inferior */
+  border-right: none;
+  /* 🔹 remove a borda direita */
+  border-bottom: none;
+  /* 🔹 remove a borda inferior */
 }
 
 .tabela_requisitos tr:last-child td {
-  border-bottom: 1px solid #ddd; /* 🔹 recoloca a borda inferior na última linha */
+  border-bottom: 1px solid #ddd;
+  /* 🔹 recoloca a borda inferior na última linha */
 }
 
 .tabela_requisitos th:last-child,
 .tabela_requisitos td:last-child {
-  border-right: 1px solid #ddd; /* 🔹 recoloca a borda direita na última coluna */
+  border-right: 1px solid #ddd;
+  /* 🔹 recoloca a borda direita na última coluna */
 }

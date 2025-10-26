@@ -348,11 +348,11 @@ const Requisitos = () => {
             <tr>
               <th>ID</th>
               <th>Prioridade</th>
-              <th>Descrição</th>
-              <th>Critério de Aceite</th>
+              <th className="largura_head_descricao">Descrição</th>
+              <th className="largura_head_criterio">Critério de Aceite</th>
               <th>Tipo</th>
-              <th>Status</th>
-              <th>Ações</th>
+              <th className="largura_head_status">Status</th>
+              <th className="largura_head_acoes">Ações</th>
             </tr>
           </thead>
           <tbody>
