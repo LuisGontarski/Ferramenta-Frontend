@@ -92,6 +92,8 @@ const ProjetosDetalhes = () => {
   const [sprints, setSprints] = useState<{ id: string; title: string }[]>([]);
   const [selectedSprint, setSelectedSprint] = useState<string>("");
 
+  const sprintSelecionadaLocal = localStorage.getItem("sprint_selecionada_id");
+
   const [burndownData, setBurndownData] = useState([
     { dia: "Dia 1", planejado: 100, real: 100 },
     { dia: "Dia 2", planejado: 90, real: 95 },
@@ -333,22 +335,12 @@ const ProjetosDetalhes = () => {
     }
     fetchDadosDoProjeto();
 
-    async function fetchTotalTarefas() {
-      try {
-        const res = await fetch(`${BASE_URL}/projects/${id}/tasks/count`);
-        if (!res.ok)
-          throw new Error(`Erro ao buscar total de tarefas: ${res.status}`);
-        const data = await res.json();
-        setTotalTarefas(data.total);
-      } catch (err) {
-        console.error("Erro ao buscar total de tarefas:", err);
-      }
-    }
+    
 
     async function fetchTarefasEmProgresso() {
       try {
         const res = await fetch(
-          `${BASE_URL}/projects/${id}/tasks/count?fase=Executar,Revisar`
+          `${BASE_URL}/projects/${sprintSelecionadaLocal}/tasks/count?fase=Executar,Revisar`
         );
         if (!res.ok)
           throw new Error(`Erro ao buscar tarefas em progresso: ${res.status}`);
@@ -364,7 +356,7 @@ const ProjetosDetalhes = () => {
     async function fetchCycleTime() {
       if (!id) return;
       try {
-        const res = await fetch(`${BASE_URL}/projects/${id}/cycle-time`);
+        const res = await fetch(`${BASE_URL}/projects/${sprintSelecionadaLocal}/cycle-time`);
         if (!res.ok) throw new Error(`Erro ${res.status}`);
         const data = await res.json();
         setCycleTime(data.cycleTime);
@@ -375,11 +367,23 @@ const ProjetosDetalhes = () => {
     }
     fetchCycleTime();
 
+	async function fetchTotalTarefas() {
+      try {
+        const res = await fetch(`${BASE_URL}/projects/${sprintSelecionadaLocal}/tasks/count`);
+        if (!res.ok)
+          throw new Error(`Erro ao buscar total de tarefas: ${res.status}`);
+        const data = await res.json();
+        setTotalTarefas(data.total);
+      } catch (err) {
+        console.error("Erro ao buscar total de tarefas:", err);
+      }
+    }
+
     // Total de tarefas concluídas
     async function fetchTarefasConcluidas() {
       try {
         const res = await fetch(
-          `${BASE_URL}/projects/${id}/tasks/count?fase=Feito`
+          `${BASE_URL}/projects/${sprintSelecionadaLocal}/tasks/count?fase=Feito`
         );
         if (!res.ok)
           throw new Error(`Erro ao buscar tarefas concluídas: ${res.status}`);
