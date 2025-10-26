@@ -1,5 +1,5 @@
 import "./NavbarHome.css";
-import { NavLink, useParams } from "react-router-dom";
+import { NavLink, useNavigate, useParams } from "react-router-dom";
 import {
   IoBookOutline,
   IoChatboxOutline,
@@ -55,14 +55,8 @@ const NavbarHome = () => {
         const usuarioId = localStorage.getItem("usuario_id");
         if (!usuarioId) return;
 
-        const token = localStorage.getItem("token");
         const response = await axios.get(
-          `${API_URL}/notificacoes/contar-nao-lidas`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+          `${API_URL}/notificacoes/contar-nao-lidas?usuario_id=${usuarioId}`
         );
 
         if (response.data.success) {
@@ -72,7 +66,6 @@ const NavbarHome = () => {
         console.error("Erro ao buscar notificações não lidas:", err);
       }
     };
-
     buscarNotificacoesNaoLidas();
 
     // Atualizar a cada 30 segundos (opcional)
@@ -80,9 +73,10 @@ const NavbarHome = () => {
     return () => clearInterval(interval);
   }, []);
 
+  const navigate = useNavigate();
+
   const handleNotificacaoClick = () => {
-    // Redirecionar para a tela de notificações
-    window.location.href = "/notificacoes";
+    navigate("/notificacoes-historico");
   };
 
   const renderAvatar = () => {
