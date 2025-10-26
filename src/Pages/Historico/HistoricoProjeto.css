@@ -8,7 +8,7 @@
 .card_documentos {
   background: white;
   border-radius: 12px;
-  padding: 24px;
+  padding: 1rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   border: 1px solid #e9ecef;
 }
@@ -30,7 +30,7 @@
   font-size: 24px;
   font-weight: 600;
   color: #1a1a1a;
-  margin: 0 0 8px 0;
+  margin: 0;
 }
 
 .subtitulo_documentos {
@@ -367,11 +367,6 @@
     padding: 16px;
   }
 
-  .card_documentos {
-    padding: 16px;
-    border-radius: 8px;
-  }
-
   .div_titulo_historicos {
     flex-direction: column;
     gap: 16px;
@@ -418,10 +413,6 @@
 }
 
 @media (max-width: 480px) {
-  .titulo_documentos {
-    font-size: 20px;
-  }
-
   .subtitulo_documentos {
     font-size: 13px;
   }

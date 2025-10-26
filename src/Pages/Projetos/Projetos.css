@@ -3,13 +3,15 @@
 /* Container principal com namespace */
 .projetos-container {
   display: flex;
-  min-height: calc(100vh - 70px);
+  min-height: calc(100vh - 50.4px);
 }
 
 .projetos-content {
   flex: 1;
   padding: 0;
   background-color: #f8fafc;
+  height: calc(100vh - 50.4px);
+  overflow: auto;
 }
 
 .projetos-main-content {
@@ -33,7 +35,7 @@
 }
 
 .projetos-title {
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: #1f2937;
   margin: 0;
@@ -81,7 +83,6 @@
 .projetos-search-container {
   position: relative;
   width: 100%;
-  max-width: 400px;
 }
 
 .projetos-search-icon {
@@ -133,10 +134,7 @@
   cursor: pointer;
 }
 
-.projetos-category:hover {
-  border-color: #1d4ed8;
-  color: #1d4ed8;
-}
+
 
 .projetos-category-selected {
   background-color: #1d4ed8;
@@ -344,10 +342,6 @@
 
   .projetos-card {
     padding: 1.25rem;
-  }
-
-  .projetos-title {
-    font-size: 1.5rem;
   }
 }
 

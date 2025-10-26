@@ -161,13 +161,13 @@ const Documentos = () => {
       <NavbarHome />
       <div className="container_conteudos">
         <MenuLateral />
-        <div className="container_vertical_conteudos">
+        <div className="container_vertical_documentos">
           <div className="card_documentos">
             <div className="div_adicionar_arquivo_documentos">
               <div className="div_titulo_documentos">
                 <h2 className="titulo_documentos">Arquivos do Projeto</h2>
                 <h2 className="subtitulo_documentos">
-                  Documentos e recursos relacionados
+                  Documentos e recursos relacionados ao projeto
                 </h2>
               </div>
               <button
@@ -195,29 +195,30 @@ const Documentos = () => {
                         {new Date(doc.criado_em).toLocaleDateString()}
                       </span>
                     </div>
-                    {/* O link para download agora aponta para o caminho servido pelo back-end */}
-                    <a
-                      href={`/${doc.caminho_arquivo.replace(/\\/g, "/")}`}
-                      download={doc.nome_arquivo}
-                      className="documento_download"
-                      title="Baixar arquivo"
-                    >
-                      <i className="fa-solid fa-download"></i>
-                    </a>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation(); // Impede clique no link pai
-                        handleDeletarDocumento(
-                          doc.documento_id,
-                          doc.nome_arquivo
-                        );
-                      }}
-                      className="documento_delete"
-                      title="Excluir arquivo"
-                    >
-                      <i className="fa-solid fa-trash"></i>{" "}
-                      {/* Exemplo com ícone */}
-                    </button>
+                    <div className="div_acoes_documento">
+                      <a
+                        href={`/${doc.caminho_arquivo.replace(/\\/g, "/")}`}
+                        download={doc.nome_arquivo}
+                        className="documento_download"
+                        title="Baixar arquivo"
+                      >
+                        <i className="fa-solid fa-download"></i>
+                      </a>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation(); // Impede clique no link pai
+                          handleDeletarDocumento(
+                            doc.documento_id,
+                            doc.nome_arquivo
+                          );
+                        }}
+                        className="documento_delete"
+                        title="Excluir arquivo"
+                      >
+                        <i className="fa-solid fa-trash"></i>{" "}
+                        {/* Exemplo com ícone */}
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>

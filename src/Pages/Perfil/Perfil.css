@@ -3,24 +3,26 @@
 /* Container Principal */
 .container_conteudos {
   display: flex;
-  min-height: calc(100vh - 70px);
+  min-height: calc(100vh - 50.4px);
 }
 
 .container_vertical_conteudos {
   flex: 1;
-  padding: 2rem;
+  padding: 0rem;
   background-color: #f8fafc;
+  height: calc(100vh - 50.4px);
+  overflow: auto;
 }
 
 /* Header do Perfil */
 .perfil-header {
-  margin-bottom: 2rem;
+  margin: 1rem;
 }
 
 .perfil-info-card {
   background: white;
   border-radius: 16px;
-  padding: 2rem;
+  padding: 1rem;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   border: 1px solid #e2e8f0;
 }
@@ -58,7 +60,7 @@
 }
 
 .perfil-nome {
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: #1a202c;
   margin: 0 0 0.5rem 0;
@@ -301,9 +303,6 @@
 
 /* Responsividade */
 @media (max-width: 768px) {
-  .container_vertical_conteudos {
-    padding: 1rem;
-  }
 
   .perfil-avatar-section {
     flex-direction: column;

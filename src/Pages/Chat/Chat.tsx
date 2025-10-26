@@ -78,7 +78,7 @@ const Chat: React.FC<ChatProps> = ({
               msg.usuario_id === usuario_id ? "mine" : ""
             }`}
           >
-            <strong>{msg.usuario_nome}:</strong> {msg.texto}
+            <strong>{msg.usuario_nome}</strong> {msg.texto}
             <span className="chat-date">
               {new Date(msg.data_envio).toLocaleTimeString("pt-BR", {
                 hour: "2-digit",

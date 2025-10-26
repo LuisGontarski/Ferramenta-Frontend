@@ -9,11 +9,13 @@
   flex: 1;
   padding: 0;
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  height: calc(100vh - 50.4px);
+  overflow: auto;
 }
 
 /* Hero Section */
 .homepage-hero-section {
-  padding: 5rem 2rem;
+  padding: 2rem 2rem;
   background: linear-gradient(135deg, #1d4ed8 0%, #3730a3 100%);
   color: white;
   position: relative;
@@ -183,8 +185,8 @@
 
 .homepage-hero-cards {
   position: relative;
-  width: 320px;
-  height: 320px;
+  width: 420px;
+  height: 360px;
 }
 
 .homepage-hero-card {
@@ -225,6 +227,7 @@
   bottom: 10%;
   left: 5%;
   animation-delay: 3s;
+  width: 160px;
 }
 
 .homepage-card-4 {

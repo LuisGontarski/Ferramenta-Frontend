@@ -853,7 +853,8 @@ const ProjetosDetalhes = () => {
 									tempo médio por tarefa
 								</h2>
 							</div>
-
+						</div>
+						<div className="div_metricas_separadas">
 							<div className="div_informacoes_projeto_detalhes">
 								<h2 className="titulo_metricas_detalhes_projetos">
 									Lead Time
@@ -889,19 +890,6 @@ const ProjetosDetalhes = () => {
 									percentual de tarefas tipo bug
 								</h2>
 							</div>
-
-							<div className="div_informacoes_projeto_detalhes">
-								<h2 className="titulo_metricas_detalhes_projetos">
-									Taxa de retrabalho
-								</h2>
-								<h2 className="valor_metricas_detalhes_projetos">
-									10%
-								</h2>
-								<h2 className="adicional_metricas_detalhes_projetos">
-									percentual de retrabalho
-								</h2>
-							</div>
-
 						</div>
 
 						<div className="card_atualizacoes">

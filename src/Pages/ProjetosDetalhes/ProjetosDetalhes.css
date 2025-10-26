@@ -17,7 +17,7 @@
 }
 
 .titulo_projetos {
-  font-size: 2.5rem;
+  font-size: 1.5rem;
   font-weight: 800;
   color: #1f2937;
   margin: 0 0 0.5rem 0;
@@ -58,7 +58,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 1.5rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .div_informacoes_projeto_detalhes {
@@ -68,6 +68,7 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   border: 1px solid #e5e7eb;
   transition: all 0.3s ease;
+  flex: 1;
 }
 
 .div_informacoes_projeto_detalhes:hover {
@@ -130,6 +131,7 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   border: 1px solid #e5e7eb;
   margin-bottom: 2rem;
+  margin-top: 2rem;
 }
 
 .titulo_projetos {
@@ -208,6 +210,12 @@
   margin: 0 0 1.5rem 0;
   padding-bottom: 0.75rem;
   border-bottom: 2px solid #f3f4f6;
+}
+
+.div_metricas_separadas{
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
 }
 
 .div_datas_projeto {
@@ -530,10 +538,6 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 1.5rem;
-  }
-
-  .titulo_projetos {
-    font-size: 2rem;
   }
 
   .container_informacoes_projeto_detalhes {
