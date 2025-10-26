@@ -92,10 +92,15 @@ const ProjetosDetalhes = () => {
   const [sprints, setSprints] = useState<{ id: string; title: string }[]>([]);
   const [selectedSprint, setSelectedSprint] = useState<string>("");
 
-  
+
   const [burndownData, setBurndownData] = useState<any[]>([]); // Inicializa como array vazio
   const [loadingBurndown, setLoadingBurndown] = useState(false); // Estado de loading para o gráfico
   const [errorBurndown, setErrorBurndown] = useState<string | null>(null); // Estado de erro para o gráfico
+  const [sprintEndDate, setSprintEndDate] = useState<string | null>(null);
+
+  const [progressoSprint, setProgressoSprint] = useState<number>(0);
+  const [trabalhoRestanteSprint, setTrabalhoRestanteSprint] = useState<number | string>('...'); // Inicia com '...'
+  const [prazoRestanteSprint, setPrazoRestanteSprint] = useState<string>('...'); // Inicia com '...'
 
   const sprintSelecionadaLocal = localStorage.getItem("sprint_selecionada_id");
 
@@ -103,12 +108,17 @@ const ProjetosDetalhes = () => {
 
 
   async function fetchBurndown(sprintId?: string) {
-        const sprintIdToUse = sprintId || selectedSprint || localStorage.getItem("sprint_selecionada_id"); // Garante que temos um ID
+        const sprintIdToUse = sprintId || selectedSprint || localStorage.getItem("sprint_selecionada_id");
 
         if (!sprintIdToUse) {
             console.warn("Nenhuma sprint selecionada para buscar o burndown.");
-            setBurndownData([]); // Limpa os dados se não houver sprint
+            setBurndownData([]);
+            setSprintEndDate(null); // Limpa data fim
             setErrorBurndown("Nenhuma sprint selecionada.");
+            // Resetar valores dos cards
+            setProgressoSprint(0);
+            setTrabalhoRestanteSprint('...');
+            setPrazoRestanteSprint('...');
             return;
         }
 
@@ -122,17 +132,73 @@ const ProjetosDetalhes = () => {
                  const errorData = await res.json();
                  throw new Error(errorData.message || `Erro HTTP: ${res.status}`);
             }
-            const data = await res.json();
-            console.log("Dados do Burndown recebidos:", data);
-            setBurndownData(Array.isArray(data) ? data : []); // Garante que seja um array
+            // Agora esperamos um objeto com burndownData e data_fim
+            const responseData = await res.json();
+            const fetchedData = responseData.burndownData;
+            const fetchedEndDate = responseData.data_fim;
+
+            console.log("Dados do Burndown recebidos:", fetchedData);
+            console.log("Data Fim Sprint:", fetchedEndDate);
+
+            setBurndownData(Array.isArray(fetchedData) ? fetchedData : []);
+            setSprintEndDate(fetchedEndDate || null); // Armazena a data de fim
+
+            // --- Calcular valores dos cards APÓS buscar os dados ---
+            calculateSummaryCards(Array.isArray(fetchedData) ? fetchedData : [], fetchedEndDate);
+
         } catch (error: any) {
             console.error("Erro ao buscar dados do Burndown:", error);
             setErrorBurndown(error.message || "Falha ao carregar gráfico Burndown.");
-            setBurndownData([]); // Limpa os dados em caso de erro
+            setBurndownData([]);
+            setSprintEndDate(null);
+            // Resetar valores dos cards em caso de erro
+            setProgressoSprint(0);
+            setTrabalhoRestanteSprint('Erro');
+            setPrazoRestanteSprint('Erro');
         } finally {
             setLoadingBurndown(false);
         }
     }
+
+    // --- Função para calcular os valores dos cards ---
+    const calculateSummaryCards = (currentBurndownData: any[], currentSprintEndDate: string | null) => {
+        if (currentBurndownData.length > 0) {
+            const totalPontosInicial = currentBurndownData[0]?.real || 0;
+            const pontosRestantesAtuais = currentBurndownData[currentBurndownData.length - 1]?.real ?? 0;
+
+            // Progresso Sprint (%)
+            const progresso = totalPontosInicial > 0
+                ? Math.round(((totalPontosInicial - pontosRestantesAtuais) / totalPontosInicial) * 100)
+                : (pontosRestantesAtuais === 0 ? 100 : 0); // Se não há pontos, progresso é 100% se restante for 0
+            setProgressoSprint(progresso);
+
+            // Trabalho Restante (pts)
+            setTrabalhoRestanteSprint(pontosRestantesAtuais);
+
+        } else {
+             // Se não há dados de burndown, reseta
+            setProgressoSprint(0);
+            setTrabalhoRestanteSprint(0); // Ou 'N/A'
+        }
+
+        // Prazo Restante (dias)
+        if (currentSprintEndDate) {
+            const hoje = new Date();
+            hoje.setHours(0, 0, 0, 0); // Zera a hora para comparar só a data
+            const fimSprint = new Date(currentSprintEndDate);
+            fimSprint.setHours(0,0,0,0); // Zera a hora
+
+            if (fimSprint >= hoje) {
+                const diffTime = fimSprint.getTime() - hoje.getTime();
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // Arredonda para cima
+                setPrazoRestanteSprint(`${diffDays} ${diffDays === 1 ? 'dia' : 'dias'}`);
+            } else {
+                setPrazoRestanteSprint("Encerrado");
+            }
+        } else {
+            setPrazoRestanteSprint('Data Fim N/D'); // Não disponível
+        }
+    };
 
     // Efeito para buscar o Burndown quando a sprint selecionada mudar
     useEffect(() => {
@@ -762,31 +828,29 @@ const renderBurndownChart = () => {
                 </p>
               </div>
               {renderBurndownChart()}
-              {/* <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={burndownData}>
-                  <Line
-                    dataKey="planejado"
-                    stroke="#3b82f6"
-                    strokeDasharray="5 5"
-                  />
-                  <Line dataKey="real" stroke="#10b981" strokeWidth={2} />
-                </LineChart>
-              </ResponsiveContainer> */}
-              <div className="cards_resumo">
-                <div className="card_kpi bg-blue-50">
-                  <h3 className="valor_kpi text-blue-600">85%</h3>
-                  <p className="descricao_kpi">Progresso Atual</p>
-                </div>
-                <div className="card_kpi bg-green-50">
-                  <h3 className="valor_kpi text-green-600">8 pts</h3>
-                  <p className="descricao_kpi">Trabalho Restante</p>
-                </div>
-                <div className="card_kpi bg-red-50">
-                  <h3 className="valor_kpi text-red-600">3 dias</h3>
-                  <p className="descricao_kpi">Prazo Restante</p>
-                </div>
-              </div>
-            </div>
+              
+              {/* Cards de resumo DINÂMICOS */}
+                   {!loadingBurndown && !errorBurndown && burndownData.length > 0 && ( // Só mostra se não estiver carregando/erro e tiver dados
+                    <div className="cards_resumo">
+                        <div className="card_kpi bg-blue-50">
+                          <h3 className="valor_kpi text-blue-600">{progressoSprint}%</h3>
+                          <p className="descricao_kpi">Progresso Sprint</p>
+                        </div>
+                        <div className="card_kpi bg-green-50">
+                          <h3 className="valor_kpi text-green-600">{trabalhoRestanteSprint} pts</h3>
+                          <p className="descricao_kpi">Trabalho Restante</p>
+                        </div>
+                        <div className="card_kpi bg-red-50">
+                          <h3 className="valor_kpi text-red-600">{prazoRestanteSprint}</h3>
+                          <p className="descricao_kpi">Prazo Restante</p>
+                        </div>
+                      </div>
+                   )}
+                   {/* Mensagens de erro/loading podem ir aqui também se preferir */}
+                   {loadingBurndown && <p>Carregando resumo da sprint...</p>}
+                   {errorBurndown && !loadingBurndown && <p>Erro ao carregar resumo: {errorBurndown}</p>}
+
+                 </div>
 
             <div className="container_metricas_projeto_detalhes">
               <div className="card_atualizacoes bg-green-50 rounded-xl p-4 shadow-sm border border-green-100">
