@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import HistoricoTarefaModal from "../Historico/HistoricoTarefaModal"; // Importe o modal de histórico
 
 // --- 1. ADICIONA 'commit_url' AO TIPO ---
 type Card = {
@@ -48,6 +49,9 @@ const KanbanCardModal = ({
   const [selectedCommitUrl, setSelectedCommitUrl] = useState<string>(
     card.commit_url || ""
   );
+
+  // Estados para o modal de histórico
+  const [showHistoricoModal, setShowHistoricoModal] = useState(false);
 
   const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -168,6 +172,14 @@ const KanbanCardModal = ({
     }
   };
 
+  const handleOpenHistorico = () => {
+    setShowHistoricoModal(true);
+  };
+
+  const handleCloseHistorico = () => {
+    setShowHistoricoModal(false);
+  };
+
   const handleClose = () => onClose();
 
   const formatDate = (dateStr: string) => {
@@ -177,108 +189,133 @@ const KanbanCardModal = ({
   };
 
   return (
-    <div className="modal_overlay">
-      <div className="modal_detalhes_tarefa">
-        <h2 className="titulo_tarefa">{card.title}</h2>
+    <>
+      <div className="modal_overlay">
+        <div className="modal_detalhes_tarefa">
+          <h2 className="titulo_tarefa">{card.title}</h2>
 
-        <div className="header_badges">
-          <span className={`badge ${card.type}`}>{card.type}</span>
-          <span className={`badge ${card.priority}`}>{card.priority}</span>
-          <span className="badge storypoints">{card.points || 0}</span>
-        </div>
+          <button className="btn_fechar" onClick={handleClose}>
+            <i className="bi bi-x"></i>
+          </button>
 
-        <div className="infos_principais">
-          <p>
-            <i className="bi bi-person"></i> <b>Responsável:</b> {card.user}
-          </p>
-          <p>
-            <i className="bi bi-calendar-event"></i> <b>Data:</b>{" "}
-            {formatDate(card.date)}
-          </p>
-        </div>
+          <div className="header_badges">
+            <span className={`badge ${card.type}`}>{card.type}</span>
+            <span className={`badge ${card.priority}`}>{card.priority}</span>
+            <span className="badge storypoints">{card.points || 0}</span>
+          </div>
 
-        <div className="secao">
-          <label>
-            <b>Descrição</b>
-          </label>
-          <p className="descricao_tarefa">{card.description || "-"}</p>
-        </div>
-
-        <div className="secao">
-          <label>
-            <b>Observação / História do Usuário</b>
-          </label>
-          <textarea
-            className="textarea_tarefa"
-            placeholder="Escreva observações sobre a tarefa..."
-            value={tempNotes}
-            onChange={(e) => setTempNotes(e.target.value)}
-            disabled={loading}
-          />
-        </div>
-
-        <div className="secao">
-          <label>
-            <b>Associar a commit</b>
-          </label>
-          <select
-            className="select_commit"
-            value={selectedCommitUrl}
-            onChange={(e) => setSelectedCommitUrl(e.target.value)}
-            disabled={loading || commits.length === 0}
-          >
-            <option value="">Nenhum commit selecionado</option>
-            {commits.map((c) => (
-              <option key={c.id} value={c.url}>
-                {c.message.split("\n")[0]} (
-                {new Date(c.data_commit).toLocaleDateString()})
-              </option>
-            ))}
-          </select>
-
-          {commits.length === 0 && (
-            <p className="texto_vazio">Nenhum commit disponível.</p>
-          )}
-        </div>
-
-        {card.commit_url && (
-          <div className="secao">
-            <label>
-              <b>Commit Associado</b>
-            </label>
-            <p className="link_commit">
-              <a
-                href={card.commit_url}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Ver commit no GitHub
-              </a>
+          <div className="infos_principais">
+            <p>
+              <i className="bi bi-person"></i> <b>Responsável:</b> {card.user}
+            </p>
+            <p>
+              <i className="bi bi-calendar-event"></i> <b>Data:</b>{" "}
+              {formatDate(card.date)}
             </p>
           </div>
-        )}
 
-        <div className="botoes_modal">
-          <button
-            className="btn_primario"
-            onClick={saveCardNotes}
-            disabled={loading}
-          >
-            {loading ? "Salvando..." : "Salvar"}
-          </button>
-          <button
-            className="btn_excluir_card" // Adicione um estilo para este botão se desejar
-            onClick={handleDeleteCard}
-            disabled={loading}
-          >
-            Excluir
-          </button>
-          <button className="btn_secundario" onClick={handleClose}>
-            Fechar
-          </button>
+          <div className="secao">
+            <label>
+              <b>Descrição</b>
+            </label>
+            <p className="descricao_tarefa">{card.description || "-"}</p>
+          </div>
+
+          <div className="secao">
+            <label>
+              <b>Observação / História do Usuário</b>
+            </label>
+            <textarea
+              className="textarea_tarefa"
+              placeholder="Escreva observações sobre a tarefa..."
+              value={tempNotes}
+              onChange={(e) => setTempNotes(e.target.value)}
+              disabled={loading}
+            />
+          </div>
+
+          <div className="secao">
+            <label>
+              <b>Associar a commit</b>
+            </label>
+            <select
+              className="select_commit"
+              value={selectedCommitUrl}
+              onChange={(e) => setSelectedCommitUrl(e.target.value)}
+              disabled={loading || commits.length === 0}
+            >
+              <option value="">Nenhum commit selecionado</option>
+              {commits.map((c) => (
+                <option key={c.id} value={c.url}>
+                  {c.message.split("\n")[0]} (
+                  {new Date(c.data_commit).toLocaleDateString()})
+                </option>
+              ))}
+            </select>
+
+            {commits.length === 0 && (
+              <p className="texto_vazio">Nenhum commit disponível.</p>
+            )}
+          </div>
+
+          {card.commit_url && (
+            <div className="secao">
+              <label>
+                <b>Commit Associado</b>
+              </label>
+              <p className="link_commit">
+                <a
+                  href={card.commit_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Ver commit no GitHub
+                </a>
+              </p>
+            </div>
+          )}
+
+          {/* Botão Histórico */}
+          <div className="secao">
+            <button
+              className="btn_historico"
+              onClick={handleOpenHistorico}
+              disabled={loading}
+            >
+              <i className="bi bi-clock-history"></i> Ver Histórico
+            </button>
+          </div>
+
+          <div className="botoes_modal">
+            <button
+              className="btn_primario"
+              onClick={saveCardNotes}
+              disabled={loading}
+            >
+              {loading ? "Salvando..." : "Salvar"}
+            </button>
+            <button
+              className="btn_excluir_card"
+              onClick={handleDeleteCard}
+              disabled={loading}
+            >
+              Excluir
+            </button>
+            <button className="btn_secundario" onClick={handleClose}>
+              Fechar
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+
+      {/* Modal de Histórico */}
+      <HistoricoTarefaModal
+        tarefa_id={card.id}
+        tarefa_titulo={card.title}
+        isOpen={showHistoricoModal}
+        onClose={handleCloseHistorico}
+      />
+    </>
   );
 };
 

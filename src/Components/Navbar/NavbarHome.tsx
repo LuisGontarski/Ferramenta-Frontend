@@ -67,10 +67,6 @@ const NavbarHome = () => {
       }
     };
     buscarNotificacoesNaoLidas();
-
-    // Atualizar a cada 30 segundos (opcional)
-    const interval = setInterval(buscarNotificacoesNaoLidas, 30000);
-    return () => clearInterval(interval);
   }, []);
 
   const navigate = useNavigate();
