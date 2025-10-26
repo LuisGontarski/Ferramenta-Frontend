@@ -1,11 +1,10 @@
 import "./NavbarHome.css";
 import { NavLink, useParams } from "react-router-dom";
 import {
-  IoBook,
   IoBookOutline,
-  IoChatbox,
   IoChatboxOutline,
   IoDocumentTextOutline,
+  IoNotificationsOutline,
 } from "react-icons/io5";
 import { LuChartColumn, LuCalendar } from "react-icons/lu";
 import { IoMdCheckboxOutline } from "react-icons/io";
@@ -29,6 +28,8 @@ const NavbarHome = () => {
     foto_perfil: "",
   });
 
+  const [notificacoesNaoLidas, setNotificacoesNaoLidas] = useState(0);
+
   useEffect(() => {
     const usuarioId = localStorage.getItem("usuario_id");
     if (!usuarioId) return;
@@ -46,6 +47,43 @@ const NavbarHome = () => {
 
     carregarUsuario();
   }, []);
+
+  // Buscar quantidade de notificações não lidas
+  useEffect(() => {
+    const buscarNotificacoesNaoLidas = async () => {
+      try {
+        const usuarioId = localStorage.getItem("usuario_id");
+        if (!usuarioId) return;
+
+        const token = localStorage.getItem("token");
+        const response = await axios.get(
+          `${API_URL}/notificacoes/contar-nao-lidas`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (response.data.success) {
+          setNotificacoesNaoLidas(response.data.totalNaoLidas);
+        }
+      } catch (err) {
+        console.error("Erro ao buscar notificações não lidas:", err);
+      }
+    };
+
+    buscarNotificacoesNaoLidas();
+
+    // Atualizar a cada 30 segundos (opcional)
+    const interval = setInterval(buscarNotificacoesNaoLidas, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleNotificacaoClick = () => {
+    // Redirecionar para a tela de notificações
+    window.location.href = "/notificacoes";
+  };
 
   const renderAvatar = () => {
     if (usuario.foto_perfil) {
@@ -153,6 +191,21 @@ const NavbarHome = () => {
         </div>
 
         <div className="div-other">
+          {/* Ícone de Notificações - Estilo Gmail */}
+          <button
+            className="notificacao-btn"
+            onClick={handleNotificacaoClick}
+            title="Notificações"
+          >
+            <IoNotificationsOutline size={"24px"} />
+            {notificacoesNaoLidas > 0 && (
+              <span className="notificacao-badge">
+                {notificacoesNaoLidas > 99 ? "99+" : notificacoesNaoLidas}
+              </span>
+            )}
+          </button>
+
+          {/* Avatar do usuário */}
           <a href="/perfil" className="nav_perfil">
             {renderAvatar()}
           </a>

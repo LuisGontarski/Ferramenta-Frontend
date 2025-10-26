@@ -95,10 +95,11 @@ const Cronograma = () => {
     fetchTarefas();
   }, []);
 
+  // CORREÇÃO DAS DATAS - Usando construtor com parâmetros separados
   const config = {
     cellWidth: 30,
-    startDate: new Date("2025-10-01"),
-    endDate: new Date("2026-12-31"),
+    startDate: new Date(2025, 9, 1), // Outubro de 2025 (mês 9 = Outubro)
+    endDate: new Date(2026, 2, 31), // Março de 2026 (mês 2 = Março)
   };
 
   const formatDate = (dateString: string): string => {
@@ -300,7 +301,10 @@ const Cronograma = () => {
                           onMouseLeave={handleTaskBarLeave}
                         >
                           {canShowText &&
-                            truncateText(tarefa.sprint_nome + ' - ' + tarefa.titulo, Math.floor(width / 8))}
+                            truncateText(
+                              tarefa.sprint_nome + " - " + tarefa.titulo,
+                              Math.floor(width / 8)
+                            )}
                         </div>
                       </div>
                     );

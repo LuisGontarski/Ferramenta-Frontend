@@ -111,3 +111,49 @@
   justify-content: center;
   text-align: center;
 }
+
+.notificacao-btn {
+  position: relative;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #5f6368;
+  margin-right: 8px;
+}
+
+.notificacao-btn:hover {
+  background-color: #f1f3f4;
+}
+
+.notificacao-badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background-color: #d93025;
+  color: white;
+  border-radius: 10px;
+  min-width: 18px;
+  height: 18px;
+  font-size: 11px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  border: 2px solid white;
+  font-family: "Google Sans", Roboto, Arial, sans-serif;
+}
+
+/* Ajuste para o div-other existente */
+.div-other {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
