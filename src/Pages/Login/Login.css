@@ -19,7 +19,7 @@ body {
 .left_card_login{
   flex: 1;
   height: 100%;
-  background: linear-gradient(to bottom right, #60a5fa, #3b82f6, #2563eb);
+  background: linear-gradient(to bottom right, #1D4ED8, #2563eb);
   display: flex;
   align-items: center;
   flex-direction: column;
@@ -125,7 +125,7 @@ body {
 }
 
 .forgot {
-  color: #3182ce;
+  color: #1D4ED8;
   text-decoration: none;
   font-size: 14px;
 }
@@ -143,7 +143,7 @@ body {
   font-size: 16px;
   cursor: pointer;
   transition: background 0.3s;
-  background: linear-gradient(to right, #60a5fa, #2563eb);
+  background: linear-gradient(to right, #1D4ED8, #2563eb);
 }
 
 .btn-login:hover {
@@ -160,7 +160,7 @@ body {
 }
 
 .redirect_login a {
-  color: #3182ce;
+  color: #1D4ED8;
   text-decoration: none;
   font-size: 14px;
 }
@@ -179,7 +179,7 @@ body {
 }
 
 .footer_login a{
-  color: #3182ce;
+  color: #1D4ED8;
   text-decoration: none;
   font-size: 14px;
 }

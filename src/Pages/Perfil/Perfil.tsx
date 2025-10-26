@@ -83,14 +83,13 @@ const Perfil = () => {
   };
 
   const handleSavePerfil = async (usuarioEditado: typeof usuario) => {
-    try {
-      const loadingToast = toast.loading("Salvando perfil...");
+    const loadingToast = toast.loading("Salvando perfil...");
 
+    try {
       const usuarioId = localStorage.getItem("usuario_id");
 
       if (!usuarioId) {
-        toast.error("Usuário não autenticado.");
-        return;
+        throw new Error("Usuário não autenticado");
       }
 
       const response = await fetch(
@@ -101,10 +100,6 @@ const Perfil = () => {
           body: JSON.stringify({
             nome_usuario: usuarioEditado.nome,
             email: usuarioEditado.email,
-            senha: "dummyPassword123",
-            cargo: usuario.cargo,
-            github: usuario.github,
-            foto_perfil: usuario.foto_perfil,
           }),
         }
       );
@@ -117,7 +112,11 @@ const Perfil = () => {
       toast.success("Perfil atualizado com sucesso!", { id: loadingToast });
     } catch (err) {
       console.error("Erro ao atualizar perfil:", err);
-      toast.error("Não foi possível atualizar o perfil.");
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : "Não foi possível atualizar o perfil.";
+      toast.error(errorMessage, { id: loadingToast });
     }
   };
 
