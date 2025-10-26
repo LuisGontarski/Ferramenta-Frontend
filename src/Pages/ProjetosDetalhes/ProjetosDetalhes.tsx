@@ -92,32 +92,46 @@ const ProjetosDetalhes = () => {
   const [sprints, setSprints] = useState<{ id: string; title: string }[]>([]);
   const [selectedSprint, setSelectedSprint] = useState<string>("");
 
-  const [burndownData, setBurndownData] = useState([
-    { dia: "Dia 1", planejado: 100, real: 100 },
-    { dia: "Dia 2", planejado: 90, real: 95 },
-  ]);
+  const [burndownData, setBurndownData] = useState<any[]>([]); // Inicializa como array vazio
+  const [loadingBurndown, setLoadingBurndown] = useState(false); // Estado de loading para o gráfico
+  const [errorBurndown, setErrorBurndown] = useState<string | null>(null); // Estado de erro para o gráfico
 
   async function fetchBurndown(sprintId?: string) {
-    const sprintIdToUse =
-      sprintId || localStorage.getItem("sprint_selecionada_id");
+        const sprintIdToUse = sprintId || selectedSprint || localStorage.getItem("sprint_selecionada_id"); // Garante que temos um ID
 
-    if (!sprintIdToUse) {
-      console.warn("Nenhuma sprint selecionada encontrada no localStorage.");
-      return;
+        if (!sprintIdToUse) {
+            console.warn("Nenhuma sprint selecionada para buscar o burndown.");
+            setBurndownData([]); // Limpa os dados se não houver sprint
+            setErrorBurndown("Nenhuma sprint selecionada.");
+            return;
+        }
+
+        setLoadingBurndown(true);
+        setErrorBurndown(null);
+        console.log("Buscando burndown para sprint ID:", sprintIdToUse);
+
+        try {
+            const res = await fetch(`${BASE_URL}/sprint/${sprintIdToUse}/burndown`);
+            if (!res.ok) {
+                 const errorData = await res.json();
+                 throw new Error(errorData.message || `Erro HTTP: ${res.status}`);
+            }
+            const data = await res.json();
+            console.log("Dados do Burndown recebidos:", data);
+            setBurndownData(Array.isArray(data) ? data : []); // Garante que seja um array
+        } catch (error: any) {
+            console.error("Erro ao buscar dados do Burndown:", error);
+            setErrorBurndown(error.message || "Falha ao carregar gráfico Burndown.");
+            setBurndownData([]); // Limpa os dados em caso de erro
+        } finally {
+            setLoadingBurndown(false);
+        }
     }
 
-    console.log("Buscando burndown para sprint ID:", sprintIdToUse);
-    const res = await fetch(`${BASE_URL}/sprint/${sprintIdToUse}/burndown`);
-    const data = await res.json();
-    console.log("Burndown Data:", data);
-
-    setBurndownData(data);
-  }
-
-  // E modifique o useEffect para usar a nova função
-  useEffect(() => {
-    fetchBurndown();
-  }, []);
+    // Efeito para buscar o Burndown quando a sprint selecionada mudar
+    useEffect(() => {
+        fetchBurndown(); // Busca na montagem inicial e quando selectedSprint mudar
+    }, [selectedSprint]);
 
   const [commits, setCommits] = useState<any[]>([]);
   const [numCommits, setNumCommits] = useState(0);
@@ -504,6 +518,47 @@ const ProjetosDetalhes = () => {
     return `${day}/${month}/${year}`;
   };
 
+
+const renderBurndownChart = () => {
+        if (loadingBurndown) {
+            return <p className="loading-message">Carregando gráfico Burndown...</p>; // Adicione estilo CSS se necessário
+        }
+        if (errorBurndown) {
+            return <p className="error-message">Erro ao carregar Burndown: {errorBurndown}</p>; // Adicione estilo CSS
+        }
+        if (burndownData.length === 0) {
+            return <p className="empty-message">Dados do Burndown indisponíveis para esta sprint.</p>; // Adicione estilo CSS
+        }
+
+        return (
+            <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={burndownData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0"/>
+                    <XAxis dataKey="dia" />
+                    <YAxis label={{ value: 'Story Points Restantes', angle: -90, position: 'insideLeft' }}/>
+                    <Tooltip />
+                    <Legend />
+                    <Line
+                        type="monotone" // Curva suave
+                        dataKey="planejado"
+                        name="Planejado" // Nome na legenda
+                        stroke="#8884d8" // Cor da linha planejada (ex: roxo)
+                        strokeDasharray="5 5" // Linha tracejada
+                        dot={false} // Sem pontos nos dados
+                    />
+                    <Line
+                        type="monotone" // Curva suave
+                        dataKey="real"
+                        name="Real" // Nome na legenda
+                        stroke="#82ca9d" // Cor da linha real (ex: verde)
+                        strokeWidth={2} // Linha mais grossa
+                        activeDot={{ r: 6 }} // Ponto maior ao passar o mouse
+                    />
+                </LineChart>
+            </ResponsiveContainer>
+        );
+    }
+
   return (
     <>
       <div>
@@ -698,7 +753,8 @@ const ProjetosDetalhes = () => {
                   Visualização do trabalho restante ao longo do tempo.
                 </p>
               </div>
-              <ResponsiveContainer width="100%" height={300}>
+              {renderBurndownChart()}
+              {/* <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={burndownData}>
                   <Line
                     dataKey="planejado"
@@ -707,7 +763,7 @@ const ProjetosDetalhes = () => {
                   />
                   <Line dataKey="real" stroke="#10b981" strokeWidth={2} />
                 </LineChart>
-              </ResponsiveContainer>
+              </ResponsiveContainer> */}
               <div className="cards_resumo">
                 <div className="card_kpi bg-blue-50">
                   <h3 className="valor_kpi text-blue-600">85%</h3>
