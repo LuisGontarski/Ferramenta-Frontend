@@ -90,11 +90,10 @@ const KanbanCardModal = ({
   }, [card.id, apiUrl]);
 
   const saveCardNotes = async () => {
+    const loadingToast = toast.loading("Salvando observação...");
+
     try {
       setLoading(true);
-
-      // ✅ Mostrar loading durante o salvamento
-      const loadingToast = toast.loading("Salvando observação...");
 
       const response = await fetch(`${apiUrl}/tarefas/${card.id}/comentario`, {
         method: "PATCH",
@@ -109,7 +108,6 @@ const KanbanCardModal = ({
 
       const updatedTask = await response.json();
 
-      // Atualizar o card
       const updatedCard: Card = {
         ...card,
         notes: updatedTask.comentario,
@@ -117,7 +115,6 @@ const KanbanCardModal = ({
       };
       onUpdateCard(updatedCard);
 
-      // ✅ Substituir loading por sucesso
       toast.success("Observação salva com sucesso!", {
         id: loadingToast,
       });
@@ -126,27 +123,63 @@ const KanbanCardModal = ({
     } catch (err) {
       console.error(err);
 
-      // ✅ Notificação de erro moderna
-      toast.error("Erro ao salvar observação!");
+      toast.error("Erro ao salvar observação!", {
+        id: loadingToast,
+      });
     } finally {
       setLoading(false);
     }
   };
 
   const handleDeleteCard = async () => {
-    if (
-      !window.confirm(
-        `Tem certeza que deseja excluir a tarefa "${card.title}"?`
-      )
-    ) {
+    // ✅ Confirm personalizado com toast
+    const userConfirmed = await new Promise((resolve) => {
+      toast.custom(
+        (t) => (
+          <div className="custom-toast confirm-toast">
+            <div className="toast-content">
+              <h3>Confirmar Exclusão</h3>
+              <p>
+                Tem certeza que deseja excluir a tarefa{" "}
+                <strong>"{card.title}"</strong>?
+              </p>
+              <div className="toast-buttons">
+                <button
+                  className="btn-confirm-yes"
+                  onClick={() => {
+                    resolve(true);
+                    toast.dismiss(t.id);
+                  }}
+                >
+                  Sim, Excluir
+                </button>
+                <button
+                  className="btn-confirm-no"
+                  onClick={() => {
+                    resolve(false);
+                    toast.dismiss(t.id);
+                  }}
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          </div>
+        ),
+        {
+          duration: Infinity, // Fica aberto até o usuário responder
+        }
+      );
+    });
+
+    if (!userConfirmed) {
       return;
     }
 
+    const loadingToast = toast.loading("Excluindo tarefa...");
+
     try {
       setLoading(true);
-
-      // ✅ Mostrar loading durante a exclusão
-      const loadingToast = toast.loading("Excluindo tarefa...");
 
       const response = await axios.delete(`${apiUrl}/tarefas/${card.id}`);
 
@@ -154,19 +187,22 @@ const KanbanCardModal = ({
         throw new Error("Falha ao excluir a tarefa no servidor.");
       }
 
-      onDelete(card.id); // Avisa o componente pai para remover o card da tela
+      onDelete(card.id);
 
-      // ✅ Substituir loading por sucesso
       toast.success("Tarefa excluída com sucesso!", {
         id: loadingToast,
       });
 
-      onClose(); // Fecha o modal
-    } catch (err) {
+      onClose();
+    } catch (err: any) {
       console.error("Erro ao excluir o card:", err);
 
-      // ✅ Notificação de erro moderna
-      toast.error("Não foi possível excluir a tarefa.");
+      const errorMessage =
+        err.response?.data?.message || "Não foi possível excluir a tarefa.";
+
+      toast.error(errorMessage, {
+        id: loadingToast,
+      });
     } finally {
       setLoading(false);
     }

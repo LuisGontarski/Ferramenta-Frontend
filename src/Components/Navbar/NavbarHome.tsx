@@ -1,5 +1,5 @@
 import "./NavbarHome.css";
-import { NavLink, useNavigate, useParams } from "react-router-dom";
+import { NavLink, useNavigate, useParams, useLocation } from "react-router-dom";
 import {
   IoBookOutline,
   IoChatboxOutline,
@@ -18,6 +18,8 @@ const API_URL = import.meta.env.VITE_API_URL;
 const NavbarHome = () => {
   const { id, projeto_id } = useParams();
   const projectId = id || projeto_id;
+  const location = useLocation(); // ← ADICIONAR
+  const navigate = useNavigate();
 
   const [usuario, setUsuario] = useState<UserDTO>({
     usuario_id: "",
@@ -29,6 +31,24 @@ const NavbarHome = () => {
   });
 
   const [notificacoesNaoLidas, setNotificacoesNaoLidas] = useState(0);
+
+  // Função para buscar notificações (agora reutilizável)
+  const buscarNotificacoesNaoLidas = async () => {
+    try {
+      const usuarioId = localStorage.getItem("usuario_id");
+      if (!usuarioId) return;
+
+      const response = await axios.get(
+        `${API_URL}/notificacoes/contar-nao-lidas?usuario_id=${usuarioId}`
+      );
+
+      if (response.data.success) {
+        setNotificacoesNaoLidas(response.data.totalNaoLidas);
+      }
+    } catch (err) {
+      console.error("Erro ao buscar notificações não lidas:", err);
+    }
+  };
 
   useEffect(() => {
     const usuarioId = localStorage.getItem("usuario_id");
@@ -48,28 +68,10 @@ const NavbarHome = () => {
     carregarUsuario();
   }, []);
 
-  // Buscar quantidade de notificações não lidas
+  // SOLUÇÃO #4: Atualizar notificações quando a rota muda
   useEffect(() => {
-    const buscarNotificacoesNaoLidas = async () => {
-      try {
-        const usuarioId = localStorage.getItem("usuario_id");
-        if (!usuarioId) return;
-
-        const response = await axios.get(
-          `${API_URL}/notificacoes/contar-nao-lidas?usuario_id=${usuarioId}`
-        );
-
-        if (response.data.success) {
-          setNotificacoesNaoLidas(response.data.totalNaoLidas);
-        }
-      } catch (err) {
-        console.error("Erro ao buscar notificações não lidas:", err);
-      }
-    };
     buscarNotificacoesNaoLidas();
-  }, []);
-
-  const navigate = useNavigate();
+  }, [location.pathname]); // ← Atualiza sempre que a URL muda
 
   const handleNotificacaoClick = () => {
     navigate("/notificacoes-historico");

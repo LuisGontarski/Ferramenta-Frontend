@@ -715,3 +715,79 @@ body {
     padding: 0.4rem;
     flex: 1;
 }
+
+/* Toast de Confirmação Discreto */
+.custom-toast.confirm-toast {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  max-width: 350px;
+  animation: toast-in 0.2s ease-out;
+}
+
+.confirm-toast .toast-content h3 {
+  margin: 0 0 8px 0;
+  color: #2d3748;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.confirm-toast .toast-content p {
+  margin: 0 0 16px 0;
+  color: #4a5568;
+  line-height: 1.4;
+  font-size: 14px;
+}
+
+.confirm-toast .toast-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.confirm-toast .btn-confirm-yes {
+  background: #e53e3e;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.confirm-toast .btn-confirm-yes:hover {
+  background: #c53030;
+  transform: translateY(-1px);
+}
+
+.confirm-toast .btn-confirm-no {
+  background: #718096;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.confirm-toast .btn-confirm-no:hover {
+  background: #4a5568;
+  transform: translateY(-1px);
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
