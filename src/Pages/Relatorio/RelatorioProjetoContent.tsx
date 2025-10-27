@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import { handleGerarRelatorioProjeto } from "../../services/relatorioService"; // <-- Ajuste o caminho se necessário
+import { toast } from "react-hot-toast"; // Adicione se não estiver importado
 
 // Tipos para o relatório
 type Projeto = {
@@ -246,167 +248,15 @@ const RelatorioProjetoContent = ({
   };
 
   // Função alternativa para gerar PDF com conteúdo estruturado
-  const gerarPDFEstruturado = async () => {
-    if (!relatorio) return;
-
-    setExportando(true);
-
-    try {
-      const pdf = new jsPDF({
-        orientation: "portrait",
-        unit: "mm",
-        format: "a4",
-      });
-
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      let yPosition = 20;
-
-      // Configurações de estilo
-      pdf.setFont("helvetica", "bold");
-      pdf.setFontSize(20);
-
-      // Título
-      pdf.text("Relatório do Projeto", pageWidth / 2, yPosition, {
-        align: "center",
-      });
-      yPosition += 10;
-
-      pdf.setFontSize(14);
-      pdf.setFont("helvetica", "normal");
-      pdf.text(`Projeto: ${relatorio.projeto.nome}`, 20, yPosition);
-      yPosition += 8;
-      pdf.text(
-        `Data de geração: ${new Date().toLocaleDateString("pt-BR")}`,
-        20,
-        yPosition
-      );
-      yPosition += 15;
-
-      // Informações do Projeto
-      pdf.setFont("helvetica", "bold");
-      pdf.setFontSize(16);
-      pdf.text("Informações do Projeto", 20, yPosition);
-      yPosition += 10;
-
-      pdf.setFont("helvetica", "normal");
-      pdf.setFontSize(10);
-
-      const infoProjeto = [
-        `Status: ${relatorio.projeto.status}`,
-        `Data Início: ${formatarData(relatorio.projeto.data_inicio)}`,
-        `Previsão Término: ${formatarData(
-          relatorio.projeto.data_fim_prevista
-        )}`,
-        `Equipe: ${relatorio.projeto.equipe_nome || "Não definida"}`,
-        `Criador: ${relatorio.projeto.criador_nome}`,
-        `Sprint Atual: ${relatorio.projeto.sprint_atual_nome || "Nenhuma"}`,
-      ];
-
-      infoProjeto.forEach((info) => {
-        if (yPosition > 270) {
-          pdf.addPage();
-          yPosition = 20;
-        }
-        pdf.text(info, 25, yPosition);
-        yPosition += 6;
-      });
-
-      yPosition += 10;
-
-      // Resumo de Tarefas
-      pdf.setFont("helvetica", "bold");
-      pdf.setFontSize(16);
-      pdf.text("Resumo de Tarefas", 20, yPosition);
-      yPosition += 10;
-
-      pdf.setFont("helvetica", "normal");
-      pdf.setFontSize(10);
-
-      const resumo = relatorio.resumo_tarefas;
-      const infoTarefas = [
-        `Total de Tarefas: ${resumo.total_tarefas}`,
-        `Tarefas Concluídas: ${resumo.tarefas_concluidas}`,
-        `Tarefas em Andamento: ${resumo.tarefas_andamento}`,
-        `Tarefas Pendentes: ${resumo.tarefas_pendentes}`,
-        `Total Story Points: ${resumo.total_story_points}`,
-        `Story Points Concluídos: ${resumo.story_points_concluidos}`,
-        `Cycle Time Médio: ${formatarDias(resumo.cycle_time_medio)}`,
-      ];
-
-      infoTarefas.forEach((info) => {
-        if (yPosition > 270) {
-          pdf.addPage();
-          yPosition = 20;
-        }
-        pdf.text(info, 25, yPosition);
-        yPosition += 6;
-      });
-
-      yPosition += 10;
-
-      // Métricas (se disponíveis)
-      if (relatorio.metricas_detalhadas) {
-        pdf.setFont("helvetica", "bold");
-        pdf.setFontSize(16);
-        pdf.text("Métricas de Desempenho", 20, yPosition);
-        yPosition += 10;
-
-        pdf.setFont("helvetica", "normal");
-        pdf.setFontSize(10);
-
-        const metricas = [
-          `Velocidade Média: ${relatorio.metricas_detalhadas.velocidade.velocidade_media.toFixed(
-            1
-          )} SP/sprint`,
-          `Lead Time Médio: ${formatarDias(
-            relatorio.metricas_detalhadas.tempos_entrega.lead_time_medio_dias
-          )}`,
-          `Cycle Time Médio: ${formatarDias(
-            relatorio.metricas_detalhadas.tempos_entrega.cycle_time_medio_dias
-          )}`,
-          `Taxa de Conclusão: ${formatarPorcentagem(
-            relatorio.metricas_detalhadas.taxas_conclusao.taxa_conclusao_tarefas
-          )}`,
-          `Membros Ativos: ${relatorio.metricas_detalhadas.distribuicao_trabalho.membros_com_tarefas}/${relatorio.metricas_detalhadas.distribuicao_trabalho.total_membros_equipe}`,
-        ];
-
-        metricas.forEach((metrica) => {
-          if (yPosition > 270) {
-            pdf.addPage();
-            yPosition = 20;
-          }
-          pdf.text(metrica, 25, yPosition);
-          yPosition += 6;
-        });
-      }
-
-      // Rodapé
-      const totalPages = pdf.getNumberOfPages();
-      for (let i = 1; i <= totalPages; i++) {
-        pdf.setPage(i);
-        pdf.setFontSize(8);
-        pdf.text(
-          `Página ${i} de ${totalPages} - Gerado em ${new Date().toLocaleString(
-            "pt-BR"
-          )}`,
-          pageWidth / 2,
-          290,
-          { align: "center" }
-        );
-      }
-
-      // Salvar PDF
-      pdf.save(
-        `relatorio-estruturado-${relatorio.projeto.nome}-${
-          new Date().toISOString().split("T")[0]
-        }.pdf`
-      );
-    } catch (error) {
-      console.error("Erro ao gerar PDF estruturado:", error);
-      setErro("Erro ao gerar relatório em PDF");
-    } finally {
-      setExportando(false);
+  const gerarPDFBackend = async () => {
+    if (!relatorio) {
+        toast.error("Não há dados de relatório para gerar o PDF.");
+        return;
     }
+    setExportando(true); // Indica que a exportação está em andamento
+    // Chama a função do serviço, passando o projeto_id
+    await handleGerarRelatorioProjeto(projeto_id, relatorio.projeto.nome);
+    setExportando(false); // Finaliza o estado de exportação
   };
 
   // Renderizar loading
@@ -496,7 +346,7 @@ const RelatorioProjetoContent = ({
                   📷 Captura da Tela
                 </button>
                 <button
-                  onClick={gerarPDFEstruturado}
+                  onClick={gerarPDFBackend}
                   disabled={exportando}
                   className="rp-export-option"
                 >

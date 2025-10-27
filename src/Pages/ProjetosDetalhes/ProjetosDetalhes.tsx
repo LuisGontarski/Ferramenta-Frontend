@@ -456,8 +456,8 @@ const ProjetosDetalhes = () => {
 
 	async function fetchTotalTarefas() {
 		try {
-			const res = await fetch(`${BASE_URL}/projects/${sprintSelecionadaLocal}/tasks/count`);
-			if (!res.ok)
+			const res = await fetch(`${BASE_URL}/projects/${selectedSprint}/tasks/count`);
+			if (!res.ok) 
 				throw new Error(`Erro ao buscar total de tarefas: ${res.status}`);
 			const data = await res.json();
 			setTotalTarefas(data.total);
@@ -470,7 +470,7 @@ const ProjetosDetalhes = () => {
 	async function fetchTarefasConcluidas() {
 		try {
 			const res = await fetch(
-				`${BASE_URL}/projects/${sprintSelecionadaLocal}/tasks/count?fase=Feito`
+				`${BASE_URL}/projects/${selectedSprint}/tasks/count?fase=Feito`
 			);
 			if (!res.ok)
 				throw new Error(`Erro ao buscar tarefas concluídas: ${res.status}`);
@@ -481,12 +481,12 @@ const ProjetosDetalhes = () => {
 		}
 	}
 
-	fetchTotalTarefas().then(fetchTarefasConcluidas);
+	// fetchTotalTarefas().then(fetchTarefasConcluidas);
 
 	async function fetchTarefasEmProgresso() {
 		try {
 			const res = await fetch(
-				`${BASE_URL}/projects/${sprintSelecionadaLocal}/tasks/count?fase=Executar,Revisar`
+				`${BASE_URL}/projects/${selectedSprint}/tasks/count?fase=Executar,Revisar`
 			);
 			if (!res.ok)
 				throw new Error(`Erro ao buscar tarefas em progresso: ${res.status}`);
@@ -497,21 +497,47 @@ const ProjetosDetalhes = () => {
 		}
 	}
 
-	fetchTarefasEmProgresso();
+	// fetchTarefasEmProgresso();
 
 	async function fetchCycleTime() {
-		if (!id) return;
-		try {
-			const res = await fetch(`${BASE_URL}/projects/${sprintSelecionadaLocal}/cycle-time`);
-			if (!res.ok) throw new Error(`Erro ${res.status}`);
-			const data = await res.json();
-			setCycleTime(data.cycleTime);
-		} catch (err) {
-			console.error("Erro ao buscar cycle time:", err);
-			setCycleTime(null);
-		}
-	}
-	fetchCycleTime();
+   // const sprintSelecionadaLocal = localStorage.getItem("sprint_selecionada_id"); // Remova ou comente esta linha
+   if (!selectedSprint) { // Use o estado 'selectedSprint'
+       console.warn("Nenhuma sprint selecionada para buscar cycle time.");
+       setCycleTime(null);
+       return;
+   }
+   try {
+     // Use 'selectedSprint' na URL
+     const res = await fetch(`${BASE_URL}/projects/${selectedSprint}/cycle-time`);
+     if (!res.ok) throw new Error(`Erro ${res.status}`);
+     const data = await res.json();
+     // Arredonda para duas casas decimais ANTES de setar o estado
+     const cycleTimeValue = data.cycleTime !== null ? parseFloat(data.cycleTime.toFixed(2)) : null;
+     setCycleTime(cycleTimeValue);
+   } catch (err) {
+     console.error("Erro ao buscar cycle time:", err);
+     setCycleTime(null);
+   }
+ }
+	// fetchCycleTime();
+
+	useEffect(() => {
+   if (selectedSprint) { // Garante que só busca se houver uma sprint selecionada
+     fetchTotalTarefas(); // Chamada dentro do useEffect
+     fetchTarefasConcluidas(); // Chamada dentro do useEffect
+     fetchTarefasEmProgresso(); // Chamada dentro do useEffect
+     fetchCycleTime(); // Chamada dentro do useEffect 
+   } else {
+     // Opcional: Limpar os estados se nenhuma sprint estiver selecionada
+     setTotalTarefas(0);
+     setTotalConcluidas(0);
+     setTotalEmProgresso(0);
+     setCycleTime(null);
+     setLeadTime(null);
+     setVelocidadeEquipe(null);
+     setTaxaBugs(null);
+   }
+ }, [selectedSprint]);
 
 	useEffect(() => {
 		async function fetchMetrics() {
