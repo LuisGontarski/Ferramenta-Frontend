@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import "./Login.css";
 import { Link, useNavigate } from "react-router-dom";
-import { login, type LoginPayload, type LoginResponse, } from "../../services/authService";
+import {
+  login,
+  type LoginPayload,
+  type LoginResponse,
+} from "../../services/authService";
 import { FiEyeOff } from "react-icons/fi";
 import { FiEye } from "react-icons/fi";
 
@@ -65,12 +69,10 @@ const Login: React.FC = () => {
       <div className="card_container_login">
         <section className="card_login">
           <div className="header_login">
-            <span className="logo-login">
-              Acesse e otimize sua gestão
-            </span>
+            <span className="logo-login">Acesse e otimize sua gestão</span>
             <p className="subtitle">Entre com suas credenciais</p>
           </div>
-          
+
           <div>
             <h2 className="titulos_inputs_login">Email</h2>
             <input
@@ -85,23 +87,23 @@ const Login: React.FC = () => {
           <div>
             <h2 className="titulos_inputs_login">Senha</h2>
             <div className="password-wrapper">
-                <input
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Insira sua senha"
-                    className="input_login"
-                    value={senha}
-                    onChange={(e) => setSenha(e.target.value)}
-                    disabled={loading}
-                />
-                <button
-                    type="button"
-                    className="toggle-password"
-                    onClick={() => setShowPassword((prev) => !prev)}
-                >
-                    {showPassword ? <FiEyeOff /> : <FiEye />}
-                </button>
-                </div>
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Insira sua senha"
+                className="input_login"
+                value={senha}
+                onChange={(e) => setSenha(e.target.value)}
+                disabled={loading}
+              />
+              <button
+                type="button"
+                className="toggle-password"
+                onClick={() => setShowPassword((prev) => !prev)}
+              >
+                {showPassword ? <FiEyeOff /> : <FiEye />}
+              </button>
             </div>
+          </div>
 
           {loginError && (
             <p style={{ color: "red", textAlign: "center", marginTop: "10px" }}>
@@ -117,9 +119,9 @@ const Login: React.FC = () => {
             {loading ? "Entrando..." : "Entrar"}
           </button>
           <div className="footer_login">
-            <Link to={"/esqueceuSenha"}>
+            {/* <Link to={"/esqueceuSenha"}>
                 Esqueceu sua senha?
-            </Link>
+            </Link> */}
             <p className="redirect_login">
               Não tem uma conta? <Link to="/register">Cadastre-se</Link>
             </p>

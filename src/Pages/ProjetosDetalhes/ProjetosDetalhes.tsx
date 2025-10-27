@@ -1052,17 +1052,7 @@ const ProjetosDetalhes = () => {
 													<h2 className="sub_titulo_card_projeto_detalhes">
 														{membro.nome}
 													</h2>
-													<h2 className="adicional_metricas_detalhes_projetos">
-														Tech Lead
-													</h2>
-												</div>
-												<div className="div_equipe_tarefas">
-													<h2 className="sub_titulo_card_projeto_detalhes">
-														5 tarefas ativas
-													</h2>
-													<h2 className="sub_titulo_card_projeto_detalhes">
-														12 concluidas
-													</h2>
+											
 												</div>
 											</div>
 										</div>

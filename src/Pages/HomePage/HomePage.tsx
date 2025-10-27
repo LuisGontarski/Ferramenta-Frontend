@@ -110,7 +110,7 @@ const HomePage = () => {
               <div className="homepage-hero-text">
                 <div className="homepage-hero-badge">
                   <FaCheckCircle className="homepage-badge-icon" />
-                  Plataforma All-in-One para Gestão de Projetos
+                  Plataforma para Gestão de Projetos
                 </div>
                 <h1 className="homepage-hero-title">
                   Gerencie projetos com

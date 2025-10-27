@@ -65,6 +65,7 @@ body {
 .left_card_titulo{
   font-size: 40px;
   font-weight: 700;
+  color: white;
 
 }
 
@@ -171,6 +172,7 @@ body {
 
 .texto_slogan_login{
   font-size: 22px;
+  color: white;
 }
 
 .footer_login{

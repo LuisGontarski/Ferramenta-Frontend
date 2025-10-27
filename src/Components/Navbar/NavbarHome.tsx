@@ -4,7 +4,9 @@ import {
   IoBookOutline,
   IoChatboxOutline,
   IoDocumentTextOutline,
+  IoNewspaperOutline,
   IoNotificationsOutline,
+  IoPaperPlaneOutline,
 } from "react-icons/io5";
 import { LuChartColumn, LuCalendar } from "react-icons/lu";
 import { IoMdCheckboxOutline } from "react-icons/io";
@@ -177,6 +179,17 @@ const NavbarHome = () => {
                 }
               >
                 <IoBookOutline size={"16px"} /> <span>Histórico</span>
+              </NavLink>
+
+              <NavLink
+                to={`/relatorio/projeto/${projectId}`}
+                className={({ isActive }) =>
+                  isActive
+                    ? "menu_lateral_item selecionado"
+                    : "menu_lateral_item"
+                }
+              >
+                <IoNewspaperOutline size={"16px"} /> <span>Relatório</span>
               </NavLink>
             </>
           )}

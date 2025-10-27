@@ -16,6 +16,7 @@ import GithubErrorIntegration from "./Pages/Register/GithubErrorIntegration";
 import GithubSuccessIntegration from "./Pages/Register/GithubSuccessIntegration";
 import HistoricoProjetoWrapper from "./Pages/Historico/HistoricoProjetoWrapper";
 import HistoricoNotificacao from "./Pages/Historico/HistoricoNotificacao";
+import RelatorioProjetoWrapper from "./Pages/Relatorio/RelatorioProjetoWrapper";
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
           <Route path="/cronograma/:id" element={<Cronograma />} />
           <Route path="/chat/:projeto_id" element={<ChatWrapper />} />
           <Route path="/notificacoes-historico" element={<HistoricoNotificacao />} />
+          <Route path="/relatorio/projeto/:projeto_id" element={<RelatorioProjetoWrapper />} />
           <Route
             path="/github-error-integration"
             element={<GithubErrorIntegration />}
