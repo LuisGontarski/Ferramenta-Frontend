@@ -473,6 +473,7 @@ const ConteudoKanban = () => {
             <KanbanModal
               onClose={() => setShowNewCardModal(false)}
               projeto_id={projectId || ""}
+              selectedSprint={selectedSprint}
               sprints={sprints.map((s) => ({
                 id: s.id.toString(),
                 nome: s.title,

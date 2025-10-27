@@ -2,7 +2,8 @@
   padding: 20px;
   width: 100%;
   background: #f8f9fa;
-  min-height: 100vh;
+  height: calc(100vh - 50.4px);
+  overflow: auto;
 }
 
 .card_documentos {
@@ -11,6 +12,15 @@
   padding: 1rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   border: 1px solid #e9ecef;
+}
+
+.card_historicos{
+  background: white;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e9ecef;
+  margin: 0;
 }
 
 .div_titulo_historicos {
@@ -363,9 +373,6 @@
 
 /* Responsivo */
 @media (max-width: 768px) {
-  .historicos_container {
-    padding: 16px;
-  }
 
   .div_titulo_historicos {
     flex-direction: column;

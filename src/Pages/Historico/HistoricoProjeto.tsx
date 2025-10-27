@@ -116,7 +116,7 @@ const HistoricoProjeto = ({
 
   return (
     <div className="historicos_container">
-      <div className="card_documentos">
+      <div className="card_historicos">
         {/* Cabeçalho */}
         <div className="div_titulo_historicos">
           <div className="div_titulo_documentos">

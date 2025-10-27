@@ -26,8 +26,10 @@ type KanbanModalProps = {
   onClose: () => void;
   projeto_id: string;
   sprints: SprintOption[];
+  selectedSprint?: string; // ✅ nova prop opcional
   onTarefaCreated?: (novaTarefa: any) => void;
 };
+
 
 const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
@@ -35,22 +37,31 @@ const KanbanModal = ({
   onClose,
   projeto_id,
   sprints,
+  selectedSprint,
   onTarefaCreated,
 }: KanbanModalProps) => {
   const [formData, setFormData] = useState({
-    title: "",
-    priority: "medium",
-    user: "",
-    date: "",
-    data_entrega: "",
-    type: "tarefa",
-    points: "",
-    description: "",
-    notes: "",
-    columnId: 0,
-    sprintId: sprints.length > 0 ? sprints[0].id : "",
-    requisitoId: "",
-  });
+  title: "",
+  priority: "medium",
+  user: "",
+  date: "",
+  data_entrega: "",
+  type: "tarefa",
+  points: "",
+  description: "",
+  notes: "",
+  columnId: 0,
+  sprintId: selectedSprint || (sprints.length > 0 ? sprints[0].id : ""), // ✅ usa a sprint atual
+  requisitoId: "",
+});
+
+useEffect(() => {
+  if (selectedSprint) {
+    setFormData((prev) => ({ ...prev, sprintId: selectedSprint }));
+  }
+}, [selectedSprint]);
+
+
 
   const [users, setUsers] = useState<User[]>([]);
   const [requisitos, setRequisitos] = useState<Requisito[]>([]);
