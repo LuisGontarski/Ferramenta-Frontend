@@ -212,8 +212,7 @@ const ProjetoModal: React.FC<ProjetoModalProps> = ({ fecharModal }) => {
         nome: e.nome,
         usuarios: e.usuarios.map((u) => u.usuario_id),
       })),
-      status:
-        document.querySelector<HTMLSelectElement>("select")!?.value || "Ativo",
+      status: document.querySelector<HTMLSelectElement>("#projeto-status-select")!?.value || "Ativo",
       github_repo: fullRepoName || null,
     };
 
@@ -500,7 +499,7 @@ const ProjetoModal: React.FC<ProjetoModalProps> = ({ fecharModal }) => {
           <div className="projeto-modal-section">
             <div className="projeto-modal-input-group">
               <label>Status do Projeto</label>
-              <select className="projeto-modal-input">
+              <select id="projeto-status-select" className="projeto-modal-input">
                 <option>Ativo</option>
                 <option>Concluído</option>
                 <option>Arquivado</option>
