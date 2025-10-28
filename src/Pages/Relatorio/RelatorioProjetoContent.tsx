@@ -256,17 +256,6 @@ const RelatorioProjetoContent = ({
                     </span>
                   </div>
                 </div>
-
-                <div className="rp-metric-card">
-                  <h3>📊 Qualidade</h3>
-                  <div className="rp-metric-value">
-                    {formatarPorcentagem(metricas.taxa_entrega_prazo)}
-                  </div>
-                  <div className="rp-metric-details">
-                    <span>Entregas no prazo</span>
-                    <span>{metricas.tarefas_reabertas} tarefas reabertas</span>
-                  </div>
-                </div>
               </div>
 
               {/* Informações do Projeto */}
