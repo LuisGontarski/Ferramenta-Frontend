@@ -465,6 +465,7 @@ const ProjetosDetalhes = () => {
       toast.success("Projeto atualizado com sucesso!", {
         id: loadingToast,
       });
+	  fecharModal();
 
       setShowModal(false);
     } catch (err) {
