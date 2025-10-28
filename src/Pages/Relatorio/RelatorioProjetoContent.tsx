@@ -1,137 +1,53 @@
+// RelatorioProjetoContent.tsx
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
-import { handleGerarRelatorioProjeto } from "../../services/relatorioService"; // <-- Ajuste o caminho se necessário
-import { toast } from "react-hot-toast"; // Adicione se não estiver importado
+import {
+  buscarRelatorioSimples,
+  gerarRelatorioPDF,
+  type RelatorioSimples,
+} from "../../services/relatorioService";
+import { toast } from "react-hot-toast";
 
-// Tipos para o relatório
-type Projeto = {
-  projeto_id: string;
-  nome: string;
-  descricao: string;
-  data_inicio: string;
-  data_fim_prevista: string;
-  status: string;
-  equipe_nome: string;
-  criador_nome: string;
-  sprint_atual_nome: string;
-};
-
-type MembroEquipe = {
-  usuario_id: string;
-  nome_usuario: string;
-  email: string;
-  cargo: string;
-  github: string;
-};
-
-type ResumoTarefas = {
-  total_tarefas: number;
-  tarefas_concluidas: number;
-  tarefas_andamento: number;
-  tarefas_pendentes: number;
-  total_story_points: number;
-  story_points_concluidos: number;
-  cycle_time_medio: number;
-};
-
-type TarefaPorPrioridade = {
-  prioridade: string;
-  quantidade: number;
-  story_points: number;
-};
-
-type TarefaPorStatus = {
-  status: string;
-  quantidade: number;
-};
-
-type CommitRecente = {
-  commit_id: string;
-  hash_commit: string;
-  mensagem: string;
-  data_commit: string;
-  url_commit: string;
-  nome_usuario: string;
-};
-
-type DocumentoRecente = {
-  documento_id: string;
-  nome_arquivo: string;
-  tipo_arquivo: string;
-  tamanho_arquivo: number;
-  criado_em: string;
-};
-
-type Metricas = {
-  velocidade: {
-    velocidade_media: number;
-    velocidade_minima: number;
-    velocidade_maxima: number;
-    sprints_analisadas: number;
-  };
-  tempos_entrega: {
-    lead_time_medio_dias: number;
-    cycle_time_medio_dias: number;
-    lead_time_mediano_dias: number;
-    cycle_time_mediano_dias: number;
-    total_tarefas_medidas: number;
-  };
-  taxas_conclusao: {
-    taxa_conclusao_tarefas: number;
-    taxa_conclusao_requisitos: number;
-    tarefas_entregues_no_prazo: number;
-  };
-  qualidade: {
-    tarefas_reabertas: number;
-    commits_por_tarefa: number;
-  };
-  distribuicao_trabalho: {
-    membros_com_tarefas: number;
-    total_membros_equipe: number;
-    media_tarefas_por_membro: number;
-    max_tarefas_por_membro: number;
-  };
-  sprints_concluidas: any[];
-  throughput_semanal: any[];
-};
-
-type RelatorioProjeto = {
-  projeto: Projeto;
-  equipe: MembroEquipe[];
-  resumo_tarefas: ResumoTarefas;
-  resumo_requisitos: any;
-  resumo_commits: any;
-  resumo_documentos: any;
-  resumo_sprints: any;
-  sprint_atual: any;
-  resumo_mensagens: any;
-  historico_tarefas: any;
-  historico_requisitos: any;
-  tarefas_por_prioridade: TarefaPorPrioridade[];
-  tarefas_por_status: TarefaPorStatus[];
-  commits_recentes: CommitRecente[];
-  documentos_recentes: DocumentoRecente[];
-  metricas_detalhadas: Metricas;
-};
+// Importar componentes de gráfico (usando Chart.js ou similar)
+import {
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  LineChart,
+  Line,
+} from "recharts";
 
 type RelatorioProjetoProps = {
   projeto_id: string;
   usuario_id: string;
-  relatorio: RelatorioProjeto | null;
-  setRelatorio: (relatorio: RelatorioProjeto) => void;
+  relatorio: RelatorioSimples | null;
+  setRelatorio: (relatorio: RelatorioSimples) => void;
   carregando: boolean;
   setCarregando: (carregando: boolean) => void;
   erro: string | null;
   setErro: (erro: string | null) => void;
 };
 
-const API_URL = import.meta.env.VITE_API_URL;
+// Cores para os gráficos
+const CORES_GRAFICO = [
+  "#0088FE",
+  "#00C49F",
+  "#FFBB28",
+  "#FF8042",
+  "#8884D8",
+  "#82CA9D",
+];
 
 const RelatorioProjetoContent = ({
   projeto_id,
-  usuario_id,
   relatorio,
   setRelatorio,
   carregando,
@@ -139,30 +55,26 @@ const RelatorioProjetoContent = ({
   erro,
   setErro,
 }: RelatorioProjetoProps) => {
-  // Estados para controles de UI
   const [abaAtiva, setAbaAtiva] = useState<string>("overview");
   const [exportando, setExportando] = useState(false);
-
-  // Ref para o conteúdo a ser exportado
   const contentRef = useRef<HTMLDivElement>(null);
 
-  // Buscar relatório completo
+  // Buscar relatório simplificado
   const buscarRelatorio = async () => {
     setCarregando(true);
     setErro(null);
 
     try {
-      console.log(`📊 Buscando relatório para projeto: ${projeto_id}`);
-
-      const response = await axios.get(
-        `${API_URL}/projects/${projeto_id}/full-report`
+      console.log(
+        `📊 Buscando relatório simplificado para projeto: ${projeto_id}`
       );
-
-      setRelatorio(response.data);
+      const dados = await buscarRelatorioSimples(projeto_id);
+      setRelatorio(dados);
       console.log("✅ Relatório carregado com sucesso");
     } catch (error) {
       console.error("❌ Erro ao buscar relatório:", error);
       setErro("Não foi possível carregar o relatório do projeto");
+      toast.error("Erro ao carregar relatório");
     } finally {
       setCarregando(false);
     }
@@ -182,81 +94,26 @@ const RelatorioProjetoContent = ({
     return `${(valor * 100).toFixed(1)}%`;
   };
 
-  const formatarBytes = (bytes: number) => {
-    if (bytes === 0) return "0 Bytes";
-    const k = 1024;
-    const sizes = ["Bytes", "KB", "MB", "GB"];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
-  };
-
   const formatarDias = (dias: number) => {
     return `${dias?.toFixed(1) || "0"} dias`;
   };
 
-  // Função para exportar para PDF (captura de tela)
-  const exportarParaPDF = async () => {
-    if (!contentRef.current || !relatorio) return;
+  // Função para gerar PDF via backend
+  const gerarPDFBackend = async () => {
+    if (!relatorio) {
+      toast.error("Não há dados de relatório para gerar o PDF.");
+      return;
+    }
 
     setExportando(true);
-
     try {
-      // Capturar o conteúdo como imagem
-      const canvas = await html2canvas(contentRef.current, {
-        scale: 2, // Melhor qualidade
-        useCORS: true,
-        logging: false,
-        backgroundColor: "#ffffff",
-      });
-
-      const imgData = canvas.toDataURL("image/png");
-
-      // Criar PDF
-      const pdf = new jsPDF({
-        orientation: "portrait",
-        unit: "mm",
-        format: "a4",
-      });
-
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = pdf.internal.pageSize.getHeight();
-
-      // Adicionar imagem ao PDF
-      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-
-      // Adicionar metadados
-      pdf.setProperties({
-        title: `Relatório do Projeto - ${relatorio.projeto.nome}`,
-        subject: "Relatório completo do projeto",
-        author: "Sistema de Gestão de Projetos",
-        keywords: "relatório, projeto, métricas, tarefas",
-        creator: "Sistema de Gestão de Projetos",
-      });
-
-      // Salvar o PDF
-      pdf.save(
-        `relatorio-projeto-${relatorio.projeto.nome}-${
-          new Date().toISOString().split("T")[0]
-        }.pdf`
-      );
+      await gerarRelatorioPDF(projeto_id, relatorio.projeto.nome);
+      toast.success("PDF gerado com sucesso!");
     } catch (error) {
-      console.error("Erro ao exportar PDF:", error);
-      setErro("Erro ao exportar relatório para PDF");
+      toast.error("Erro ao gerar PDF");
     } finally {
       setExportando(false);
     }
-  };
-
-  // Função alternativa para gerar PDF com conteúdo estruturado
-  const gerarPDFBackend = async () => {
-    if (!relatorio) {
-        toast.error("Não há dados de relatório para gerar o PDF.");
-        return;
-    }
-    setExportando(true); // Indica que a exportação está em andamento
-    // Chama a função do serviço, passando o projeto_id
-    await handleGerarRelatorioProjeto(projeto_id, relatorio.projeto.nome);
-    setExportando(false); // Finaliza o estado de exportação
   };
 
   // Renderizar loading
@@ -266,7 +123,7 @@ const RelatorioProjetoContent = ({
         <div className="rp-card">
           <div className="rp-loading">
             <div className="rp-spinner"></div>
-            <p>Gerando relatório completo...</p>
+            <p>Carregando relatório...</p>
           </div>
         </div>
       </div>
@@ -297,7 +154,7 @@ const RelatorioProjetoContent = ({
           <div className="rp-empty">
             <p>📊 Nenhum relatório disponível</p>
             <button onClick={buscarRelatorio} className="rp-btn-generate">
-              Gerar Relatório
+              Carregar Relatório
             </button>
           </div>
         </div>
@@ -305,7 +162,7 @@ const RelatorioProjetoContent = ({
     );
   }
 
-  const { projeto, metricas_detalhadas } = relatorio;
+  const { projeto, metricas, dados_graficos, equipe } = relatorio;
 
   return (
     <div className="rp-container">
@@ -315,7 +172,7 @@ const RelatorioProjetoContent = ({
           <div className="rp-header-content">
             <h2 className="rp-title">Relatório do Projeto</h2>
             <h2 className="rp-subtitle">
-              {projeto.nome} - Análise completa e métricas
+              {projeto.nome} - Métricas e Análises
             </h2>
           </div>
 
@@ -329,31 +186,13 @@ const RelatorioProjetoContent = ({
               {carregando ? "🔄" : "↻"} Atualizar
             </button>
 
-            {/* Menu dropdown para exportação */}
-            <div className="rp-export-dropdown">
-              <button
-                className="rp-btn-export"
-                disabled={exportando || !relatorio}
-              >
-                {exportando ? "⏳" : "📄"} Exportar PDF
-              </button>
-              <div className="rp-export-options">
-                <button
-                  onClick={exportarParaPDF}
-                  disabled={exportando}
-                  className="rp-export-option"
-                >
-                  📷 Captura da Tela
-                </button>
-                <button
-                  onClick={gerarPDFBackend}
-                  disabled={exportando}
-                  className="rp-export-option"
-                >
-                  📊 PDF Estruturado
-                </button>
-              </div>
-            </div>
+            <button
+              onClick={gerarPDFBackend}
+              disabled={exportando || !relatorio}
+              className="rp-btn-export"
+            >
+              {exportando ? "⏳" : "📄"} Exportar PDF
+            </button>
           </div>
         </div>
 
@@ -368,12 +207,10 @@ const RelatorioProjetoContent = ({
             📊 Visão Geral
           </button>
           <button
-            className={`rp-tab ${
-              abaAtiva === "metrics" ? "rp-tab-active" : ""
-            }`}
-            onClick={() => setAbaAtiva("metrics")}
+            className={`rp-tab ${abaAtiva === "charts" ? "rp-tab-active" : ""}`}
+            onClick={() => setAbaAtiva("charts")}
           >
-            📈 Métricas
+            📈 Gráficos
           </button>
           <button
             className={`rp-tab ${abaAtiva === "team" ? "rp-tab-active" : ""}`}
@@ -381,79 +218,27 @@ const RelatorioProjetoContent = ({
           >
             👥 Equipe
           </button>
-          <button
-            className={`rp-tab ${
-              abaAtiva === "activities" ? "rp-tab-active" : ""
-            }`}
-            onClick={() => setAbaAtiva("activities")}
-          >
-            🔄 Atividades
-          </button>
         </div>
 
         {/* Conteúdo das Abas */}
         <div className="rp-content">
           {abaAtiva === "overview" && (
             <div className="rp-tab-content">
-              {/* Cards de Resumo */}
+              {/* Cards de Métricas Principais */}
               <div className="rp-summary-grid">
-                <div className="rp-metric-card">
-                  <h3>📋 Tarefas</h3>
+                <div className="rp-metric-card rp-metric-highlight">
+                  <h3>🎯 Progresso do Projeto</h3>
                   <div className="rp-metric-value">
-                    {relatorio.resumo_tarefas.total_tarefas}
+                    {formatarPorcentagem(metricas.taxa_conclusao_tarefas)}
                   </div>
                   <div className="rp-metric-details">
                     <span>
-                      ✅ {relatorio.resumo_tarefas.tarefas_concluidas}{" "}
-                      concluídas
+                      {metricas.tarefas_concluidas} de {metricas.total_tarefas}{" "}
+                      tarefas
                     </span>
                     <span>
-                      🔄 {relatorio.resumo_tarefas.tarefas_andamento} em
-                      andamento
-                    </span>
-                    <span>
-                      ⏳ {relatorio.resumo_tarefas.tarefas_pendentes} pendentes
-                    </span>
-                  </div>
-                </div>
-
-                <div className="rp-metric-card">
-                  <h3>🎯 Story Points</h3>
-                  <div className="rp-metric-value">
-                    {relatorio.resumo_tarefas.total_story_points}
-                  </div>
-                  <div className="rp-metric-details">
-                    <span>
-                      ✅ {relatorio.resumo_tarefas.story_points_concluidos}{" "}
-                      concluídos
-                    </span>
-                    <span>
-                      📊{" "}
-                      {relatorio.resumo_tarefas.total_story_points -
-                        relatorio.resumo_tarefas.story_points_concluidos}{" "}
-                      restantes
-                    </span>
-                  </div>
-                </div>
-
-                <div className="rp-metric-card">
-                  <h3>👥 Equipe</h3>
-                  <div className="rp-metric-value">
-                    {relatorio.equipe?.length || 0}
-                  </div>
-                  <div className="rp-metric-details">
-                    <span>
-                      👤{" "}
-                      {metricas_detalhadas?.distribuicao_trabalho
-                        ?.membros_com_tarefas || 0}{" "}
-                      com tarefas
-                    </span>
-                    <span>
-                      📝 Média:{" "}
-                      {metricas_detalhadas?.distribuicao_trabalho?.media_tarefas_por_membro?.toFixed(
-                        1
-                      ) || 0}{" "}
-                      tarefas/membro
+                      {metricas.story_points_concluidos} de{" "}
+                      {metricas.total_story_points} SP
                     </span>
                   </div>
                 </div>
@@ -461,17 +246,37 @@ const RelatorioProjetoContent = ({
                 <div className="rp-metric-card">
                   <h3>⚡ Velocidade</h3>
                   <div className="rp-metric-value">
-                    {metricas_detalhadas?.velocidade?.velocidade_media?.toFixed(
-                      1
-                    ) || 0}
+                    {metricas.velocidade_media?.toFixed(1) || 0}
                   </div>
                   <div className="rp-metric-details">
-                    <span>📈 SP/sprint</span>
+                    <span>SP por sprint</span>
                     <span>
-                      🔄{" "}
-                      {metricas_detalhadas?.velocidade?.sprints_analisadas || 0}{" "}
-                      sprints analisadas
+                      {metricas.sprints_analisadas} sprints analisadas
                     </span>
+                  </div>
+                </div>
+
+                <div className="rp-metric-card">
+                  <h3>⏱️ Tempos Médios</h3>
+                  <div className="rp-metric-value">
+                    {formatarDias(metricas.cycle_time_medio_dias)}
+                  </div>
+                  <div className="rp-metric-details">
+                    <span>Cycle Time</span>
+                    <span>
+                      Lead Time: {formatarDias(metricas.lead_time_medio_dias)}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="rp-metric-card">
+                  <h3>📊 Qualidade</h3>
+                  <div className="rp-metric-value">
+                    {formatarPorcentagem(metricas.taxa_entrega_prazo)}
+                  </div>
+                  <div className="rp-metric-details">
+                    <span>Entregas no prazo</span>
+                    <span>{metricas.tarefas_reabertas} tarefas reabertas</span>
                   </div>
                 </div>
               </div>
@@ -505,170 +310,123 @@ const RelatorioProjetoContent = ({
                     <span>{projeto.criador_nome}</span>
                   </div>
                   <div className="rp-info-item">
-                    <strong>Sprint Atual:</strong>
-                    <span>{projeto.sprint_atual_nome || "Nenhuma"}</span>
+                    <strong>Membros Ativos:</strong>
+                    <span>
+                      {metricas.membros_ativos} de {metricas.total_membros}
+                    </span>
                   </div>
-                </div>
-              </div>
-
-              {/* Tarefas por Prioridade */}
-              <div className="rp-tasks-section">
-                <h3>🎯 Tarefas por Prioridade</h3>
-                <div className="rp-priorities-list">
-                  {relatorio.tarefas_por_prioridade?.map(
-                    (item: TarefaPorPrioridade) => (
-                      <div key={item.prioridade} className="rp-priority-item">
-                        <div className="rp-priority-header">
-                          <span
-                            className={`rp-badge rp-priority-badge rp-priority-${item.prioridade?.toLowerCase()}`}
-                          >
-                            {item.prioridade}
-                          </span>
-                          <span className="rp-priority-count">
-                            {item.quantidade} tarefas
-                          </span>
-                        </div>
-                        <div className="rp-priority-details">
-                          <span>{item.story_points} story points</span>
-                        </div>
-                      </div>
-                    )
-                  )}
                 </div>
               </div>
             </div>
           )}
 
-          {abaAtiva === "metrics" && metricas_detalhadas && (
+          {abaAtiva === "charts" && (
             <div className="rp-tab-content">
-              <div className="rp-metrics-grid">
-                <div className="rp-detailed-metric">
-                  <h4>⏱️ Tempos de Entrega</h4>
-                  <div className="rp-metrics-list">
-                    <div className="rp-metric-item">
-                      <span>Lead Time Médio:</span>
-                      <strong>
-                        {formatarDias(
-                          metricas_detalhadas.tempos_entrega
-                            .lead_time_medio_dias
-                        )}
-                      </strong>
-                    </div>
-                    <div className="rp-metric-item">
-                      <span>Cycle Time Médio:</span>
-                      <strong>
-                        {formatarDias(
-                          metricas_detalhadas.tempos_entrega
-                            .cycle_time_medio_dias
-                        )}
-                      </strong>
-                    </div>
-                    <div className="rp-metric-item">
-                      <span>Tarefas Medidas:</span>
-                      <strong>
-                        {
-                          metricas_detalhadas.tempos_entrega
-                            .total_tarefas_medidas
-                        }
-                      </strong>
-                    </div>
+              <div className="rp-charts-grid">
+                {/* Gráfico de Pizza - Status das Tarefas */}
+                <div className="rp-chart-card">
+                  <h3>📊 Distribuição de Tarefas por Status</h3>
+                  <div className="rp-chart-container">
+                    <ResponsiveContainer width="100%" height={300}>
+                      <PieChart>
+                        <Pie
+                          data={dados_graficos.tarefas_por_status}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={false}
+                          label={({ status, quantidade }) => `${quantidade}`}
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="quantidade"
+                        >
+                          {dados_graficos.tarefas_por_status.map(
+                            (entry, index) => (
+                              <Cell
+                                key={`cell-${index}`}
+                                fill={
+                                  entry.cor ||
+                                  CORES_GRAFICO[index % CORES_GRAFICO.length]
+                                }
+                              />
+                            )
+                          )}
+                        </Pie>
+                        <Tooltip />
+                        <Legend />
+                      </PieChart>
+                    </ResponsiveContainer>
                   </div>
                 </div>
 
-                <div className="rp-detailed-metric">
-                  <h4>📈 Taxas de Conclusão</h4>
-                  <div className="rp-metrics-list">
-                    <div className="rp-metric-item">
-                      <span>Tarefas:</span>
-                      <strong>
-                        {formatarPorcentagem(
-                          metricas_detalhadas.taxas_conclusao
-                            .taxa_conclusao_tarefas
-                        )}
-                      </strong>
-                    </div>
-                    <div className="rp-metric-item">
-                      <span>Requisitos:</span>
-                      <strong>
-                        {formatarPorcentagem(
-                          metricas_detalhadas.taxas_conclusao
-                            .taxa_conclusao_requisitos
-                        )}
-                      </strong>
-                    </div>
-                    <div className="rp-metric-item">
-                      <span>No Prazo:</span>
-                      <strong>
-                        {formatarPorcentagem(
-                          metricas_detalhadas.taxas_conclusao
-                            .tarefas_entregues_no_prazo
-                        )}
-                      </strong>
-                    </div>
+                {/* Gráfico de Barras - Velocidade por Sprint */}
+                <div className="rp-chart-card">
+                  <h3>📈 Velocidade por Sprint</h3>
+                  <div className="rp-chart-container">
+                    <ResponsiveContainer width="100%" height={300}>
+                      <BarChart data={dados_graficos.velocidade_sprints}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="sprint_nome" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Bar
+                          dataKey="story_points_concluidos"
+                          name="Story Points"
+                          fill="#0088FE"
+                        />
+                      </BarChart>
+                    </ResponsiveContainer>
                   </div>
                 </div>
 
-                <div className="rp-detailed-metric">
-                  <h4>🔄 Velocidade da Equipe</h4>
-                  <div className="rp-metrics-list">
-                    <div className="rp-metric-item">
-                      <span>Média:</span>
-                      <strong>
-                        {metricas_detalhadas.velocidade.velocidade_media.toFixed(
-                          1
-                        )}{" "}
-                        SP
-                      </strong>
-                    </div>
-                    <div className="rp-metric-item">
-                      <span>Mínima:</span>
-                      <strong>
-                        {metricas_detalhadas.velocidade.velocidade_minima} SP
-                      </strong>
-                    </div>
-                    <div className="rp-metric-item">
-                      <span>Máxima:</span>
-                      <strong>
-                        {metricas_detalhadas.velocidade.velocidade_maxima} SP
-                      </strong>
-                    </div>
+                {/* Gráfico de Linha - Throughput Semanal */}
+                <div className="rp-chart-card">
+                  <h3>📅 Throughput Semanal</h3>
+                  <div className="rp-chart-container">
+                    <ResponsiveContainer width="100%" height={300}>
+                      <LineChart data={dados_graficos.throughput_semanal}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="semana" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Line
+                          type="monotone"
+                          dataKey="tarefas_concluidas"
+                          name="Tarefas Concluídas"
+                          stroke="#00C49F"
+                        />
+                      </LineChart>
+                    </ResponsiveContainer>
                   </div>
                 </div>
 
-                <div className="rp-detailed-metric">
-                  <h4>📊 Distribuição de Trabalho</h4>
-                  <div className="rp-metrics-list">
-                    <div className="rp-metric-item">
-                      <span>Membros Ativos:</span>
-                      <strong>
-                        {
-                          metricas_detalhadas.distribuicao_trabalho
-                            .membros_com_tarefas
-                        }
-                        /
-                        {
-                          metricas_detalhadas.distribuicao_trabalho
-                            .total_membros_equipe
-                        }
-                      </strong>
-                    </div>
-                    <div className="rp-metric-item">
-                      <span>Média Tarefas/Membro:</span>
-                      <strong>
-                        {metricas_detalhadas.distribuicao_trabalho.media_tarefas_por_membro.toFixed(
-                          1
-                        )}
-                      </strong>
-                    </div>
-                    <div className="rp-metric-item">
-                      <span>Máximo Tarefas/Membro:</span>
-                      <strong>
-                        {
-                          metricas_detalhadas.distribuicao_trabalho
-                            .max_tarefas_por_membro
-                        }
-                      </strong>
-                    </div>
+                {/* Gráfico de Barras - Tarefas por Prioridade */}
+                <div className="rp-chart-card">
+                  <h3>🎯 Tarefas por Prioridade</h3>
+                  <div className="rp-chart-container">
+                    <ResponsiveContainer width="100%" height={300}>
+                      <BarChart data={dados_graficos.tarefas_por_prioridade}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="prioridade" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Bar dataKey="quantidade" name="Quantidade">
+                          {dados_graficos.tarefas_por_prioridade.map(
+                            (entry, index) => (
+                              <Cell
+                                key={`cell-${index}`}
+                                fill={
+                                  entry.cor ||
+                                  CORES_GRAFICO[index % CORES_GRAFICO.length]
+                                }
+                              />
+                            )
+                          )}
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
                   </div>
                 </div>
               </div>
@@ -677,9 +435,9 @@ const RelatorioProjetoContent = ({
 
           {abaAtiva === "team" && (
             <div className="rp-tab-content">
-              <h3>👥 Membros da Equipe</h3>
+              <h3>👥 Membros da Equipe ({equipe.length})</h3>
               <div className="rp-team-grid">
-                {relatorio.equipe?.map((membro: MembroEquipe) => (
+                {equipe.map((membro) => (
                   <div key={membro.usuario_id} className="rp-member-card">
                     <div className="rp-member-avatar">
                       {membro.nome_usuario.charAt(0).toUpperCase()}
@@ -694,63 +452,6 @@ const RelatorioProjetoContent = ({
                     </div>
                   </div>
                 ))}
-              </div>
-            </div>
-          )}
-
-          {abaAtiva === "activities" && (
-            <div className="rp-tab-content">
-              <div className="rp-activities-grid">
-                <div className="rp-activity-section">
-                  <h3>🔨 Commits Recentes</h3>
-                  <div className="rp-commits-list">
-                    {relatorio.commits_recentes?.map(
-                      (commit: CommitRecente) => (
-                        <div key={commit.commit_id} className="rp-commit-item">
-                          <div className="rp-commit-header">
-                            <span className="rp-commit-hash">
-                              {commit.hash_commit.substring(0, 8)}
-                            </span>
-                            <span className="rp-commit-date">
-                              {formatarData(commit.data_commit)}
-                            </span>
-                          </div>
-                          <div className="rp-commit-message">
-                            {commit.mensagem}
-                          </div>
-                          <div className="rp-commit-author">
-                            por {commit.nome_usuario}
-                          </div>
-                        </div>
-                      )
-                    )}
-                  </div>
-                </div>
-
-                <div className="rp-activity-section">
-                  <h3>📎 Documentos Recentes</h3>
-                  <div className="rp-documents-list">
-                    {relatorio.documentos_recentes?.map(
-                      (documento: DocumentoRecente) => (
-                        <div
-                          key={documento.documento_id}
-                          className="rp-document-item"
-                        >
-                          <div className="rp-document-name">
-                            {documento.nome_arquivo}
-                          </div>
-                          <div className="rp-document-details">
-                            <span>{documento.tipo_arquivo}</span>
-                            <span>
-                              {formatarBytes(documento.tamanho_arquivo)}
-                            </span>
-                            <span>{formatarData(documento.criado_em)}</span>
-                          </div>
-                        </div>
-                      )
-                    )}
-                  </div>
-                </div>
               </div>
             </div>
           )}
