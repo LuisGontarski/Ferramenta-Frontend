@@ -98,7 +98,6 @@ const RelatorioProjetoContent = ({
     return `${dias?.toFixed(1) || "0"} dias`;
   };
 
-  // Função para gerar PDF via backend
   const gerarPDFBackend = async () => {
     if (!relatorio) {
       toast.error("Não há dados de relatório para gerar o PDF.");
@@ -206,18 +205,7 @@ const RelatorioProjetoContent = ({
           >
             📊 Visão Geral
           </button>
-          <button
-            className={`rp-tab ${abaAtiva === "charts" ? "rp-tab-active" : ""}`}
-            onClick={() => setAbaAtiva("charts")}
-          >
-            📈 Gráficos
-          </button>
-          <button
-            className={`rp-tab ${abaAtiva === "team" ? "rp-tab-active" : ""}`}
-            onClick={() => setAbaAtiva("team")}
-          >
-            👥 Equipe
-          </button>
+          
         </div>
 
         {/* Conteúdo das Abas */}
@@ -316,142 +304,6 @@ const RelatorioProjetoContent = ({
                     </span>
                   </div>
                 </div>
-              </div>
-            </div>
-          )}
-
-          {abaAtiva === "charts" && (
-            <div className="rp-tab-content">
-              <div className="rp-charts-grid">
-                {/* Gráfico de Pizza - Status das Tarefas */}
-                <div className="rp-chart-card">
-                  <h3>📊 Distribuição de Tarefas por Status</h3>
-                  <div className="rp-chart-container">
-                    <ResponsiveContainer width="100%" height={300}>
-                      <PieChart>
-                        <Pie
-                          data={dados_graficos.tarefas_por_status}
-                          cx="50%"
-                          cy="50%"
-                          labelLine={false}
-                          label={({ status, quantidade }) => `${quantidade}`}
-                          outerRadius={80}
-                          fill="#8884d8"
-                          dataKey="quantidade"
-                        >
-                          {dados_graficos.tarefas_por_status.map(
-                            (entry, index) => (
-                              <Cell
-                                key={`cell-${index}`}
-                                fill={
-                                  entry.cor ||
-                                  CORES_GRAFICO[index % CORES_GRAFICO.length]
-                                }
-                              />
-                            )
-                          )}
-                        </Pie>
-                        <Tooltip />
-                        <Legend />
-                      </PieChart>
-                    </ResponsiveContainer>
-                  </div>
-                </div>
-
-                {/* Gráfico de Barras - Velocidade por Sprint */}
-                <div className="rp-chart-card">
-                  <h3>📈 Velocidade por Sprint</h3>
-                  <div className="rp-chart-container">
-                    <ResponsiveContainer width="100%" height={300}>
-                      <BarChart data={dados_graficos.velocidade_sprints}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="sprint_nome" />
-                        <YAxis />
-                        <Tooltip />
-                        <Legend />
-                        <Bar
-                          dataKey="story_points_concluidos"
-                          name="Story Points"
-                          fill="#0088FE"
-                        />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
-                </div>
-
-                {/* Gráfico de Linha - Throughput Semanal */}
-                <div className="rp-chart-card">
-                  <h3>📅 Throughput Semanal</h3>
-                  <div className="rp-chart-container">
-                    <ResponsiveContainer width="100%" height={300}>
-                      <LineChart data={dados_graficos.throughput_semanal}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="semana" />
-                        <YAxis />
-                        <Tooltip />
-                        <Legend />
-                        <Line
-                          type="monotone"
-                          dataKey="tarefas_concluidas"
-                          name="Tarefas Concluídas"
-                          stroke="#00C49F"
-                        />
-                      </LineChart>
-                    </ResponsiveContainer>
-                  </div>
-                </div>
-
-                {/* Gráfico de Barras - Tarefas por Prioridade */}
-                <div className="rp-chart-card">
-                  <h3>🎯 Tarefas por Prioridade</h3>
-                  <div className="rp-chart-container">
-                    <ResponsiveContainer width="100%" height={300}>
-                      <BarChart data={dados_graficos.tarefas_por_prioridade}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="prioridade" />
-                        <YAxis />
-                        <Tooltip />
-                        <Legend />
-                        <Bar dataKey="quantidade" name="Quantidade">
-                          {dados_graficos.tarefas_por_prioridade.map(
-                            (entry, index) => (
-                              <Cell
-                                key={`cell-${index}`}
-                                fill={
-                                  entry.cor ||
-                                  CORES_GRAFICO[index % CORES_GRAFICO.length]
-                                }
-                              />
-                            )
-                          )}
-                        </Bar>
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {abaAtiva === "team" && (
-            <div className="rp-tab-content">
-              <h3>👥 Membros da Equipe ({equipe.length})</h3>
-              <div className="rp-team-grid">
-                {equipe.map((membro) => (
-                  <div key={membro.usuario_id} className="rp-member-card">
-                    <div className="rp-member-avatar">
-                      {membro.nome_usuario.charAt(0).toUpperCase()}
-                    </div>
-                    <div className="rp-member-info">
-                      <h4>{membro.nome_usuario}</h4>
-                      <p>{membro.cargo || "Sem cargo definido"}</p>
-                      <p className="rp-member-email">{membro.email}</p>
-                      {membro.github && (
-                        <p className="rp-member-github">🐙 {membro.github}</p>
-                      )}
-                    </div>
-                  </div>
-                ))}
               </div>
             </div>
           )}
