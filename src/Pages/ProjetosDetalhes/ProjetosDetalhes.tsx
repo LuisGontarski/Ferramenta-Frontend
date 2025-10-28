@@ -20,6 +20,8 @@ import {
   Bar,
 } from "recharts";
 
+import toast from "react-hot-toast";
+
 const BASE_URL = import.meta.env.VITE_API_URL;
 
 // --- Interface para a tipagem dos membros ---
@@ -441,8 +443,10 @@ const ProjetosDetalhes = () => {
 
   // --- Lógica do Modal (mantida como estava) ---
   const handleSalvar = async () => {
-    // Esta função agora usará os dados estáticos do estado se não forem alterados no modal
     try {
+      // ✅ Mostra loading durante o salvamento
+      const loadingToast = toast.loading("Salvando projeto...");
+
       const res = await fetch(`${BASE_URL}/projects/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -454,11 +458,20 @@ const ProjetosDetalhes = () => {
           data_fim_prevista: dataFim,
         }),
       });
+
       if (!res.ok) throw new Error("Falha ao salvar");
-      alert("Projeto atualizado!");
+
+      // ✅ Substitui loading por sucesso
+      toast.success("Projeto atualizado com sucesso!", {
+        id: loadingToast,
+      });
+
       setShowModal(false);
     } catch (err) {
       console.error("Erro ao atualizar projeto:", err);
+
+      // ✅ Notificação de erro e remove loading
+      toast.error("Falha ao atualizar o projeto.");
     }
   };
 
@@ -619,18 +632,78 @@ const ProjetosDetalhes = () => {
   };
 
   const handleExcluir = async () => {
-    if (!window.confirm("Tem certeza?")) return;
+    // ✅ Substitui confirm por uma confirmação mais moderna
+    const confirmacao = await new Promise((resolve) => {
+      toast.loading(
+        <div>
+          <p>Tem certeza que deseja excluir este projeto?</p>
+          <div style={{ marginTop: "10px", display: "flex", gap: "10px" }}>
+            <button
+              onClick={() => {
+                toast.dismiss();
+                resolve(true);
+              }}
+              style={{
+                padding: "5px 10px",
+                backgroundColor: "#e53e3e",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                cursor: "pointer",
+              }}
+            >
+              Sim, excluir
+            </button>
+            <button
+              onClick={() => {
+                toast.dismiss();
+                resolve(false);
+              }}
+              style={{
+                padding: "5px 10px",
+                backgroundColor: "#718096",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                cursor: "pointer",
+              }}
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>,
+        {
+          duration: Infinity, // Mantém até o usuário responder
+        }
+      );
+    });
+
+    if (!confirmacao) return;
+
     try {
+      // ✅ Mostra loading durante a exclusão
+      const loadingToast = toast.loading("Excluindo projeto...");
+
       const res = await fetch(`${BASE_URL}/projects/${id}`, {
         method: "DELETE",
       });
+
       if (!res.ok) throw new Error("Falha ao excluir");
-      alert("Projeto excluído!");
+
+      // ✅ Substitui loading por sucesso
+      toast.success("Projeto excluído com sucesso!", {
+        id: loadingToast,
+      });
+
       navigate("/projetos");
     } catch (err) {
       console.error("Erro ao excluir projeto:", err);
+
+      // ✅ Notificação de erro e remove loading
+      toast.error("Falha ao excluir o projeto.");
     }
   };
+
   const mostrarModal = () => {
     let modal = document.getElementById("modal_editar");
     const conteudo_modal = document.getElementById("modal_editar_projeto");
