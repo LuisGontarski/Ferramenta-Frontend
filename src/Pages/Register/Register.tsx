@@ -9,7 +9,7 @@ import "./Register.css";
 
 const Register: React.FC = () => {
   const [step, setStep] = useState(1);
-  const [cargoOutro, setCargoOutro] = useState("");
+  const [cargoOutro] = useState("");
 
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
@@ -20,8 +20,8 @@ const Register: React.FC = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [cargo, setCargo] = useState("Não informar");
-  const [github, setGithub] = useState("");
-  const [showGithubInput, setShowGithubInput] = useState(false);
+  const [github] = useState("");
+  const [showGithubInput] = useState(false);
 
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});

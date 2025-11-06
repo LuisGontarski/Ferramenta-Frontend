@@ -1,29 +1,10 @@
-// RelatorioProjetoContent.tsx
 import { useState, useEffect, useRef } from "react";
-import axios from "axios";
 import {
   buscarRelatorioSimples,
   gerarRelatorioPDF,
   type RelatorioSimples,
 } from "../../services/relatorioService";
 import { toast } from "react-hot-toast";
-
-// Importar componentes de gráfico (usando Chart.js ou similar)
-import {
-  PieChart,
-  Pie,
-  Cell,
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  LineChart,
-  Line,
-} from "recharts";
 
 type RelatorioProjetoProps = {
   projeto_id: string;
@@ -35,16 +16,6 @@ type RelatorioProjetoProps = {
   erro: string | null;
   setErro: (erro: string | null) => void;
 };
-
-// Cores para os gráficos
-const CORES_GRAFICO = [
-  "#0088FE",
-  "#00C49F",
-  "#FFBB28",
-  "#FF8042",
-  "#8884D8",
-  "#82CA9D",
-];
 
 const RelatorioProjetoContent = ({
   projeto_id,
@@ -161,7 +132,7 @@ const RelatorioProjetoContent = ({
     );
   }
 
-  const { projeto, metricas, dados_graficos, equipe } = relatorio;
+  const { projeto, metricas } = relatorio;
 
   return (
     <div className="rp-container">
@@ -205,7 +176,6 @@ const RelatorioProjetoContent = ({
           >
             📊 Visão Geral
           </button>
-          
         </div>
 
         {/* Conteúdo das Abas */}

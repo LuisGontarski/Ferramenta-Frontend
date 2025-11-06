@@ -56,9 +56,9 @@ const Requisitos = () => {
     "Baixa"
   );
   const [descricao, setDescricao] = useState("");
-  const [status, setStatus] = useState<
-    "Registrado" | "Em andamento" | "Finalizado"
-  >("Registrado");
+  const [, setStatus] = useState<"Registrado" | "Em andamento" | "Finalizado">(
+    "Registrado"
+  );
   const [criterioAceite, setCriterioAceite] = useState("");
 
   // Função para buscar histórico do requisito
@@ -198,27 +198,6 @@ const Requisitos = () => {
     }
 
     return requisitoAtualizado;
-  };
-
-  const mudarStatus = (
-    requisito: Requisito,
-    novoStatus: Requisito["status"]
-  ) => {
-    const requisitoAtualizado = adicionarEntradaHistorico(
-      requisito,
-      `Status alterado: ${requisito.status} → ${novoStatus}`
-    );
-    const atualizadoComStatus = { ...requisitoAtualizado, status: novoStatus };
-
-    if (requisito.tipo === "Funcional") {
-      setRequisitosFuncionais((prev) =>
-        prev.map((r) => (r.uuid === requisito.uuid ? atualizadoComStatus : r))
-      );
-    } else {
-      setRequisitosNaoFuncionais((prev) =>
-        prev.map((r) => (r.uuid === requisito.uuid ? atualizadoComStatus : r))
-      );
-    }
   };
 
   const excluirRequisito = async (requisito: Requisito) => {

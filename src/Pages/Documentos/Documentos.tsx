@@ -85,7 +85,7 @@ const Documentos = () => {
             <button
               onClick={() => {
                 toast.dismiss(t.id);
-                confirmarExclusao(docId, docName);
+                confirmarExclusao(docId);
               }}
               style={{
                 background: "#ef4444",
@@ -121,7 +121,7 @@ const Documentos = () => {
   };
 
   // Função separada para a exclusão real
-  const confirmarExclusao = async (docId: string, docName: string) => {
+  const confirmarExclusao = async (docId: string) => {
     try {
       const loadingToast = toast.loading("Excluindo documento...");
 

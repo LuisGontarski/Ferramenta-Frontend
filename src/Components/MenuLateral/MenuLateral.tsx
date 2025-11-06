@@ -1,14 +1,9 @@
-import React from "react";
 import "./MenuLateral.css";
-import { IoDocumentTextOutline } from "react-icons/io5";
-import { LuChartColumn, LuCalendar } from "react-icons/lu";
-import { IoMdCheckboxOutline } from "react-icons/io";
 import { MdOutlineDashboard } from "react-icons/md";
 import { AiOutlineFolderOpen } from "react-icons/ai";
 import { BiUser } from "react-icons/bi";
 import { TbLogout2 } from "react-icons/tb";
 import { NavLink } from "react-router-dom";
-import { TfiRulerAlt2 } from "react-icons/tfi";
 
 const MenuLateral = () => {
 	return (

@@ -34,7 +34,6 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 const HistoricoProjeto = ({
   projeto_id,
-  usuario_id,
   historicos,
   setHistoricos,
   carregando,

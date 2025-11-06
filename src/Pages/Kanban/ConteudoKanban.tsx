@@ -58,8 +58,7 @@ const ConteudoKanban = () => {
   const [showNewCardModal, setShowNewCardModal] = useState(false);
   const [showCardModal, setShowCardModal] = useState(false);
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
-  const [tempNotes, setTempNotes] = useState("");
-
+  const [, setTempNotes] = useState("");
   const selectedCard = cards.find((c) => c.id === selectedCardId) || null;
 
   const handleUpdateCard = (updatedCard: Card) => {
@@ -180,14 +179,6 @@ const ConteudoKanban = () => {
 
     fetchUsers();
   }, [projectId]);
-
-  const addColumn = () => {
-    const t = newColumnTitle.trim();
-    if (!t) return;
-    const newCol = { id: Date.now(), title: t };
-    setColumns((prev) => [...prev, newCol]);
-    setNewColumnTitle("");
-  };
 
   const handleDropOnColumn = (colId: number) => {
     if (draggedCardId === null) return;

@@ -6,7 +6,6 @@ import {
   IoDocumentTextOutline,
   IoNewspaperOutline,
   IoNotificationsOutline,
-  IoPaperPlaneOutline,
 } from "react-icons/io5";
 import { LuChartColumn, LuCalendar } from "react-icons/lu";
 import { IoMdCheckboxOutline } from "react-icons/io";

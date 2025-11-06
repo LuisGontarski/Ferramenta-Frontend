@@ -1,10 +1,8 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "./Perfil.css";
-import imgPerfil from "../../assets/desenvolvedor1.jpeg";
 import NavbarHome from "../../Components/Navbar/NavbarHome";
 import { getUserById } from "../../services/userDataService";
 import { formatarDataParaDDMMYYYY } from "../../utils/dateUtils";
-import AtividadesPerfil from "../../Components/AtividadesPerfil/AtividadesPerfil";
 import MenuLateral from "../../Components/MenuLateral/MenuLateral";
 import toast from "react-hot-toast";
 
@@ -23,7 +21,7 @@ const Perfil = () => {
 
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
-  const [categoriaSelecionada, setCategoriaSelecionada] = useState("Commits");
+  const [] = useState("Commits");
   const [githubIntegrated, setGithubIntegrated] = useState(false);
 
   // controle do modal
@@ -73,10 +71,6 @@ const Perfil = () => {
   useEffect(() => {
     carregarPerfil();
   }, []);
-
-  const handleCategoriaClick = (categoria: string) => {
-    setCategoriaSelecionada(categoria);
-  };
 
   const handleRetryGithub = () => {
     window.location.href = `${import.meta.env.VITE_API_URL}/auth/github/login`;

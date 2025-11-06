@@ -14,10 +14,6 @@ import {
   YAxis,
   Legend,
   Line,
-  AreaChart,
-  Area,
-  BarChart,
-  Bar,
 } from "recharts";
 
 import toast from "react-hot-toast";
@@ -41,31 +37,6 @@ interface Commit {
   avatar_url?: string | null; // GitHub avatar URL
 }
 
-// Dados estáticos para os gráficos e outras seções
-const data = [
-  { dia: "Dia 1", planejado: 100, real: 100 },
-  { dia: "Dia 3", planejado: 90, real: 92 },
-  { dia: "Dia 5", planejado: 75, real: 75 },
-  { dia: "Dia 7", planejado: 60, real: 65 },
-  { dia: "Dia 9", planejado: 45, real: 48 },
-  { dia: "Dia 11", planejado: 30, real: 32 },
-  { dia: "Dia 13", planejado: 15, real: 20 },
-  { dia: "Dia 15", planejado: 0, real: 10 },
-];
-const leadTimeData = [
-  { semana: "S1", leadtime: 4.2 },
-  { semana: "S2", leadtime: 3.9 },
-  { semana: "S3", leadtime: 3.6 },
-  { semana: "S4", leadtime: 3.2 },
-];
-
-const velocidadeData = [
-  { sprint: "Sprint 1", pontos: 25 },
-  { sprint: "Sprint 2", pontos: 28 },
-  { sprint: "Sprint 3", pontos: 30 },
-  { sprint: "Sprint 4", pontos: 27 },
-];
-
 const cargo = localStorage.getItem("cargo");
 
 const ProjetosDetalhes = () => {
@@ -80,7 +51,7 @@ const ProjetosDetalhes = () => {
 
   const [cycleTime, setCycleTime] = useState<number | null>(null);
 
-  const [showModal, setShowModal] = useState(false);
+  const [, setShowModal] = useState(false);
   const [nome, setNome] = useState("Carregando...");
   const [descricao, setDescricao] = useState("Carregando...");
   const [dataInicio, setDataInicio] = useState("");
@@ -97,7 +68,7 @@ const ProjetosDetalhes = () => {
   const [burndownData, setBurndownData] = useState<any[]>([]); // Inicializa como array vazio
   const [loadingBurndown, setLoadingBurndown] = useState(false); // Estado de loading para o gráfico
   const [errorBurndown, setErrorBurndown] = useState<string | null>(null); // Estado de erro para o gráfico
-  const [sprintEndDate, setSprintEndDate] = useState<string | null>(null);
+  const [, setSprintEndDate] = useState<string | null>(null);
 
   const [leadTime, setLeadTime] = useState<number | null>(null);
   const [velocidadeEquipe, setVelocidadeEquipe] = useState<number | null>(null);
@@ -108,8 +79,6 @@ const ProjetosDetalhes = () => {
     number | string
   >("..."); // Inicia com '...'
   const [prazoRestanteSprint, setPrazoRestanteSprint] = useState<string>("..."); // Inicia com '...'
-
-  const sprintSelecionadaLocal = localStorage.getItem("sprint_selecionada_id");
 
   async function fetchBurndown(sprintId?: string) {
     const sprintIdToUse =
@@ -229,30 +198,6 @@ const ProjetosDetalhes = () => {
   const [commits, setCommits] = useState<any[]>([]);
   const [numCommits, setNumCommits] = useState(0);
 
-  async function fetchCommits(repoFullName: string) {
-    try {
-      const res = await fetch(
-        `https://api.github.com/repos/${repoFullName}/commits?per_page=30`
-      );
-      if (!res.ok) throw new Error(`GitHub API: ${res.status}`);
-      const commitsGitHub = await res.json();
-
-      if (!Array.isArray(commitsGitHub)) {
-        console.error("Resposta inesperada da API:", commitsGitHub);
-        return;
-      }
-
-      setCommits(commitsGitHub.slice(0, 10));
-      setNumCommits(commitsGitHub.length);
-      console.log(
-        `✅ ${commitsGitHub.length} commits carregados de ${repoFullName}`
-      );
-    } catch (err) {
-      console.error("❌ Erro ao buscar commits:", err);
-      setCommits([]);
-      setNumCommits(0);
-    }
-  }
 
   // --- Efeito para buscar APENAS os membros do projeto ---
   useEffect(() => {

@@ -11,9 +11,9 @@ export default function GithubSuccessIntegration() {
   const [message, setMessage] = useState(
     "Verificando integração com GitHub..."
   );
-  const [payload, setPayload] = useState<any>(null);
-  const [githubToken, setGithubToken] = useState<string | null>(null);
-  const [savedUserId, setSavedUserId] = useState<string | null>(null);
+  const [, setPayload] = useState<any>(null);
+  const [, setGithubToken] = useState<string | null>(null);
+  const [, setSavedUserId] = useState<string | null>(null);
   const [action, setAction] = useState<() => Promise<void>>(
     () => async () => {}
   );
