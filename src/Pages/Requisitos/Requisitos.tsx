@@ -170,36 +170,6 @@ const Requisitos = () => {
     setEditandoRequisito(null);
   };
 
-  const adicionarEntradaHistorico = (
-    requisito: Requisito,
-    descricao: string
-  ) => {
-    const novaEntrada: Alteracao = {
-      data_formatada: new Date().toLocaleString(),
-      usuario_nome: cargo,
-      status_anterior: requisito.status,
-      status_novo: requisito.status,
-      observacao: descricao,
-      criado_em: new Date().toISOString(),
-    };
-    const requisitoAtualizado: Requisito = {
-      ...requisito,
-      historico: [...requisito.historico, novaEntrada],
-    };
-
-    if (requisito.tipo === "Funcional") {
-      setRequisitosFuncionais((prev) =>
-        prev.map((r) => (r.uuid === requisito.uuid ? requisitoAtualizado : r))
-      );
-    } else {
-      setRequisitosNaoFuncionais((prev) =>
-        prev.map((r) => (r.uuid === requisito.uuid ? requisitoAtualizado : r))
-      );
-    }
-
-    return requisitoAtualizado;
-  };
-
   const excluirRequisito = async (requisito: Requisito) => {
     // ✅ Substituir confirm nativo por toast de confirmação customizado
     toast(

@@ -42,7 +42,6 @@ const KanbanCardModal = ({
   onUpdateCard,
   onDelete,
 }: KanbanCardModalProps) => {
-  const navigate = useNavigate();
   const [tempNotes, setTempNotes] = useState(card.notes || "");
   const [loading, setLoading] = useState(false);
   const [commits, setCommits] = useState<Commit[]>([]);

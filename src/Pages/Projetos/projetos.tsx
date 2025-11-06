@@ -6,7 +6,6 @@ import { LuSearch } from "react-icons/lu";
 import { MdAccessTime } from "react-icons/md";
 import { GoPeople } from "react-icons/go";
 import { NavLink } from "react-router-dom";
-import { IoIosGitBranch } from "react-icons/io";
 import ProjetoModal from "./ProjetoModal";
 import "./Projetos.css";
 
@@ -30,9 +29,6 @@ export const BASE_URL = import.meta.env.VITE_API_URL;
 const value = 5.5;
 const max = 10;
 const fillPercent = (value / max) * 100;
-const gradientStyle = {
-  background: `linear-gradient(to right, #155DFC ${fillPercent}%, #e0e0e0 ${fillPercent}%)`,
-};
 
 const Projetos = () => {
   const categorias = ["Todos", "Ativo", "Concluído", "Arquivado"];

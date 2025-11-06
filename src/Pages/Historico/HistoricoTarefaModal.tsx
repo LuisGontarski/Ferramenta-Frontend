@@ -40,7 +40,7 @@ const HistoricoTarefaModal = ({
 
   // Estados para filtros
   const [filtroTipo, setFiltroTipo] = useState<string>("");
-  const [filtroUsuario, setFiltroUsuario] = useState<string>("");
+  const [filtroUsuario] = useState<string>("");
 
   // Buscar históricos
   const buscarHistoricos = async () => {

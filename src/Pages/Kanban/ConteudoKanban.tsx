@@ -42,7 +42,7 @@ type Card = {
 const ConteudoKanban = () => {
   const { id: projectId } = useParams<{ id: string }>();
 
-  const [columns, setColumns] = useState(initialColumns);
+  const [columns] = useState(initialColumns);
   const [sprints, setSprints] = useState<Sprint[]>([]);
   const [selectedSprint, setSelectedSprint] = useState<string>("");
   const [showNewSprintModal, setShowNewSprintModal] = useState(false);
@@ -52,7 +52,7 @@ const ConteudoKanban = () => {
   );
 
   const [draggedCardId, setDraggedCardId] = useState<string | null>(null);
-  const [newColumnTitle, setNewColumnTitle] = useState("");
+  const [] = useState("");
   const cargo = localStorage.getItem("cargo");
 
   const [showNewCardModal, setShowNewCardModal] = useState(false);
