@@ -13,7 +13,7 @@ const MenuLateral = () => {
 					to="/" 
 					className={({ isActive }) => isActive ? "menu_lateral_item selecionado" : "menu_lateral_item"}
 				>
-					<MdOutlineDashboard size={'16px'} /> <span>Dashboard</span>
+					<MdOutlineDashboard size={'16px'} /> <span>Home</span>
 				</NavLink>
 
 				<NavLink to="/projetos" className={({ isActive }) => isActive ? "menu_lateral_item selecionado" : "menu_lateral_item"}>
