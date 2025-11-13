@@ -15,8 +15,17 @@ interface Mensagem {
   data_envio: string;
 }
 
-// Conexão com Socket.io usando variável do .env
-const socket = io(import.meta.env.VITE_API_URL || "http://localhost:3000");
+// ✅ CORREÇÃO: Use VITE_API_URL sem o /api no final para Socket.io
+const SOCKET_URL = import.meta.env.DEV
+  ? "http://localhost:3000"
+  : "https://ferramenta-backend.vercel.app"; // Socket.io não usa /api
+
+const socket = io(SOCKET_URL, {
+  transports: ["websocket", "polling"],
+  withCredentials: true,
+  timeout: 10000,
+  forceNew: true,
+});
 
 const Chat: React.FC<ChatProps> = ({
   projeto_id,
@@ -27,7 +36,6 @@ const Chat: React.FC<ChatProps> = ({
   const [texto, setTexto] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Rolagem automática para última mensagem
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [mensagens]);
@@ -37,12 +45,10 @@ const Chat: React.FC<ChatProps> = ({
 
     socket.emit("joinProject", projeto_id);
 
-    // Receber histórico
     socket.on("messageHistory", (msgs: Mensagem[]) => {
       setMensagens(msgs);
     });
 
-    // Receber novas mensagens em tempo real
     socket.on("newMessage", (msg: Mensagem) => {
       setMensagens((prev) => [...prev, msg]);
     });
