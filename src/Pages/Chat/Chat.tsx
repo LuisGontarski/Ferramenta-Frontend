@@ -16,7 +16,7 @@ interface Mensagem {
 }
 
 // Conexão com Socket.io usando variável do .env
-const socket = io(import.meta.env.VITE_BACKEND_URL || "http://localhost:3000");
+const socket = io(import.meta.env.VITE_API_URL || "http://localhost:3000");
 
 const Chat: React.FC<ChatProps> = ({
   projeto_id,
